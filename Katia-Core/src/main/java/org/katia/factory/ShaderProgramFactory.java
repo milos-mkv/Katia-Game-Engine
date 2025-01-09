@@ -16,6 +16,15 @@ public abstract class ShaderProgramFactory {
 
     static final Map<String, ShaderProgram> shaders = new HashMap<>();
 
+    /**
+     * Get shader program by its name.
+     * @param programName Shader program name.
+     * @return ShaderProgram
+     */
+    public static ShaderProgram getShaderProgram(String programName) {
+        return shaders.get(programName);
+    }
+
     @Data
     static class Shader {
 
@@ -54,6 +63,7 @@ public abstract class ShaderProgramFactory {
      * @return ShaderProgram
      */
     public static ShaderProgram createShaderProgram(String name, String vertexShaderFilePath, String fragmentShaderFilePath) {
+        Logger.log(Logger.Type.INFO, "Creating shader program:", name);
         Shader vert = new Shader(GL_VERTEX_SHADER, FileSystem.readFromFile(vertexShaderFilePath));
         Shader frag = new Shader(GL_FRAGMENT_SHADER, FileSystem.readFromFile(fragmentShaderFilePath));
 

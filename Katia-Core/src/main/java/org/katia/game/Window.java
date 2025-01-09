@@ -1,12 +1,15 @@
 package org.katia.game;
 
 import lombok.Data;
+import org.katia.Logger;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.system.MemoryUtil;
 
 import java.util.Objects;
+
+import static org.lwjgl.opengl.GL11.glViewport;
 
 /**
  * Handles creation of GLFW type window. Used for creating Engine window same for Game window.
@@ -15,6 +18,7 @@ import java.util.Objects;
 public class Window {
 
     private long handle;
+    private int width, height;
 
     /**
      * Create window.
@@ -34,6 +38,12 @@ public class Window {
 
         GLFW.glfwMakeContextCurrent(handle);
         GLFW.glfwShowWindow(handle);
+        this.width = width;
+        this.height = height;
+        GLFW.glfwSetFramebufferSizeCallback(handle, (long handle, int w, int h) -> {
+            this.width = w;
+            this.height = h;
+        });
         GL.createCapabilities();
     }
 
