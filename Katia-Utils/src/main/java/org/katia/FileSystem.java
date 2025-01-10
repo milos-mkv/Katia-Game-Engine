@@ -6,6 +6,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public abstract class FileSystem {
 
@@ -27,6 +28,15 @@ public abstract class FileSystem {
             Logger.log(Logger.Type.ERROR, "Failed to create file:", path);
             return false;
         }
+    }
+
+    /**
+     * Check if provided file is json file.
+     * @param path Path to file.
+     * @return boolean
+     */
+    public static boolean isJsonFile(String path) {
+        return (!Files.isDirectory(Paths.get(path))) && Objects.equals(getFileExtension(path), "json");
     }
 
     /**

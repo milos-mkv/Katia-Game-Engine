@@ -17,7 +17,8 @@ public abstract class Logger {
         INFO,
         WARNING,
         ERROR,
-        SUCCESS
+        SUCCESS,
+        LUA
     }
 
     static List<String> logs;
@@ -92,10 +93,11 @@ public abstract class Logger {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(" |");
         switch (type) {
-            case INFO: stringBuilder.append("\033[36m").append("  INFO   "); break;
-            case WARNING: stringBuilder.append("\033[33m").append(" WARNING "); break;
-            case ERROR: stringBuilder.append("\033[31m").append("  ERROR  "); break;
-            case SUCCESS: stringBuilder.append("\033[32m").append(" SUCCESS "); break;
+            case INFO: stringBuilder.append("\033[36m").append("INFORMATION"); break;
+            case WARNING: stringBuilder.append("\033[33m").append("  WARNING  "); break;
+            case ERROR: stringBuilder.append("\033[31m").append("   ERROR   "); break;
+            case SUCCESS: stringBuilder.append("\033[32m").append("  SUCCESS  "); break;
+            case LUA: stringBuilder.append("\033[34m").append("    LUA    "); break;
         };
         stringBuilder.append("\033[0m").append("| ");
         return stringBuilder.toString();

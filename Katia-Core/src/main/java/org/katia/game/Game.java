@@ -14,6 +14,7 @@ import org.katia.core.components.TransformComponent;
 import org.katia.factory.GameObjectFactory;
 import org.katia.factory.SceneFactory;
 import org.katia.gfx.SceneRenderer;
+import org.katia.managers.SceneManager;
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.lib.jse.CoerceJavaToLua;
 import org.lwjgl.glfw.GLFW;
@@ -50,7 +51,7 @@ public class Game {
         Logger.log(Logger.Type.INFO, "Run game instance!");
 
         Scene scene = SceneFactory.createScene("Main Scene", configuration.width, configuration.height);
-
+        SceneFactory.generateJsonFromScene(scene);
         var go = GameObjectFactory.createGameObject("Test");
         SpriteComponent sp = new SpriteComponent();
         sp.setTexture("C:\\Users\\milos\\OneDrive\\Pictures\\Screenshots\\Screenshot 2024-03-10 192344.png");
@@ -66,7 +67,7 @@ public class Game {
         go.addComponent(scriptComponent);
 
         go = null;
-
+        SceneManager.getInstance().loadScenesDirectory("C:\\Users\\milos\\OneDrive\\Desktop\\scenes");
         ScriptExecutioner.getInstance().initialize(scene);
 
         float previousTime = (float) GLFW.glfwGetTime();

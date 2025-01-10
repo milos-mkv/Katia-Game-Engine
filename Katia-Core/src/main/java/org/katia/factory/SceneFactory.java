@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import lombok.ToString;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.katia.Logger;
@@ -12,9 +11,12 @@ import org.katia.core.GameObject;
 import org.katia.core.Scene;
 import org.katia.core.components.CameraComponent;
 import org.katia.core.components.TransformComponent;
-import org.katia.game.Input;
-import org.katia.gfx.FrameBuffer;
+import org.katia.managers.InputManager;
+import org.katia.managers.LuaConsole;
+import org.katia.managers.SceneManager;
+import org.luaj.vm2.LuaFunction;
 import org.luaj.vm2.LuaValue;
+import org.luaj.vm2.Varargs;
 import org.luaj.vm2.lib.jse.CoerceJavaToLua;
 import org.luaj.vm2.lib.jse.JsePlatform;
 
@@ -97,6 +99,8 @@ public abstract class SceneFactory {
         String customScriptsPath = "./Katia-Core/src/main/resources/scripts/";
         String existingPath = scene.getGlobals().get("package").get("path").tojstring();
         scene.getGlobals().get("package").set("path", LuaValue.valueOf(customScriptsPath + existingPath));
-        scene.getGlobals().set("Input", CoerceJavaToLua.coerce(new Input()));
+        scene.getGlobals().set("InputManager", CoerceJavaToLua.coerce(InputManager.getInstance()));
+        scene.getGlobals().set("SceneManager", CoerceJavaToLua.coerce(SceneManager.getInstance()));
+        scene.getGlobals().set("print", LuaConsole.getInstance());
     }
 }

@@ -4,27 +4,35 @@ function Behaviour:init(params)
     print("Behaviour:init")
     self.gameObject = params.gameObject
     for k, v in pairs(params) do
-        print(k,v)
+        print(k, v)
     end
+    print(1,2,3)
+    print(1,2,3,4)
     self.pos = self.gameObject:getComponent("Transform"):getPosition()
     self.rot = self.gameObject:getComponent("Transform"):getRotation()
 end
+
 
 function Behaviour:update(dt)
     -- Update
     self.rot = self.rot +0.01
     self.gameObject:getComponent("Transform"):setRotation(self.rot)
-    if Input:isKeyDown(KEY_A) then
+    if InputManager:isMouseButtonPressed(MOUSE_BUTTON_1) then
         self.pos.x = self.pos.x - 1
     end
-    if Input:isKeyDown(KEY_D) then
+    if InputManager:isKeyPressed(KEY_D) then
         self.pos.x = self.pos.x + 1
     end
-    if Input:isKeyDown(KEY_W) then
+    if InputManager:isKeyPressed(KEY_W) then
         self.pos.y = self.pos.y + 1
     end
-    if Input:isKeyDown(KEY_S) then
+    if InputManager:isKeyPressed(KEY_S) then
         self.pos.y = self.pos.y - 1
+    end
+
+    if InputManager:isKeyJustPressed(KEY_F) then
+        print(SceneManager:getActiveScene(), "Behaviour:init", 'SAD',"Behaviour:init", 1,"Behaviour:init", 'SAD')
+
     end
 end
 

@@ -1,4 +1,4 @@
--- Prinatble keys
+-- Printable keys
 KEY_SPACE         = 32
 KEY_APOSTROPHE    = 39
 KEY_COMMA         = 44
