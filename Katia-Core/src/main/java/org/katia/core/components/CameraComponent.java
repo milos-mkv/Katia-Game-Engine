@@ -29,4 +29,9 @@ public class CameraComponent extends Component {
     public Matrix4f getCameraProjection() {
         return new Matrix4f().ortho(-viewport.x / 2, viewport.x / 2, -viewport.y / 2, viewport.y /2, -1.0f, 1.0f);
     }
+
+    @Override
+    public void dispose() {
+
+    }
 }

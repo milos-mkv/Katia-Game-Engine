@@ -86,4 +86,9 @@ public class TransformComponent extends Component {
         localTransformMatrix.getRotation(axisAngle4f);
         rotation = axisAngle4f.angle * axisAngle4f.z;
     }
+
+    @Override
+    public void dispose() {
+        this.parent = null;
+    }
 }

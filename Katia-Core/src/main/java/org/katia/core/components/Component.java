@@ -17,6 +17,7 @@ import java.util.HashMap;
         @JsonSubTypes.Type(value = TransformComponent.class, name = "TransformComponent"),
         @JsonSubTypes.Type(value = SpriteComponent.class, name = "SpriteComponent"),
         @JsonSubTypes.Type(value = CameraComponent.class, name = "CameraComponent"),
+        @JsonSubTypes.Type(value = ScriptComponent.class, name = "ScriptComponent"),
 })
 @Data
 @NoArgsConstructor
@@ -28,7 +29,10 @@ public abstract class Component {
             put("Transform", TransformComponent.class);
             put("Sprite", SpriteComponent.class);
             put("Camera", CameraComponent.class);
+            put("Script", ScriptComponent.class);
         }
     };
     String componentType;
+
+    public abstract void dispose();
 }

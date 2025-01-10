@@ -43,6 +43,7 @@ public class Window {
         GLFW.glfwSetFramebufferSizeCallback(handle, (long handle, int w, int h) -> {
             this.width = w;
             this.height = h;
+            glViewport(0, 0, w, h);
         });
         GL.createCapabilities();
     }

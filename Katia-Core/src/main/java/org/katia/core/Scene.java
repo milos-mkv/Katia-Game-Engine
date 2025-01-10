@@ -4,10 +4,10 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.joml.Vector2f;
 import org.joml.Vector2i;
 import org.katia.factory.GameObjectFactory;
 import org.katia.gfx.FrameBuffer;
+import org.luaj.vm2.Globals;
 
 @Data
 @JsonDeserialize
@@ -17,8 +17,9 @@ public class Scene {
     private String name;
     private GameObject rootGameObject;
     private Vector2i size;
+
     @JsonIgnore
-    private FrameBuffer frameBuffer;
+    private Globals globals;
 
     /**
      * Constructor.
@@ -28,7 +29,6 @@ public class Scene {
         this.name = name;
         this.size = new Vector2i(width, height);
         this.rootGameObject = GameObjectFactory.createGameObject("Root");
-        this.frameBuffer = new FrameBuffer(width, height, false);
     }
 
     /**

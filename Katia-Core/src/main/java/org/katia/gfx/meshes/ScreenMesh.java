@@ -2,6 +2,10 @@ package org.katia.gfx.meshes;
 
 import lombok.Getter;
 import org.katia.Logger;
+import org.katia.factory.ShaderProgramFactory;
+import org.katia.game.Game;
+import org.katia.gfx.FrameBuffer;
+import org.katia.gfx.ShaderProgram;
 
 import static org.lwjgl.opengl.GL11.GL_FLOAT;
 import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
@@ -13,19 +17,21 @@ import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
 import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
 import static org.lwjgl.opengl.GL30.*;
 
-public class TextureMesh {
+public class ScreenMesh {
 
     @Getter
-    private static final TextureMesh instance = new TextureMesh();
+    private static final ScreenMesh instance = new ScreenMesh();
 
     private final int vbo;
     private final int vao;
     private final int ebo;
 
+    ShaderProgram shaderProgram;
+
     /**
      * Quad mesh constructor.
      */
-    public TextureMesh() {
+    public ScreenMesh() {
         Logger.log(Logger.Type.INFO, "Initialize TextureMesh mesh!");
         var vertices = new float[] {
                 1.0f,  1.0f, 0.0f, 1.0f, 1.0f,
@@ -51,12 +57,23 @@ public class TextureMesh {
 
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         glBindVertexArray(0);
+
+        shaderProgram = ShaderProgramFactory.createShaderProgram("ScreenShader",
+                "./Katia-Core/src/main/resources/shaders/screen.vert",
+                "./Katia-Core/src/main/resources/shaders/screen.frag");
     }
 
     /**
      * Render quad.
      */
-    public void render() {
+    public void render(FrameBuffer frameBuffer, int width, int height) {
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        glViewport(0, 0, width, height);
+        glClearColor(0, 0, 0, 1);
+        glClear(GL_COLOR_BUFFER_BIT);
+        shaderProgram.use();
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, frameBuffer.getTexture());
         glBindVertexArray(vao);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
         glBindVertexArray(0);

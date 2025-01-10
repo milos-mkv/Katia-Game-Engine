@@ -50,6 +50,11 @@ public class GameObject {
         }
     }
 
+    public void destroy() {
+        this.removeFromParent();
+        components.forEach((_, component) -> component.dispose());
+    }
+
     /**
      * Add child game object.
      * @param gameObject Game Object.
@@ -80,8 +85,12 @@ public class GameObject {
      * @param gameObject Game Object.
      */
     public void setParent(GameObject gameObject) {
-        this.parent = new WeakReference<GameObject>(gameObject);
-         this.getComponent(TransformComponent.class).setParent(this.parent.get().getComponent(TransformComponent.class));
+         this.parent = new WeakReference<GameObject>(gameObject);
+         if (gameObject != null) {
+             this.getComponent(TransformComponent.class).setParent(this.parent.get().getComponent(TransformComponent.class));
+         } else {
+             this.getComponent(TransformComponent.class).setParent(null);
+         }
     }
 
     /**
@@ -188,13 +197,13 @@ public class GameObject {
         return false;
     }
 
-//    @Override
-//    protected void finalize() throws Throwable {
-//        try {
-//            System.out.println("Removing: " + this.name + " : " + this.id);
-//            super.finalize();
-//        } catch (Throwable e) {
-//            throw new RuntimeException(e);
-//        }
-//    }
+    @Override
+    protected void finalize() throws Throwable {
+        try {
+            System.out.println("Removing: " + this.name + " : " + this.id);
+            super.finalize();
+        } catch (Throwable e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

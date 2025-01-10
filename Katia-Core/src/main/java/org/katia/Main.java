@@ -17,8 +17,8 @@ public class Main {
             Logger.log(Logger.Type.ERROR, e.toString());
         }
 
-        Game game = new Game();
-        game.run().dispose();
+
+        Game.getInstance().run().dispose();
 
         EngineCore.dispose();
     }

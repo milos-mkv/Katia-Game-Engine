@@ -12,7 +12,11 @@ import org.katia.core.GameObject;
 import org.katia.core.Scene;
 import org.katia.core.components.CameraComponent;
 import org.katia.core.components.TransformComponent;
+import org.katia.game.Input;
 import org.katia.gfx.FrameBuffer;
+import org.luaj.vm2.LuaValue;
+import org.luaj.vm2.lib.jse.CoerceJavaToLua;
+import org.luaj.vm2.lib.jse.JsePlatform;
 
 public abstract class SceneFactory {
 
@@ -36,7 +40,7 @@ public abstract class SceneFactory {
      */
     public static Scene createScene(String name, int width, int height) {
         Scene scene = new Scene(name, width, height);
-       // addCustomScriptPath(scene);
+        addCustomScriptPath(scene);
 
         GameObject mainCameraGameObject = GameObjectFactory.createGameObject("Main Camera");
         mainCameraGameObject.addComponent(new CameraComponent());
@@ -78,14 +82,21 @@ public abstract class SceneFactory {
         try {
             final Scene scene = objectMapper.readValue(json, Scene.class);
             GameObjectFactory.reconstructGameObject(scene, scene.getRootGameObject());
-         //   addCustomScriptPath(scene);
-            scene.setFrameBuffer(new FrameBuffer(scene.getSize().x, scene.getSize().y, false));
+            addCustomScriptPath(scene);
             Logger.log(Logger.Type.SUCCESS, "Scene generated:", scene.getName());
-
             return scene;
         } catch (JsonProcessingException e) {
             Logger.log(Logger.Type.ERROR, e.toString());
         }
         return null;
+    }
+
+    private static void addCustomScriptPath(Scene scene) {
+        scene.setGlobals(JsePlatform.standardGlobals());
+        scene.getGlobals().loadfile("./Katia-Core/src/main/resources/scripts/classes.lua").call();
+        String customScriptsPath = "./Katia-Core/src/main/resources/scripts/";
+        String existingPath = scene.getGlobals().get("package").get("path").tojstring();
+        scene.getGlobals().get("package").set("path", LuaValue.valueOf(customScriptsPath + existingPath));
+        scene.getGlobals().set("Input", CoerceJavaToLua.coerce(new Input()));
     }
 }

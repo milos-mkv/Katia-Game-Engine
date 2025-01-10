@@ -1,7 +1,12 @@
 package org.katia.gfx.meshes;
 
 import lombok.Getter;
+import org.joml.Matrix4f;
 import org.katia.Logger;
+import org.katia.core.components.TransformComponent;
+import org.katia.factory.ShaderProgramFactory;
+import org.katia.gfx.ShaderProgram;
+import org.katia.gfx.Texture;
 
 import static org.lwjgl.opengl.GL11.GL_FLOAT;
 import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
@@ -17,6 +22,8 @@ public class QuadMesh {
 
     @Getter
     private static final QuadMesh instance = new QuadMesh();
+
+    ShaderProgram shaderProgram;
 
     private final int vbo;
     private final int vao;
@@ -49,12 +56,31 @@ public class QuadMesh {
 
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         glBindVertexArray(0);
+
+        shaderProgram = ShaderProgramFactory.createShaderProgram("Default",
+                "./Katia-Core/src/main/resources/shaders/shader.vert",
+                "./Katia-Core/src/main/resources/shaders/shader.frag");
+    }
+
+    /**
+     * Set camera projection and view for quad mesh rendering.
+     * @param projection Camera projection matrix.
+     * @param view Camera view matrix.
+     */
+    public void use(Matrix4f projection, Matrix4f view) {
+        shaderProgram.use();
+        shaderProgram.setUniformMatrix4("projection",projection);
+        shaderProgram.setUniformMatrix4("view", view);
     }
 
     /**
      * Render quad.
      */
-    public void render() {
+    public void render(Texture texture, Matrix4f transform) {
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, texture.getId());
+        shaderProgram.setUniformMatrix4("model", transform);
+
         glBindVertexArray(vao);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
         glBindVertexArray(0);

@@ -27,4 +27,9 @@ public class SpriteComponent extends Component {
         this.path = path;
         this.texture = TextureFactory.createTexture(path);
     }
+
+    @Override
+    public void dispose() {
+
+    }
 }
