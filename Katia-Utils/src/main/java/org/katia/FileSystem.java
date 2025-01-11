@@ -49,7 +49,6 @@ public abstract class FileSystem {
         try {
             content = Files.readString(Paths.get(path), StandardCharsets.UTF_8);
             Logger.log(Logger.Type.SUCCESS, "Data read from file:", path);
-            Logger.log(content);
         } catch (IOException e)  {
             Logger.log(Logger.Type.ERROR, e.toString());
         }
@@ -66,7 +65,6 @@ public abstract class FileSystem {
         try {
             Files.write(Paths.get(path), data.getBytes());
             Logger.log(Logger.Type.SUCCESS, "Data written to file:", path);
-            Logger.log(data);
             return true;
         } catch (IOException e) {
             Logger.log(Logger.Type.ERROR, "Failed to write to file:", path);

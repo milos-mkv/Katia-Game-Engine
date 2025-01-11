@@ -36,7 +36,7 @@ public class SceneRenderer {
 
         glClearColor(backgroundColor.x, backgroundColor.y, backgroundColor.z, 1);
         glClear(GL_COLOR_BUFFER_BIT);
-
+        System.out.println(camera);
         AxisMesh.getInstance().render(camera);
         QuadMesh.getInstance().use(
                 cameraComponent.getCameraProjection(),

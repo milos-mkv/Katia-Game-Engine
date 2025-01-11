@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.katia.Logger;
 import org.katia.core.GameObject;
 import org.katia.core.Scene;
+import org.katia.core.components.ScriptComponent;
 import org.katia.core.components.SpriteComponent;
 import org.katia.core.components.TransformComponent;
 
@@ -72,12 +73,12 @@ public class GameObjectFactory {
 
     public static void reconstructGameObject(Scene scene, GameObject gameObject) {
         for (Class<?> component : gameObject.getComponents().keySet()) {
-//            if (component == ScriptComponent.class) {
-//                ScriptComponent scriptComponent = gameObject.getComponent(ScriptComponent.class);
-//                if (scriptComponent.getFilePath() != null) {
-//                    scriptComponent.addScriptFile(scene, Paths.get(scriptComponent.getFilePath()));
-//                }
-//            }
+            if (component == ScriptComponent.class) {
+                ScriptComponent scriptComponent = gameObject.getComponent(ScriptComponent.class);
+                if (scriptComponent.getPath() != null) {
+                    scriptComponent.addScriptFile(scene, scriptComponent.getPath());
+                }
+            }
             if (component == SpriteComponent.class) {
                 SpriteComponent spriteComponent = gameObject.getComponent(SpriteComponent.class);
                 if (spriteComponent.getPath() != null) {

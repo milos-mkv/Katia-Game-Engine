@@ -31,7 +31,5 @@ public class CameraComponent extends Component {
     }
 
     @Override
-    public void dispose() {
-
-    }
+    public void dispose() { }
 }

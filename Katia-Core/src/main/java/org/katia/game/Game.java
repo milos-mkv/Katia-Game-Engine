@@ -50,24 +50,11 @@ public class Game {
     public Game run() {
         Logger.log(Logger.Type.INFO, "Run game instance!");
 
-        Scene scene = SceneFactory.createScene("Main Scene", configuration.width, configuration.height);
-        SceneFactory.generateJsonFromScene(scene);
-        var go = GameObjectFactory.createGameObject("Test");
-        SpriteComponent sp = new SpriteComponent();
-        sp.setTexture("C:\\Users\\milos\\OneDrive\\Pictures\\Screenshots\\Screenshot 2024-03-10 192344.png");
-        go.addComponent(sp);
-        go.getComponent(TransformComponent.class).setScale(new Vector3f(400, 400, 1));
-        go.getComponent(TransformComponent.class).setPosition(new Vector3f(100, 100, 1));
-        scene.addGameObject(go);
-        scene.find("Main Camera").getComponent(TransformComponent.class).setScale(new Vector3f(1, 1, 1));
 
 
-        ScriptComponent scriptComponent = new ScriptComponent();
-        scriptComponent.addScriptFile(scene, "C:\\Users\\milos\\Documents\\Katia-Game-Engine\\Katia-Core\\src\\main\\resources\\scripts\\Behaviour.lua");
-        go.addComponent(scriptComponent);
 
-        go = null;
         SceneManager.getInstance().loadScenesDirectory("C:\\Users\\milos\\OneDrive\\Desktop\\scenes");
+        Scene scene = SceneManager.getInstance().getScene("Main Scene");
         ScriptExecutioner.getInstance().initialize(scene);
 
         float previousTime = (float) GLFW.glfwGetTime();

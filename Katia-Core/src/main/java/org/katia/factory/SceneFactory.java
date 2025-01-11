@@ -14,9 +14,7 @@ import org.katia.core.components.TransformComponent;
 import org.katia.managers.InputManager;
 import org.katia.managers.LuaConsole;
 import org.katia.managers.SceneManager;
-import org.luaj.vm2.LuaFunction;
 import org.luaj.vm2.LuaValue;
-import org.luaj.vm2.Varargs;
 import org.luaj.vm2.lib.jse.CoerceJavaToLua;
 import org.luaj.vm2.lib.jse.JsePlatform;
 
@@ -66,7 +64,6 @@ public abstract class SceneFactory {
         try {
             json = objectMapper.writeValueAsString(scene);
             Logger.log(Logger.Type.SUCCESS, "Json scene generated!");
-            Logger.log(json);
         } catch (JsonProcessingException e) {
             Logger.log(Logger.Type.ERROR, e.toString());
         }
@@ -80,11 +77,10 @@ public abstract class SceneFactory {
      */
     public static Scene generateSceneFromJson(String json) {
         Logger.log(Logger.Type.INFO, "Generate scene from json:");
-        Logger.log(json);
         try {
             final Scene scene = objectMapper.readValue(json, Scene.class);
-            GameObjectFactory.reconstructGameObject(scene, scene.getRootGameObject());
             addCustomScriptPath(scene);
+            GameObjectFactory.reconstructGameObject(scene, scene.getRootGameObject());
             Logger.log(Logger.Type.SUCCESS, "Scene generated:", scene.getName());
             return scene;
         } catch (JsonProcessingException e) {
@@ -93,6 +89,10 @@ public abstract class SceneFactory {
         return null;
     }
 
+    /**
+     * Setup lua context with custom libraries and lua binds.
+     * @param scene Scene.
+     */
     private static void addCustomScriptPath(Scene scene) {
         scene.setGlobals(JsePlatform.standardGlobals());
         scene.getGlobals().loadfile("./Katia-Core/src/main/resources/scripts/classes.lua").call();

@@ -27,6 +27,10 @@ public class SceneManager {
         activeScene = null;
     }
 
+    public Scene getScene(String name) {
+        return scenes.get(name);
+    }
+
     /**
      * Set current active scene by its name.
      * @param name Scene name.
