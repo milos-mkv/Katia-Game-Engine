@@ -6,8 +6,6 @@ function Behaviour:init(params)
     for k, v in pairs(params) do
         print(k, v)
     end
-    print(1,2,3)
-    print(1,2,3,4)
     self.pos = self.gameObject:getComponent("Transform"):getPosition()
     self.rot = self.gameObject:getComponent("Transform"):getRotation()
 end
@@ -31,8 +29,7 @@ function Behaviour:update(dt)
     end
 
     if InputManager:isKeyJustPressed(KEY_F) then
-        print(SceneManager:getActiveScene(), "Behaviour:init", 'SAD',"Behaviour:init", 1,"Behaviour:init", 'SAD')
-
+       -- print(SceneManager:getActiveScene(), "Behaviour:init", 'SAD',"Behaviour:init", 1,"Behaviour:init", 'SAD')
     end
 end
 

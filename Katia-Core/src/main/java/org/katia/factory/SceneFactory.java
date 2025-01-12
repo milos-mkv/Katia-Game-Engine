@@ -99,8 +99,8 @@ public abstract class SceneFactory {
         String customScriptsPath = "./Katia-Core/src/main/resources/scripts/";
         String existingPath = scene.getGlobals().get("package").get("path").tojstring();
         scene.getGlobals().get("package").set("path", LuaValue.valueOf(customScriptsPath + existingPath));
-        scene.getGlobals().set("InputManager", CoerceJavaToLua.coerce(InputManager.getInstance()));
-        scene.getGlobals().set("SceneManager", CoerceJavaToLua.coerce(SceneManager.getInstance()));
-        scene.getGlobals().set("print", LuaConsole.getInstance());
+//        scene.getGlobals().set("InputManager", CoerceJavaToLua.coerce(InputManager.getInstance()));
+//        scene.getGlobals().set("SceneManager", CoerceJavaToLua.coerce(SceneManager.getInstance()));
+//        scene.getGlobals().set("print", LuaConsole.getInstance());
     }
 }

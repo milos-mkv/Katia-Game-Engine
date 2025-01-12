@@ -1,5 +1,6 @@
 package org.katia.managers;
 
+import lombok.Data;
 import lombok.Getter;
 import org.katia.Logger;
 import org.luaj.vm2.LuaFunction;
@@ -9,7 +10,7 @@ import org.luaj.vm2.Varargs;
 import java.util.ArrayList;
 import java.util.List;
 
-
+@Data
 public class LuaConsole extends LuaFunction {
 
     @Getter
@@ -25,6 +26,11 @@ public class LuaConsole extends LuaFunction {
         logs = new ArrayList<>();
     }
 
+    /**
+     * Override print function in lua that accepts 1 function argument.
+     * @param luaValue Argument 1.
+     * @return LuaValue
+     */
     @Override
     public LuaValue call(LuaValue luaValue) {
         StringBuilder message = new StringBuilder();
@@ -34,6 +40,12 @@ public class LuaConsole extends LuaFunction {
         return LuaValue.NIL;
     }
 
+    /**
+     * Override print function in lua that accepts 2 function arguments.
+     * @param luaValue Argument 1.
+     * @param luaValue1 Argument 2.
+     * @return LuaValue
+     */
     @Override
     public LuaValue call(LuaValue luaValue, LuaValue luaValue1) {
         StringBuilder message = new StringBuilder();
@@ -46,6 +58,13 @@ public class LuaConsole extends LuaFunction {
         return LuaValue.NIL;
     }
 
+    /**
+     * Override print function in lua that accepts 3 function arguments.
+     * @param luaValue Argument 1.
+     * @param luaValue1 Argument 2.
+     * @param luaValue2 Argument 3.
+     * @return LuaValue
+     */
     @Override
     public LuaValue call(LuaValue luaValue, LuaValue luaValue1, LuaValue luaValue2) {
         StringBuilder message = new StringBuilder();
@@ -60,6 +79,11 @@ public class LuaConsole extends LuaFunction {
         return LuaValue.NIL;
     }
 
+    /**
+     * Override print function in lua that accepts more than 3 function arguments.
+     * @param args Arguments.
+     * @return Varargs
+     */
     @Override
     public Varargs invoke(Varargs args) {
         StringBuilder message = new StringBuilder();

@@ -1,6 +1,8 @@
 package org.katia.game;
 
 import lombok.Data;
+import org.joml.Vector2f;
+import org.joml.Vector2i;
 import org.katia.Logger;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWVidMode;
@@ -17,17 +19,21 @@ import static org.lwjgl.opengl.GL11.glViewport;
 @Data
 public class Window {
 
-    private long handle;
-    private int width, height;
+    Game game;
+    long handle;
+    Vector2i size;
 
     /**
      * Create window.
+     * @param game Game instance.
      * @param title Window title.
      * @param width Window width.
      * @param height Window height.
      * @throws RuntimeException When failing to create window.
      */
-    public Window(String title, int width, int height) throws RuntimeException {
+    public Window(Game game, String title, int width, int height) throws RuntimeException {
+        this.game = game;
+        this.size = new Vector2i(width, height);
         handle = GLFW.glfwCreateWindow(width, height, title, MemoryUtil.NULL, MemoryUtil.NULL);
         if (handle == MemoryUtil.NULL) {
             throw new RuntimeException("Failed to create GLFW window!");
@@ -38,11 +44,8 @@ public class Window {
 
         GLFW.glfwMakeContextCurrent(handle);
         GLFW.glfwShowWindow(handle);
-        this.width = width;
-        this.height = height;
         GLFW.glfwSetFramebufferSizeCallback(handle, (long handle, int w, int h) -> {
-            this.width = w;
-            this.height = h;
+            size.set(w, h);
             glViewport(0, 0, w, h);
         });
         GL.createCapabilities();

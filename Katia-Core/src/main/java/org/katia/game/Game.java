@@ -1,48 +1,44 @@
 package org.katia.game;
 
 import lombok.Data;
-import lombok.Getter;
-import lombok.extern.java.Log;
-import org.joml.Vector3f;
 import org.katia.Logger;
-import org.katia.core.GameObject;
 import org.katia.core.Scene;
 import org.katia.core.ScriptExecutioner;
-import org.katia.core.components.ScriptComponent;
-import org.katia.core.components.SpriteComponent;
-import org.katia.core.components.TransformComponent;
 import org.katia.factory.GameObjectFactory;
 import org.katia.factory.SceneFactory;
 import org.katia.gfx.SceneRenderer;
+import org.katia.managers.AssetManager;
 import org.katia.managers.SceneManager;
-import org.luaj.vm2.LuaTable;
-import org.luaj.vm2.lib.jse.CoerceJavaToLua;
+import org.katia.managers.ScriptManager;
 import org.lwjgl.glfw.GLFW;
 
 @Data
 public class Game {
 
-    @Getter
-    static Game instance = new Game();
-
     Configuration configuration;
     Window window;
+    AssetManager assetManager;
+    SceneManager sceneManager;
+    ScriptManager scriptManager;
+
 
     /**
      * Crete new game instance.
      */
-    public Game() {
+    public Game(String directory) {
         Logger.log(Logger.Type.INFO, "Creating new game instance!");
-        configuration = Configuration.load();
-        window = new Window(configuration.title, configuration.width, configuration.height);
+        configuration = Configuration.load(directory + "/katia-conf.json");
+        window = new Window(this, configuration.title, configuration.width, configuration.height);
+
+        SceneFactory.initialize();
+        GameObjectFactory.initialize();
+
+        // Load resources
+        assetManager = new AssetManager(this, directory + "/assets");
+        sceneManager = new SceneManager(this, directory + "/scenes");
+        scriptManager = new ScriptManager(this, directory + "/scripts");
     }
-    void test(ScriptComponent scriptComponent, GameObject a2, Scene scene) {
-        var initMethod = scriptComponent.getBehaviourTable().get("init");
-        LuaTable params = new LuaTable();
-        params.set("gameObject", CoerceJavaToLua.coerce(a2));
-        params.set("scene", CoerceJavaToLua.coerce(scene));
-        initMethod.call(scriptComponent.getBehaviourTable(), params);
-    }
+
     /**
      * Run game.
      * @return Game
@@ -50,12 +46,8 @@ public class Game {
     public Game run() {
         Logger.log(Logger.Type.INFO, "Run game instance!");
 
-
-
-
-        SceneManager.getInstance().loadScenesDirectory("C:\\Users\\milos\\OneDrive\\Desktop\\scenes");
-        Scene scene = SceneManager.getInstance().getScene("Main Scene");
-        ScriptExecutioner.getInstance().initialize(scene);
+        Scene scene = sceneManager.getScene("Main Scene");
+//        ScriptExecutioner.getInstance().initialize(scene);
 
         float previousTime = (float) GLFW.glfwGetTime();
         float deltaTime;
@@ -65,7 +57,7 @@ public class Game {
             previousTime = currentTime;
 
             GLFW.glfwPollEvents();
-            ScriptExecutioner.getInstance().update(deltaTime);
+//            ScriptExecutioner.getInstance().update(deltaTime);
             SceneRenderer.getInstance().render(scene);
 
             GLFW.glfwSwapBuffers(window.getHandle());

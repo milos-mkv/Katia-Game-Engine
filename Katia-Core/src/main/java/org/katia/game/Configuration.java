@@ -21,13 +21,14 @@ public class Configuration {
 
     /**
      * Load configuration from file.
+     * @param path Path to katia-conf.json file.
      * @return Configuration
      */
-    static Configuration load() {
+    static Configuration load(String path) {
         ObjectMapper objectMapper = new ObjectMapper();
         Configuration configuration = null;
         try {
-            configuration = objectMapper.readValue(FileSystem.readFromFile("katia-conf.json"), Configuration.class);
+            configuration = objectMapper.readValue(FileSystem.readFromFile(path), Configuration.class);
         } catch (JsonProcessingException e) {
             Logger.log(Logger.Type.ERROR, e.toString());
         }

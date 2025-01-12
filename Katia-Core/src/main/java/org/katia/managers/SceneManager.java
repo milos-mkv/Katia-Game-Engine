@@ -5,28 +5,39 @@ import org.katia.FileSystem;
 import org.katia.Logger;
 import org.katia.core.Scene;
 import org.katia.factory.SceneFactory;
+import org.katia.game.Game;
 
+import java.nio.file.Files;
 import java.util.HashMap;
-import java.util.List;
 
 public class SceneManager {
 
-    @Getter
-    static SceneManager instance = new SceneManager();
-
+    Game game;
     HashMap<String, Scene> scenes;
+    String path;
+
     @Getter
     Scene activeScene;
 
     /**
      * Scene manager constructor.
      */
-    public SceneManager() {
-        Logger.log(Logger.Type.INFO, "Creating scene manager!");
+    public SceneManager(Game game, String path) {
+        Logger.log(Logger.Type.INFO, "Creating scene manager ...");
+
+        this.path = path;
+        this.game = game;
         scenes = new HashMap<>();
         activeScene = null;
+
+        loadScenes(path);
     }
 
+    /**
+     * Get scene by name.
+     * @param name Scene name.
+     * @return Scene
+     */
     public Scene getScene(String name) {
         return scenes.get(name);
     }
@@ -44,15 +55,19 @@ public class SceneManager {
      * Load all scenes from scenes directory.
      * @param path Path to scenes directory.
      */
-    public void loadScenesDirectory(String path) {
+    private void loadScenes(String path) {
         Logger.log(Logger.Type.INFO, "Scene manager loading scenes from scenes directory:", path);
-        List<Scene> scenes = FileSystem.readDirectoryData(path)
-                .stream()
-                .filter((filePath) -> FileSystem.isJsonFile(filePath.toString()))
-                .map((filePath) -> SceneFactory.generateSceneFromJson(FileSystem.readFromFile(filePath.toString())))
-                .toList();
-        for (Scene scene : scenes) {
-            this.scenes.put(scene.getName(), scene);
-        }
+
+        FileSystem.readDirectoryData(path).stream().filter((entry) -> {
+            if (Files.isDirectory(entry)) {
+                return true;
+            } else if  (FileSystem.isJsonFile(entry.toString())) {
+                var scene = SceneFactory.generateSceneFromJson(FileSystem.readFromFile(entry.toString()));
+                if (scene != null) {
+                    scenes.put(scene.getName(), scene);
+                }
+            }
+            return false;
+        }).toList().forEach((dir) -> loadScenes(dir.toString()));
     }
 }
