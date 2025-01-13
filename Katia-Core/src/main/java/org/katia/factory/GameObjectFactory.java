@@ -74,10 +74,10 @@ public class GameObjectFactory {
     public static void reconstructGameObject(Scene scene, GameObject gameObject) {
         for (Class<?> component : gameObject.getComponents().keySet()) {
             if (component == ScriptComponent.class) {
-                ScriptComponent scriptComponent = gameObject.getComponent(ScriptComponent.class);
-                if (scriptComponent.getPath() != null) {
-                    scriptComponent.addScriptFile(scene, scriptComponent.getPath());
-                }
+//                ScriptComponent scriptComponent = gameObject.getComponent(ScriptComponent.class);
+//                if (scriptComponent.getPath() != null) {
+//                    scriptComponent.addScriptFile(scene, scriptComponent.getPath());
+//                }
             }
             if (component == SpriteComponent.class) {
                 SpriteComponent spriteComponent = gameObject.getComponent(SpriteComponent.class);

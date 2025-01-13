@@ -14,6 +14,7 @@ import java.util.HashMap;
  *  - Texture/Images
  *  - Sounds
  *  - Prefabs
+ *  - Fonts
  */
 public class AssetManager {
 

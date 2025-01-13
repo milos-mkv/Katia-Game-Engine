@@ -3,11 +3,13 @@ package org.katia.game;
 import lombok.Data;
 import org.katia.Logger;
 import org.katia.core.Scene;
-import org.katia.core.ScriptExecutioner;
+import org.katia.gfx.FontLoader;
+import org.katia.scripting.LuaScriptExecutioner;
 import org.katia.factory.GameObjectFactory;
 import org.katia.factory.SceneFactory;
 import org.katia.gfx.SceneRenderer;
 import org.katia.managers.AssetManager;
+import org.katia.managers.InputManager;
 import org.katia.managers.SceneManager;
 import org.katia.managers.ScriptManager;
 import org.lwjgl.glfw.GLFW;
@@ -20,56 +22,79 @@ public class Game {
     AssetManager assetManager;
     SceneManager sceneManager;
     ScriptManager scriptManager;
-
+    InputManager inputManager;
+    LuaScriptExecutioner scriptExecutioner;
+    String directory;
+    float deltaTime = 0;
 
     /**
      * Crete new game instance.
+     * @param directory Game root directory.
      */
     public Game(String directory) {
-        Logger.log(Logger.Type.INFO, "Creating new game instance!");
+        Logger.log(Logger.Type.INFO, "Creating new game instance:", directory);
+        this.directory = directory;
         configuration = Configuration.load(directory + "/katia-conf.json");
         window = new Window(this, configuration.title, configuration.width, configuration.height);
 
         SceneFactory.initialize();
         GameObjectFactory.initialize();
 
-        // Load resources
         assetManager = new AssetManager(this, directory + "/assets");
         sceneManager = new SceneManager(this, directory + "/scenes");
         scriptManager = new ScriptManager(this, directory + "/scripts");
+        inputManager = new InputManager(this);
+        scriptExecutioner = new LuaScriptExecutioner(this);
     }
 
     /**
      * Run game.
      * @return Game
      */
-    public Game run() {
-        Logger.log(Logger.Type.INFO, "Run game instance!");
+    public void run() {
+        Logger.log(Logger.Type.INFO, "Run game instance ...");
 
         Scene scene = sceneManager.getScene("Main Scene");
-//        ScriptExecutioner.getInstance().initialize(scene);
-
+        scriptExecutioner.init(scene);
+        int fps = 0;
+        float tim = 0;
         float previousTime = (float) GLFW.glfwGetTime();
-        float deltaTime;
-        while (!GLFW.glfwWindowShouldClose(window.getHandle())) {
-            float currentTime = (float) GLFW.glfwGetTime();
-            deltaTime = currentTime - previousTime;
-            previousTime = currentTime;
+        GLFW.glfwSwapInterval(1);
 
+
+        while (!GLFW.glfwWindowShouldClose(window.getHandle())) {
+            previousTime = calculateDeltaTime(previousTime);
+            tim += deltaTime;
+            fps++;
+            if (tim >= 1) {
+                tim = 0;
+                Logger.log(Logger.Type.INFO, "FPS:", String.valueOf(fps));
+                fps=0;
+            }
             GLFW.glfwPollEvents();
-//            ScriptExecutioner.getInstance().update(deltaTime);
+            scriptExecutioner.update(deltaTime);
             SceneRenderer.getInstance().render(scene);
 
             GLFW.glfwSwapBuffers(window.getHandle());
         }
-        return this;
+    }
+
+    /**
+     * Calculate delta time.
+     * @param previousTime Previous time.
+     * @return float
+     */
+    private float calculateDeltaTime(float previousTime) {
+        float currentTime = (float) GLFW.glfwGetTime();
+        deltaTime = currentTime - previousTime;
+        return currentTime;
     }
 
     /**
      * Dispose of game.
      */
     public void dispose() {
-        Logger.log(Logger.Type.INFO, "Dispose of game instance!");
+        Logger.log(Logger.Type.DISPOSE, "Disposing of game instance ...");
         window.dispose();
     }
 }

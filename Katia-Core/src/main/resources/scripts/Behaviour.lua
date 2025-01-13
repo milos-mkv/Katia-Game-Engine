@@ -13,7 +13,7 @@ end
 
 function Behaviour:update(dt)
     -- Update
-    self.rot = self.rot +0.01
+  --  self.rot = self.rot +0.01
     self.gameObject:getComponent("Transform"):setRotation(self.rot)
     if InputManager:isMouseButtonPressed(MOUSE_BUTTON_1) then
         self.pos.x = self.pos.x - 1
@@ -29,7 +29,7 @@ function Behaviour:update(dt)
     end
 
     if InputManager:isKeyJustPressed(KEY_F) then
-       -- print(SceneManager:getActiveScene(), "Behaviour:init", 'SAD',"Behaviour:init", 1,"Behaviour:init", 'SAD')
+        print(SceneManager:getActiveScene(), "Behaviour:init", 'SAD',"Behaviour:init", 1,"Behaviour:init", 'SAD')
     end
 end
 

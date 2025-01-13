@@ -18,7 +18,8 @@ public abstract class Logger {
         WARNING,
         ERROR,
         SUCCESS,
-        LUA
+        LUA,
+        DISPOSE
     }
 
     static List<String> logs;
@@ -93,11 +94,12 @@ public abstract class Logger {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(" |");
         switch (type) {
-            case INFO:    stringBuilder.append("\033[36m").append("INFORMATION"); break;
-            case WARNING: stringBuilder.append("\033[33m").append("  WARNING  "); break;
-            case ERROR:   stringBuilder.append("\033[31m").append("   ERROR   "); break;
-            case SUCCESS: stringBuilder.append("\033[32m").append("  SUCCESS  "); break;
-            case LUA:     stringBuilder.append("\033[34m").append("    LUA    "); break;
+            case INFO:    stringBuilder.append("\033[36m").append("INFORMATION"); break; // Cyan
+            case WARNING: stringBuilder.append("\033[33m").append("  WARNING  "); break; // Yellow
+            case ERROR:   stringBuilder.append("\033[31m").append("   ERROR   "); break; // Red
+            case SUCCESS: stringBuilder.append("\033[32m").append("  SUCCESS  "); break; // Green
+            case LUA:     stringBuilder.append("\033[34m").append("    LUA    "); break; // Blue
+            case DISPOSE: stringBuilder.append("\033[35m").append("  DISPOSE  "); break; // Magenta
         };
         stringBuilder.append("\033[0m").append("| ");
         return stringBuilder.toString();

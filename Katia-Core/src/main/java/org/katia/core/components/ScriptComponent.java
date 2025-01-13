@@ -2,35 +2,40 @@ package org.katia.core.components;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
-import org.katia.core.Scene;
+import org.katia.Logger;
 import org.luaj.vm2.LuaValue;
 
 @Data
 public class ScriptComponent extends Component {
 
-    private String path;
+    String name;
+    String path;
     @JsonIgnore
-    private LuaValue behaviourTable;
+    LuaValue behaviourTable;
 
+    /**
+     * Script component constructor.
+     */
     public ScriptComponent() {
         super("Script");
     }
 
     /**
      * Attach script file to component.
-     * @param scene Scene.
+     * @param name Behaviour class name.
      * @param path Path to lua file.
      */
-    public void addScriptFile(Scene scene, String path) {
+    public void addScriptFile(String name, String path) {
         this.path = path;
-        if (path != null) {
-            LuaValue module = scene.getGlobals().loadfile(path);
-            this.behaviourTable = module.call();
-        }
+        this.name = name;
     }
 
+    /**
+     * Dispose of script component.
+     */
     @Override
     public void dispose() {
+        Logger.log(Logger.Type.DISPOSE, "Disposing of script component ...");
         this.behaviourTable = null;
     }
 }

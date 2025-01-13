@@ -1,4 +1,4 @@
-package org.katia.managers;
+package org.katia.scripting;
 
 import lombok.Data;
 import lombok.Getter;
@@ -12,9 +12,6 @@ import java.util.List;
 
 @Data
 public class LuaConsole extends LuaFunction {
-
-    @Getter
-    static LuaConsole instance = new LuaConsole();
 
     List<String> logs;
 

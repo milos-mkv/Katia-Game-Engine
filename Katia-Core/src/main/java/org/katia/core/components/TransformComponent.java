@@ -5,6 +5,7 @@ import lombok.Data;
 import org.joml.AxisAngle4f;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
+import org.katia.Logger;
 
 import java.lang.ref.WeakReference;
 import java.util.Objects;
@@ -56,7 +57,7 @@ public class TransformComponent extends Component {
      */
     @JsonIgnore
     public Matrix4f getWorldTransformMatrix() {
-        if (this.parent != null) {
+        if (this.parent != null && this.parent.get() != null) {
             return Objects.requireNonNull(this.parent.get())
                     .getWorldTransformMatrix()
                     .mul(getTransformMatrix());
@@ -89,6 +90,7 @@ public class TransformComponent extends Component {
 
     @Override
     public void dispose() {
+        Logger.log(Logger.Type.DISPOSE, "Disposing of transform component ...");
         this.parent = null;
     }
 }

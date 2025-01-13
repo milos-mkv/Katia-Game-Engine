@@ -1,7 +1,7 @@
 package org.katia.managers;
 
-import lombok.Getter;
 import org.joml.Vector2f;
+import org.katia.game.Game;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.system.MemoryStack;
 
@@ -9,23 +9,23 @@ import java.nio.DoubleBuffer;
 
 public class InputManager {
 
-    @Getter
-    static InputManager instance = new InputManager();
-
-    private final boolean[] keyStates;
-    private final boolean[] mouseButtonStates;
-    private final Vector2f lastCursorPosition;
-    private double scrollOffset = 0;
+    Game game;
+    final boolean[] keyStates;
+    final boolean[] mouseButtonStates;
+    final Vector2f lastCursorPosition;
+    double scrollOffset = 0;
 
     /**
      * Input manager constructor.
+     * @param game Game instance.
      */
-    public InputManager() {
+    public InputManager(Game game) {
+        this.game = game;
         this.keyStates = new boolean[GLFW.GLFW_KEY_LAST + 1];
         this.mouseButtonStates = new boolean[GLFW.GLFW_MOUSE_BUTTON_LAST + 1];
         this.lastCursorPosition = new Vector2f(0, 0);
 
-        GLFW.glfwSetScrollCallback(GLFW.glfwGetCurrentContext(), (win, xOffset, yOffset) -> {
+        GLFW.glfwSetScrollCallback(game.getWindow().getHandle(), (win, xOffset, yOffset) -> {
             scrollOffset = yOffset;
         });
     }
@@ -36,7 +36,7 @@ public class InputManager {
      * @return boolean
      */
     public boolean isKeyPressed(int key) {
-        return GLFW.glfwGetKey(GLFW.glfwGetCurrentContext(), key) == GLFW.GLFW_PRESS;
+        return GLFW.glfwGetKey(game.getWindow().getHandle(), key) == GLFW.GLFW_PRESS;
     }
 
     /**
@@ -45,7 +45,7 @@ public class InputManager {
      * @return boolean
      */
     public boolean isKeyJustPressed(int key) {
-        boolean isCurrentlyPressed = GLFW.glfwGetKey(GLFW.glfwGetCurrentContext(), key) == GLFW.GLFW_PRESS;
+        boolean isCurrentlyPressed = GLFW.glfwGetKey(game.getWindow().getHandle(), key) == GLFW.GLFW_PRESS;
         if (isCurrentlyPressed && !keyStates[key]) {
             keyStates[key] = true;
             return true;
@@ -62,7 +62,7 @@ public class InputManager {
      * @return boolean
      */
     public boolean isMouseButtonPressed(int button) {
-        return GLFW.glfwGetMouseButton(GLFW.glfwGetCurrentContext(), button) == GLFW.GLFW_PRESS;
+        return GLFW.glfwGetMouseButton(game.getWindow().getHandle(), button) == GLFW.GLFW_PRESS;
     }
 
     /**
@@ -71,7 +71,7 @@ public class InputManager {
      * @return boolean
      */
     public boolean isMouseButtonJustPressed(int button) {
-        boolean isCurrentlyPressed = GLFW.glfwGetMouseButton(GLFW.glfwGetCurrentContext(), button) == GLFW.GLFW_PRESS;
+        boolean isCurrentlyPressed = GLFW.glfwGetMouseButton(game.getWindow().getHandle(), button) == GLFW.GLFW_PRESS;
         if (isCurrentlyPressed && !mouseButtonStates[button]) {
             mouseButtonStates[button] = true;
             return true;
@@ -90,7 +90,7 @@ public class InputManager {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             DoubleBuffer xBuffer = stack.mallocDouble(1);
             DoubleBuffer yBuffer = stack.mallocDouble(1);
-            GLFW.glfwGetCursorPos(GLFW.glfwGetCurrentContext(), xBuffer, yBuffer);
+            GLFW.glfwGetCursorPos(game.getWindow().getHandle(), xBuffer, yBuffer);
             return new Vector2f((float) xBuffer.get(0), (float) yBuffer.get(0));
         }
     }
@@ -110,21 +110,21 @@ public class InputManager {
      * Hide cursor.
      */
     public void hideCursor() {
-        GLFW.glfwSetInputMode(GLFW.glfwGetCurrentContext(), GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_HIDDEN);
+        GLFW.glfwSetInputMode(game.getWindow().getHandle(), GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_HIDDEN);
     }
 
     /**
      * Show cursor.
      */
     public void showCursor() {
-        GLFW.glfwSetInputMode(GLFW.glfwGetCurrentContext(), GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_NORMAL);
+        GLFW.glfwSetInputMode(game.getWindow().getHandle(), GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_NORMAL);
     }
 
     /**
      * Disable cursor.
      */
     public void disableCursor() {
-        GLFW.glfwSetInputMode(GLFW.glfwGetCurrentContext(), GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_DISABLED);
+        GLFW.glfwSetInputMode(game.getWindow().getHandle(), GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_DISABLED);
     }
 
     /**

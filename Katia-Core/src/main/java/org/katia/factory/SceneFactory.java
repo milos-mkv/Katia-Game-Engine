@@ -11,11 +11,7 @@ import org.katia.core.GameObject;
 import org.katia.core.Scene;
 import org.katia.core.components.CameraComponent;
 import org.katia.core.components.TransformComponent;
-import org.katia.managers.InputManager;
-import org.katia.managers.LuaConsole;
-import org.katia.managers.SceneManager;
 import org.luaj.vm2.LuaValue;
-import org.luaj.vm2.lib.jse.CoerceJavaToLua;
 import org.luaj.vm2.lib.jse.JsePlatform;
 
 public abstract class SceneFactory {
@@ -95,12 +91,5 @@ public abstract class SceneFactory {
      */
     private static void addCustomScriptPath(Scene scene) {
         scene.setGlobals(JsePlatform.standardGlobals());
-        scene.getGlobals().loadfile("./Katia-Core/src/main/resources/scripts/classes.lua").call();
-        String customScriptsPath = "./Katia-Core/src/main/resources/scripts/";
-        String existingPath = scene.getGlobals().get("package").get("path").tojstring();
-        scene.getGlobals().get("package").set("path", LuaValue.valueOf(customScriptsPath + existingPath));
-//        scene.getGlobals().set("InputManager", CoerceJavaToLua.coerce(InputManager.getInstance()));
-//        scene.getGlobals().set("SceneManager", CoerceJavaToLua.coerce(SceneManager.getInstance()));
-//        scene.getGlobals().set("print", LuaConsole.getInstance());
     }
 }

@@ -2,6 +2,12 @@ package org.katia;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.channels.Channels;
+import java.nio.channels.ReadableByteChannel;
+import java.nio.channels.SeekableByteChannel;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import java.util.ArrayList;
@@ -37,6 +43,15 @@ public abstract class FileSystem {
      */
     public static boolean isJsonFile(String path) {
         return (!Files.isDirectory(Paths.get(path))) && Objects.equals(getFileExtension(path), "json");
+    }
+
+    /**
+     * Check if provided file is lua file.
+     * @param path Path to file.
+     * @return boolean
+     */
+    public static boolean isLuaFile(String path) {
+        return (!Files.isDirectory(Paths.get(path))) && Objects.equals(getFileExtension(path), "lua");
     }
 
     /**
@@ -187,5 +202,53 @@ public abstract class FileSystem {
             data.add(part.toString());
         }
         return data;
+    }
+
+    /**
+     * Reads a file from the file system or classpath into a direct ByteBuffer.
+     *
+     * @param resource   The path to the file or resource.
+     * @param bufferSize Initial buffer size.
+     * @return A ByteBuffer containing the file's contents.
+     * @throws IOException If the file cannot be read.
+     */
+    public static ByteBuffer ioResourceToByteBuffer(String resource, int bufferSize) throws IOException {
+        ByteBuffer buffer;
+
+        Path path = Paths.get(resource);
+
+        // Try to read from the file system
+        if (Files.isReadable(path)) {
+            try (SeekableByteChannel channel = Files.newByteChannel(path)) {
+                buffer = ByteBuffer.allocateDirect((int) channel.size() + 1).order(ByteOrder.nativeOrder());
+                while (channel.read(buffer) != -1) {
+                    // Reading file into buffer
+                }
+                buffer.flip();
+                return buffer;
+            }
+        }
+
+        // Try to load as a resource from the classpath
+        try (InputStream source = Utils.class.getClassLoader().getResourceAsStream(resource);
+             ReadableByteChannel channel = Channels.newChannel(source)) {
+            buffer = ByteBuffer.allocateDirect(bufferSize).order(ByteOrder.nativeOrder());
+
+            while (true) {
+                int bytes = channel.read(buffer);
+                if (bytes == -1) break;
+
+                if (buffer.remaining() == 0) {
+                    // Expand the buffer if it's too small
+                    ByteBuffer newBuffer = ByteBuffer.allocateDirect(buffer.capacity() * 2).order(ByteOrder.nativeOrder());
+                    buffer.flip();
+                    newBuffer.put(buffer);
+                    buffer = newBuffer;
+                }
+            }
+            buffer.flip();
+        }
+
+        return buffer;
     }
 }

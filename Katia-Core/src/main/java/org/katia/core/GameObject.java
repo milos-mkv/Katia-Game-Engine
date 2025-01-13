@@ -50,6 +50,9 @@ public class GameObject {
         }
     }
 
+    /**
+     * Destroy game object.
+     */
     public void destroy() {
         this.removeFromParent();
         components.forEach((_, component) -> component.dispose());
@@ -75,9 +78,8 @@ public class GameObject {
         gameObject.removeFromParent();
         this.children.add(index, gameObject);
         gameObject.setParent(this);
-        gameObject.getComponent(TransformComponent.class).setParent(
-                getComponent(TransformComponent.class)
-        );
+        gameObject.getComponent(TransformComponent.class)
+                .setParent(getComponent(TransformComponent.class));
     }
 
     /**

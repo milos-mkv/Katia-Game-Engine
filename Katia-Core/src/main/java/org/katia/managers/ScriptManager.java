@@ -6,7 +6,6 @@ import org.katia.game.Game;
 
 import java.nio.file.Files;
 import java.util.HashMap;
-import java.util.Objects;
 
 public class ScriptManager {
 
@@ -37,7 +36,7 @@ public class ScriptManager {
         FileSystem.readDirectoryData(path).stream().filter((entry) -> {
             if (Files.isDirectory(entry)) {
                 return true;
-            } else if (Objects.equals(FileSystem.getFileExtension(entry.toString()), "lua")) {
+            } else if (FileSystem.isLuaFile(entry.toString())) {
                 scripts.put(FileSystem.getFilenameWithoutExtension(entry.getFileName().toString()), path);
             }
             return false;

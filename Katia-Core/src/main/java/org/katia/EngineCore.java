@@ -1,7 +1,5 @@
 package org.katia;
 
-import org.katia.factory.GameObjectFactory;
-import org.katia.factory.SceneFactory;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWErrorCallback;
 
@@ -13,6 +11,7 @@ public abstract class EngineCore {
      */
     public static void initialize() throws RuntimeException {
         Utils.initialize();
+        Logger.log(Logger.Type.INFO, "Initialize engine core ...");
         GLFWErrorCallback.createPrint(System.err).free();
         if (!GLFW.glfwInit()) {
             throw new RuntimeException("Failed to initialize GLFW!");
@@ -30,6 +29,7 @@ public abstract class EngineCore {
      * Dispose of GLFW.
      */
     public static void dispose() {
+        Logger.log(Logger.Type.DISPOSE, "Disposing of engine core ...");
         GLFW.glfwTerminate();
     }
 }

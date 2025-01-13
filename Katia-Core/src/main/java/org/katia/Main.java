@@ -5,7 +5,7 @@ import org.katia.game.Game;
 public class Main {
 
     public static void main(String[] args) {
-        // NOTE: Initialize Engine Core only when game is running as stand alone application.
+        // NOTE: Initialize Engine Core only when game is running as standalone application.
         try {
             EngineCore.initialize();
         } catch (RuntimeException e) {
@@ -13,7 +13,8 @@ public class Main {
         }
 
         Game game = new Game(".");
-        game.run().dispose();
+        game.run();
+        game.dispose();
 
         EngineCore.dispose();
     }

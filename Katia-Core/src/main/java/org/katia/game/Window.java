@@ -55,6 +55,7 @@ public class Window {
      * Dispose of GLFW window handle.
      */
     public void dispose() {
+        Logger.log(Logger.Type.DISPOSE, "Disposing of game window ...");
         GLFW.glfwDestroyWindow(handle);
     }
 }
