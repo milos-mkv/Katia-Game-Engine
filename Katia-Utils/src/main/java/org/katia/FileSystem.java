@@ -55,6 +55,18 @@ public abstract class FileSystem {
     }
 
     /**
+     * Check if provided file is font file.
+     * @param path Path to file.
+     * @return boolean
+     */
+    public static boolean isFontFile(String path) {
+        return (!Files.isDirectory(Paths.get(path))) && (
+                Objects.equals(getFileExtension(path), "ttf") || Objects.equals(getFileExtension(path), "otf") ||
+                Objects.equals(getFileExtension(path), "TTF") || Objects.equals(getFileExtension(path), "OTF")
+        );
+    }
+
+    /**
      * Read data from file.
      * @param path File path.
      * @return String

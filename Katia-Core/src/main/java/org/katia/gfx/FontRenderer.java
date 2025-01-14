@@ -8,6 +8,8 @@ import org.joml.Vector4f;
 import org.katia.FileSystem;
 import org.katia.core.GameObject;
 import org.katia.core.components.TransformComponent;
+import org.katia.factory.FontFactory;
+import org.katia.factory.ShaderProgramFactory;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.stb.STBTTAlignedQuad;
 import org.lwjgl.stb.STBTTBakedChar;
@@ -27,15 +29,17 @@ import static org.lwjgl.opengl.GL33.glVertexAttribDivisor;
 
 @Data
 public class FontRenderer {
-    private FontLoader fontLoader;
     private ShaderProgram shaderProgram;
     private int vao;
     private int staticVbo;
     private int instanceVbo;
-
-    public FontRenderer(FontLoader fontLoader, ShaderProgram shaderProgram) {
-        this.fontLoader = fontLoader;
-        this.shaderProgram = shaderProgram;
+    Font font;
+    public FontRenderer() {
+        this.font = FontFactory.createFont("./assets/RandyGGBold.ttf", 72, 512, 512);
+        this.shaderProgram = ShaderProgramFactory.createShaderProgram("Text",
+                "./Katia-Core/src/main/resources/shaders/text.vert",
+                "./Katia-Core/src/main/resources/shaders/text.frag"
+        );
         createBuffers();
     }
     private void createBuffers() {
@@ -95,10 +99,10 @@ public class FontRenderer {
         shaderProgram.use();
         shaderProgram.setUniformMatrix4("uMvpMatrix", mvp);
         shaderProgram.setUniformInt("uTexture", 0);
-//        glEnable(GL_BLEND);
-//        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        shaderProgram.setUniformVec3("uFontColor", new Vector3f(1, 1, 1));
+
         glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, fontLoader.getTexture().getId());
+        glBindTexture(GL_TEXTURE_2D, this.font.getTexture().getId());
 
         glBindVertexArray(vao);
         glBindBuffer(GL_ARRAY_BUFFER, instanceVbo);
@@ -114,21 +118,11 @@ public class FontRenderer {
 
                 if (c == '\n') {
                     cursorX = x;
-                    cursorY -= fontLoader.getFontSize() * scale;
+                    cursorY -= font.getSize() * scale;
                     continue;
                 }
 
-                STBTTBakedChar glyph = fontLoader.getGlyphInfo(c);
-                float baselineOffset = fontLoader.getFontSize() * scale;
-
-                float a = glyph.x0();
-                float a1 = glyph.y0();
-                float a2 = glyph.x1();
-                float a3 = glyph.y1();
-                float a4 = glyph.xoff();
-                float a5 = glyph.yoff();
-
-                float a6 = glyph.xadvance();
+                STBTTBakedChar glyph = font.getGlyphInfo(c);
 
                 float xoff = glyph.xoff() * scale;
                 float yoff = glyph.yoff() * scale;
@@ -136,7 +130,7 @@ public class FontRenderer {
                 float height = (glyph.y1() - glyph.y0()) * scale;
 
                 Matrix4f model = new Matrix4f()
-                        .translate(new Vector3f(cursorX + xoff, cursorY + yoff -glyph.yoff(), 0))
+                        .translate(new Vector3f(cursorX + xoff, cursorY + yoff - (glyph.yoff() * scale), 0))
                         .scale(width, height, 1.0f);
 
                 float[] matrixArray = new float[16];

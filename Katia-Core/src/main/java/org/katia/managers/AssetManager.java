@@ -2,8 +2,10 @@ package org.katia.managers;
 
 import org.katia.FileSystem;
 import org.katia.Logger;
+import org.katia.factory.FontFactory;
 import org.katia.factory.TextureFactory;
 import org.katia.game.Game;
+import org.katia.gfx.Font;
 import org.katia.gfx.Texture;
 
 import java.nio.file.Files;
@@ -20,6 +22,7 @@ public class AssetManager {
 
     Game game;
     HashMap<String, Texture> textures;
+    HashMap<String, Font> fonts;
     String assetPath;
 
     /**
@@ -32,8 +35,10 @@ public class AssetManager {
         this.game = game;
         this.assetPath = assetsDirectory;
         this.textures = new HashMap<>();
+        this.fonts = new HashMap<>();
 
         loadTextures(this.assetPath);
+        loadFonts(this.assetPath);
     }
 
     /**
@@ -45,10 +50,26 @@ public class AssetManager {
         FileSystem.readDirectoryData(path).stream().filter((entry) -> {
             if (Files.isDirectory(entry)) {
                 return true;
-            } else if  (FileSystem.isImageFile(entry.toString())) {
+            } else if (FileSystem.isImageFile(entry.toString())) {
                 textures.put(entry.toString(), TextureFactory.createTexture(entry.toString()));
             }
             return false;
         }).toList().forEach((dir) -> loadTextures(dir.toString()));
+    }
+
+    /**
+     * Load all fonts from provided directory.
+     * @param path Path to directory.
+     */
+    private void loadFonts(String path) {
+        Logger.log(Logger.Type.INFO, "Loading fonts from:", path);
+        FileSystem.readDirectoryData(path).stream().filter((entry) -> {
+            if (Files.isDirectory(entry)) {
+                return true;
+            } else if (FileSystem.isFontFile(entry.toString())) {
+                fonts.put(entry.toString(), FontFactory.createFont(entry.toString(), 72, 512, 512));
+            }
+            return false;
+        }).toList().forEach((dir) -> loadFonts(dir.toString()));
     }
 }

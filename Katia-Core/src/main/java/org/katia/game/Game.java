@@ -3,7 +3,7 @@ package org.katia.game;
 import lombok.Data;
 import org.katia.Logger;
 import org.katia.core.Scene;
-import org.katia.gfx.FontLoader;
+import org.katia.factory.FontFactory;
 import org.katia.scripting.LuaScriptExecutioner;
 import org.katia.factory.GameObjectFactory;
 import org.katia.factory.SceneFactory;
@@ -39,6 +39,7 @@ public class Game {
 
         SceneFactory.initialize();
         GameObjectFactory.initialize();
+        FontFactory.initialize();
 
         assetManager = new AssetManager(this, directory + "/assets");
         sceneManager = new SceneManager(this, directory + "/scenes");
@@ -59,8 +60,7 @@ public class Game {
         int fps = 0;
         float tim = 0;
         float previousTime = (float) GLFW.glfwGetTime();
-        GLFW.glfwSwapInterval(1);
-
+        GLFW.glfwSwapInterval(0);
 
         while (!GLFW.glfwWindowShouldClose(window.getHandle())) {
             previousTime = calculateDeltaTime(previousTime);

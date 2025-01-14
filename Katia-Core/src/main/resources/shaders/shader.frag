@@ -12,6 +12,6 @@ void main() {
     if (isCamera) {
         FragColor = vec4(bgColor, 1);
     } else {
-        FragColor = texture(uTexture, TexCoord);
+        FragColor = texture(uTexture, vec2(TexCoord.x, 1 - TexCoord.y));
     }
 }

@@ -25,12 +25,11 @@ public abstract class TextureFactory {
      */
     public static Texture createTexture(String path) {
         if (loadedTextures.containsKey(path)) {
-            Logger.log(Logger.Type.INFO, "Texture already loaded:", path);
             return loadedTextures.get(path);
         }
 
         try (var stack = MemoryStack.stackPush()) {
-//            STBImage.stbi_set_flip_vertically_on_load(true);
+          //  STBImage.stbi_set_flip_vertically_on_load(true);
             IntBuffer w = stack.mallocInt(1);
             IntBuffer h = stack.mallocInt(1);
             IntBuffer noc = stack.mallocInt(1);

@@ -6,7 +6,7 @@ in vec2 vUV; // Interpolated texture coordinates from the vertex shader
 out vec4 fragColor; // Output fragment color
 
 uniform sampler2D uTexture; // Font atlas texture
-uniform vec4 uFontColor;    // Font color (RGBA)
+uniform vec3 uFontColor;    // Font color (RGBA)
 
 void main() {
     // Sample the font texture at the given UV coordinates
@@ -18,5 +18,5 @@ void main() {
     }
 
     // Output the color with alpha modulation
-    fragColor = vec4(uFontColor.rgb, alpha * uFontColor.a);
+    fragColor = vec4(uFontColor.rgb, alpha * 1);
 }
