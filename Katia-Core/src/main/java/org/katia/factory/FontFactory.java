@@ -18,7 +18,7 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
-public class FontFactory {
+public abstract class FontFactory {
 
     static Map<String, Font> fonts;
 

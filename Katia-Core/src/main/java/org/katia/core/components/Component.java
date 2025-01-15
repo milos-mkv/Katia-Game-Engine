@@ -9,16 +9,16 @@ import lombok.NoArgsConstructor;
 
 import java.util.HashMap;
 
-@JsonTypeInfo(
-        use = JsonTypeInfo.Id.NAME,
-        property = "type"
-)
+/**
+ * Base class for all game object components.
+ */
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
 @JsonSubTypes({
         @JsonSubTypes.Type(value = TransformComponent.class, name = "TransformComponent"),
         @JsonSubTypes.Type(value = SpriteComponent.class, name = "SpriteComponent"),
         @JsonSubTypes.Type(value = CameraComponent.class, name = "CameraComponent"),
         @JsonSubTypes.Type(value = ScriptComponent.class, name = "ScriptComponent"),
-        @JsonSubTypes.Type(value = ScriptComponent.class, name = "TextComponent"),
+        @JsonSubTypes.Type(value = TextComponent.class, name = "TextComponent"),
 })
 @Data
 @NoArgsConstructor
@@ -34,7 +34,11 @@ public abstract class Component {
             put("Text", TextComponent.class);
         }
     };
+
     String componentType;
 
+    /**
+     * Dispose of component.
+     */
     public abstract void dispose();
 }

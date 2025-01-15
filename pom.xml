@@ -11,6 +11,7 @@
     <modules>
         <module>Katia-Utils</module>
         <module>Katia-Core</module>
+        <module>Katia-Editor</module>
     </modules>
 
     <properties>

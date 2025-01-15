@@ -88,6 +88,9 @@ public class TransformComponent extends Component {
         rotation = axisAngle4f.angle * axisAngle4f.z;
     }
 
+    /**
+     * Dispose of transform component.
+     */
     @Override
     public void dispose() {
         Logger.log(Logger.Type.DISPOSE, "Disposing of transform component ...");

@@ -2,25 +2,19 @@ package org.katia.gfx;
 
 import lombok.Data;
 import org.joml.Matrix4f;
-import org.joml.Vector2f;
 import org.joml.Vector3f;
-import org.joml.Vector4f;
-import org.katia.FileSystem;
+import org.katia.Math;
 import org.katia.core.GameObject;
+import org.katia.core.components.CameraComponent;
+import org.katia.core.components.TextComponent;
 import org.katia.core.components.TransformComponent;
 import org.katia.factory.FontFactory;
 import org.katia.factory.ShaderProgramFactory;
 import org.lwjgl.BufferUtils;
-import org.lwjgl.stb.STBTTAlignedQuad;
 import org.lwjgl.stb.STBTTBakedChar;
-import org.lwjgl.stb.STBTTFontinfo;
-import org.lwjgl.stb.STBTruetype;
 import org.lwjgl.system.MemoryStack;
 
-import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
-import java.nio.IntBuffer;
 
 import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.opengl.GL30.*;
@@ -33,15 +27,17 @@ public class FontRenderer {
     private int vao;
     private int staticVbo;
     private int instanceVbo;
-    Font font;
+
+    GameObject camera;
+
     public FontRenderer() {
-        this.font = FontFactory.createFont("./assets/RandyGGBold.ttf", 72, 512, 512);
         this.shaderProgram = ShaderProgramFactory.createShaderProgram("Text",
                 "./Katia-Core/src/main/resources/shaders/text.vert",
                 "./Katia-Core/src/main/resources/shaders/text.frag"
         );
         createBuffers();
     }
+
     private void createBuffers() {
         vao = glGenVertexArrays();
         glBindVertexArray(vao);
@@ -87,50 +83,51 @@ public class FontRenderer {
         glBindVertexArray(0);
     }
 
-    static float map(float value, float start1, float stop1, float start2, float stop2) {
-        return start2 + (stop2 - start2) * ((value - start1) / (stop1 - start1));
-    }
 
-    private Vector2f getMappedTextureCoords() {
-        return new Vector2f();
-    }
 
-    public void renderText(String text, float x, float y, float scale, Matrix4f mvp) {
+    public void renderText(GameObject gameObject, GameObject camera) {
+        TextComponent textComponent = gameObject.getComponent(TextComponent.class);
+        TransformComponent transformComponent = gameObject.getComponent(TransformComponent.class);
+
         shaderProgram.use();
-        shaderProgram.setUniformMatrix4("uMvpMatrix", mvp);
+
+        shaderProgram.setUniformMatrix4("proj", camera.getComponent(CameraComponent.class).getCameraProjection());
+        shaderProgram.setUniformMatrix4("view", camera.getComponent(TransformComponent.class).getTransformMatrix().invert());
         shaderProgram.setUniformInt("uTexture", 0);
-        shaderProgram.setUniformVec3("uFontColor", new Vector3f(1, 1, 1));
+        shaderProgram.setUniformVec4("uFontColor", textComponent.getColor());
 
         glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, this.font.getTexture().getId());
+        glBindTexture(GL_TEXTURE_2D, textComponent.getFont().getTexture().getId());
 
         glBindVertexArray(vao);
         glBindBuffer(GL_ARRAY_BUFFER, instanceVbo);
 
+        float x = transformComponent.getPosition().x;
+        float y = transformComponent.getPosition().y;
         try (MemoryStack stack = MemoryStack.stackPush()) {
-            FloatBuffer instanceBuffer = BufferUtils.createFloatBuffer(text.length() * (16 + 4));
+            FloatBuffer instanceBuffer = BufferUtils.createFloatBuffer(textComponent.getText().length() * (16 + 4));
 
-            float cursorX = x;
-            float cursorY = y;
+            float cursorX = transformComponent.getPosition().x;
+            float cursorY = transformComponent.getPosition().y;
 
-            for (int i = 0; i < text.length(); i++) {
-                char c = text.charAt(i);
+            for (int i = 0; i < textComponent.getText().length(); i++) {
+                char c = textComponent.getText().charAt(i);
 
                 if (c == '\n') {
                     cursorX = x;
-                    cursorY -= font.getSize() * scale;
+                    cursorY -= textComponent.getFont().getSize() * textComponent.getScale();
                     continue;
                 }
 
-                STBTTBakedChar glyph = font.getGlyphInfo(c);
+                STBTTBakedChar glyph = textComponent.getFont().getGlyphInfo(c);
 
-                float xoff = glyph.xoff() * scale;
-                float yoff = glyph.yoff() * scale;
-                float width = (glyph.x1() - glyph.x0()) * scale;
-                float height = (glyph.y1() - glyph.y0()) * scale;
+                float xoff = glyph.xoff() * textComponent.getScale();
+                float yoff = glyph.yoff() * textComponent.getScale();
+                float width = (glyph.x1() - glyph.x0()) * textComponent.getScale();
+                float height = (glyph.y1() - glyph.y0()) * textComponent.getScale();
 
                 Matrix4f model = new Matrix4f()
-                        .translate(new Vector3f(cursorX + xoff, cursorY + yoff - (glyph.yoff() * scale), 0))
+                        .translate(new Vector3f(cursorX + xoff, cursorY + yoff - (glyph.yoff() * textComponent.getScale()), 0))
                         .scale(width, height, 1.0f);
 
                 float[] matrixArray = new float[16];
@@ -139,19 +136,19 @@ public class FontRenderer {
                     instanceBuffer.put(value);
                 }
 
-                instanceBuffer.put(map(glyph.x0(), 0, 512, 0, 1))
-                        .put(map(glyph.y0(), 0, 512, 0, 1))
-                        .put(map(glyph.x1(), 0, 512, 0, 1))
-                        .put(map( glyph.y1(), 0, 512, 0, 1));
+                instanceBuffer.put(Math.map(glyph.x0(), 0, 512, 0, 1))
+                        .put(Math.map(glyph.y0(), 0, 512, 0, 1))
+                        .put(Math.map(glyph.x1(), 0, 512, 0, 1))
+                        .put(Math.map( glyph.y1(), 0, 512, 0, 1));
 
-                cursorX += (glyph.x1() - glyph.x0()) * scale + 10;
+                cursorX += (glyph.x1() - glyph.x0()) * textComponent.getScale() + 10;
             }
 
             instanceBuffer.flip();
             glBufferSubData(GL_ARRAY_BUFFER, 0, instanceBuffer);
         }
 
-        glDrawArraysInstanced(GL_TRIANGLE_FAN, 0, 4, text.length());
+        glDrawArraysInstanced(GL_TRIANGLE_FAN, 0, 4, textComponent.getText().length());
 
         glBindVertexArray(0);
         glBindTexture(GL_TEXTURE_2D, 0);

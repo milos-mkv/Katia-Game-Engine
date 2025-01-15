@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
+import org.joml.Vector4f;
 
 import static org.lwjgl.opengl.GL20.*;
 import static org.lwjgl.opengl.GL20.glDeleteProgram;
@@ -50,6 +51,15 @@ public class ShaderProgram {
      */
     public void setUniformVec3(String name, Vector3f value) {
         glUniform3f(glGetUniformLocation(id, name), value.x, value.y, value.z);
+    }
+
+    /**
+     * Set uniform vector4.
+     * @param name Uniform name.
+     * @param value Vector4 value.
+     */
+    public void setUniformVec4(String name, Vector4f value) {
+        glUniform4f(glGetUniformLocation(id, name), value.x, value.y, value.z, value.w);
     }
 
     /**

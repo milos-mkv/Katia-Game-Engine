@@ -1,82 +1,12 @@
 {
-    "name" : "Main Scene",
-    "rootGameObject" : {
-      "id" : "5f50c06c-e4e5-49ee-838b-b26975b035ff",
-      "name" : "Root",
-      "children" : [ {
-        "id" : "84053d3c-71cb-4fed-8122-6dc0cf27cc33",
-        "name" : "Main Camera",
-        "children" : [ ],
-        "components" : {
-          "org.katia.core.components.TransformComponent" : {
-            "type" : "TransformComponent",
-            "componentType" : "Transform",
-            "position" : {
-              "x" : 0.0,
-              "y" : 0.0,
-              "z" : 0.0,
-              "finite" : true
-            },
-            "rotation" : 0.0,
-            "scale" : {
-              "x" : 1.0,
-              "y" : 1.0,
-              "z" : 1.0,
-              "finite" : true
-            }
-          },
-          "org.katia.core.components.CameraComponent" : {
-            "type" : "CameraComponent",
-            "componentType" : "Camera",
-            "viewport" : {
-              "x" : 900.0,
-              "y" : 800.0,
-              "finite" : true
-            },
-            "background" : {
-              "x" : 0.0,
-              "y" : 0.0,
-              "z" : 0.0,
-              "finite" : true
-            }
-          }
-        },
-        "active" : true
-      }, {
-        "id" : "44c9f241-6418-43a6-8a59-47cc86d1f8ff",
-        "name" : "Test",
-        "children" : [ ],
-        "components" : {
-          "org.katia.core.components.TransformComponent" : {
-            "type" : "TransformComponent",
-            "componentType" : "Transform",
-            "position" : {
-              "x" : 100.0,
-              "y" : 100.0,
-              "z" : 1.0,
-              "finite" : true
-            },
-            "rotation" : 0.0,
-            "scale" : {
-              "x" : 400.0,
-              "y" : 400.0,
-              "z" : 1.0,
-              "finite" : true
-            }
-          },
-          "org.katia.core.components.SpriteComponent" : {
-            "type" : "SpriteComponent",
-            "componentType" : "Sprite",
-            "path" : "C:\\Users\\milos\\OneDrive\\Pictures\\Screenshots\\Screenshot 2024-03-10 192344.png"
-          },
-          "org.katia.core.components.ScriptComponent" : {
-            "type" : "ScriptComponent",
-            "componentType" : "Script",
-            "path" : "C:\\Users\\milos\\Documents\\Katia-Game-Engine\\Katia-Core\\src\\main\\resources\\scripts\\Behaviour.lua"
-          }
-        },
-        "active" : true
-      } ],
+  "name" : "Main Scene",
+  "rootGameObject" : {
+    "id" : "5f50c06c-e4e5-49ee-838b-b26975b035ff",
+    "name" : "Root",
+    "children" : [ {
+      "id" : "84053d3c-71cb-4fed-8122-6dc0cf27cc33",
+      "name" : "Main Camera",
+      "children" : [ ],
       "components" : {
         "org.katia.core.components.TransformComponent" : {
           "type" : "TransformComponent",
@@ -94,12 +24,97 @@
             "z" : 1.0,
             "finite" : true
           }
+        },
+        "org.katia.core.components.CameraComponent" : {
+          "type" : "CameraComponent",
+          "componentType" : "Camera",
+          "viewport" : {
+            "x" : 900.0,
+            "y" : 800.0,
+            "finite" : true
+          },
+          "background" : {
+            "x" : 0.0,
+            "y" : 0.0,
+            "z" : 0.0,
+            "finite" : true
+          }
         }
       },
       "active" : true
+    }, {
+      "id" : "44c9f241-6418-43a6-8a59-47cc86d1f8ff",
+      "name" : "Test",
+      "children" : [ ],
+      "components" : {
+        "org.katia.core.components.ScriptComponent" : {
+          "type" : "ScriptComponent",
+          "componentType" : "Script",
+          "name" : null,
+          "path" : "C:\\Users\\milos\\Documents\\Katia-Game-Engine\\Katia-Core\\src\\main\\resources\\scripts\\Behaviour.lua"
+        },
+        "org.katia.core.components.TransformComponent" : {
+          "type" : "TransformComponent",
+          "componentType" : "Transform",
+          "position" : {
+            "x" : 100.0,
+            "y" : 100.0,
+            "z" : 1.0,
+            "finite" : true
+          },
+          "rotation" : 0.0,
+          "scale" : {
+            "x" : 400.0,
+            "y" : 400.0,
+            "z" : 1.0,
+            "finite" : true
+          }
+        },
+        "org.katia.core.components.SpriteComponent" : {
+          "type" : "SpriteComponent",
+          "componentType" : "Sprite",
+          "path" : "C:\\Users\\milos\\OneDrive\\Pictures\\Screenshots\\Screenshot 2024-03-10 192344.png"
+        },
+        "org.katia.core.components.TextComponent" : {
+          "type" : "TextComponent",
+          "componentType" : "Text",
+          "text" : "HELLO WORLD!",
+          "scale" : 1.0,
+          "color" : {
+            "x" : 1.0,
+            "y" : 1.0,
+            "z" : 1.0,
+            "w" : 1.0,
+            "finite" : true
+          },
+          "fontPath" : "./assets/RandyGGBold.ttf"
+        }
+      },
+      "active" : true
+    } ],
+    "components" : {
+      "org.katia.core.components.TransformComponent" : {
+        "type" : "TransformComponent",
+        "componentType" : "Transform",
+        "position" : {
+          "x" : 0.0,
+          "y" : 0.0,
+          "z" : 0.0,
+          "finite" : true
+        },
+        "rotation" : 0.0,
+        "scale" : {
+          "x" : 1.0,
+          "y" : 1.0,
+          "z" : 1.0,
+          "finite" : true
+        }
+      }
     },
-    "size" : {
-      "x" : 900,
-      "y" : 800
-    }
-}  
+    "active" : true
+  },
+  "size" : {
+    "x" : 900,
+    "y" : 800
+  }
+}

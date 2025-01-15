@@ -5,12 +5,13 @@ import lombok.Data;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
+import org.katia.Logger;
 
 @Data
 public class CameraComponent extends Component {
 
-    private Vector2f viewport;
-    private Vector3f background;
+    Vector2f viewport;
+    Vector3f background;
 
     /**
      * Camera component default constructor.
@@ -30,6 +31,11 @@ public class CameraComponent extends Component {
         return new Matrix4f().ortho(-viewport.x / 2, viewport.x / 2, -viewport.y / 2, viewport.y /2, -1.0f, 1.0f);
     }
 
+    /**
+     * Dispose of camera component.
+     */
     @Override
-    public void dispose() { }
+    public void dispose() {
+        Logger.log(Logger.Type.DISPOSE, "Disposing of camera component ...");
+    }
 }

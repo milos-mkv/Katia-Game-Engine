@@ -8,9 +8,11 @@ import org.katia.core.GameObject;
 import org.katia.core.Scene;
 import org.katia.core.components.ScriptComponent;
 import org.katia.core.components.SpriteComponent;
+import org.katia.core.components.TextComponent;
 import org.katia.core.components.TransformComponent;
 
 import java.nio.file.Paths;
+import java.util.Objects;
 import java.util.UUID;
 
 public class GameObjectFactory {
@@ -79,6 +81,12 @@ public class GameObjectFactory {
 //                    scriptComponent.addScriptFile(scene, scriptComponent.getPath());
 //                }
             }
+
+            if (component == TextComponent.class) {
+                TextComponent textComponent = gameObject.getComponent(TextComponent.class);
+                textComponent.setFont(Objects.requireNonNull(FontFactory.createFont(textComponent.getFontPath(), 72, 512, 512)));
+            }
+
             if (component == SpriteComponent.class) {
                 SpriteComponent spriteComponent = gameObject.getComponent(SpriteComponent.class);
                 if (spriteComponent.getPath() != null) {

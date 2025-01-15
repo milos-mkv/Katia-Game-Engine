@@ -2,7 +2,9 @@ package org.katia.game;
 
 import lombok.Data;
 import org.katia.Logger;
+import org.katia.core.GameObject;
 import org.katia.core.Scene;
+import org.katia.core.components.TextComponent;
 import org.katia.factory.FontFactory;
 import org.katia.scripting.LuaScriptExecutioner;
 import org.katia.factory.GameObjectFactory;
@@ -60,7 +62,15 @@ public class Game {
         int fps = 0;
         float tim = 0;
         float previousTime = (float) GLFW.glfwGetTime();
-        GLFW.glfwSwapInterval(0);
+        GLFW.glfwSwapInterval(1);
+
+//        GameObject g = scene.find("Test");
+//        TextComponent textComponent = new TextComponent();
+//        textComponent.setText("HELLO WORLD!");
+//        textComponent.setFont(FontFactory.createFont("./assets/RandyGGBold.ttf", 72, 512, 512));
+//        g.addComponent(textComponent);
+
+        System.out.println(SceneFactory.generateJsonFromScene(scene));
 
         while (!GLFW.glfwWindowShouldClose(window.getHandle())) {
             previousTime = calculateDeltaTime(previousTime);
@@ -68,8 +78,7 @@ public class Game {
             fps++;
             if (tim >= 1) {
                 tim = 0;
-                Logger.log(Logger.Type.INFO, "FPS:", String.valueOf(fps));
-                fps=0;
+                fps = 0;
             }
             GLFW.glfwPollEvents();
             scriptExecutioner.update(deltaTime);
