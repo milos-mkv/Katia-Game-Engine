@@ -4,12 +4,14 @@ import imgui.ImFont;
 import imgui.ImFontConfig;
 import imgui.ImGuiIO;
 import imgui.internal.ImGui;
+import lombok.Data;
 import lombok.Getter;
 import org.katia.gfx.Texture;
 
 import java.util.HashMap;
 import java.util.Map;
 
+@Data
 public class EditorAssetManager {
 
     @Getter
@@ -41,7 +43,10 @@ public class EditorAssetManager {
         io.getFonts().addFontFromFileTTF("./Katia-Editor/src/main/resources/fonts/fa-solid-900.ttf", 25.0f, config, iconRanges);
         io.getFonts().build();
 
-        fonts.put("Default15", io.getFonts().addFontFromFileTTF("./Katia-Editor/src/main/resources/fonts/Roboto-Regular.ttf", 15.0f));
 
+        fonts.put("Default15", io.getFonts().addFontFromFileTTF("./Katia-Editor/src/main/resources/fonts/Roboto-Regular.ttf", 25.0f));
+        fonts.put("Default40", io.getFonts().addFontFromFileTTF("./Katia-Editor/src/main/resources/fonts/Roboto-ExtraBold.ttf", 40.0f));
+        io.getFonts().addFontFromFileTTF("./Katia-Editor/src/main/resources/fonts/fa-solid-900.ttf", 40.0f, config, iconRanges);
+        io.getFonts().build();
     }
 }

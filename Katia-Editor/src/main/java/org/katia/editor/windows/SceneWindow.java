@@ -2,6 +2,7 @@ package org.katia.editor.windows;
 
 import imgui.ImGui;
 import org.katia.Logger;
+import org.katia.factory.TextureFactory;
 
 public class SceneWindow implements UIComponent {
 
@@ -12,7 +13,11 @@ public class SceneWindow implements UIComponent {
     @Override
     public void render() {
         ImGui.begin("Scene");
-
+        ImGui.beginGroup();
+        ImGui.text("ASDSA");
+        ImGui.text("ASDSA");
+        ImGui.text("ASDSA");
+        ImGui.endGroup();
         ImGui.end();
     }
 

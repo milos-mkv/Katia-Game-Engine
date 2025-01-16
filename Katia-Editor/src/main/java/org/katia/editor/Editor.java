@@ -19,6 +19,8 @@ import org.lwjgl.system.MemoryUtil;
 
 import java.util.Objects;
 
+import static org.lwjgl.opengl.GL11.glViewport;
+
 @Data
 public class Editor {
 
@@ -52,7 +54,12 @@ public class Editor {
         GLFW.glfwSetWindowPos(handle, (videoMode.width() - 1200) / 2, (videoMode.height() - 800) / 2);
         GLFW.glfwShowWindow(handle);
         GLFW.glfwMakeContextCurrent(handle);
+        GLFW.glfwSetWindowSizeLimits(handle, 1200, 800, GLFW.GLFW_DONT_CARE, GLFW.GLFW_DONT_CARE);
+
         GL.createCapabilities();
+        GLFW.glfwSetFramebufferSizeCallback(handle, (long handle, int w, int h) -> {
+            glViewport(0, 0, w, h);
+        });
     }
 
     /**
