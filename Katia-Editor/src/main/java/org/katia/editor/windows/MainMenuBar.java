@@ -3,6 +3,9 @@ package org.katia.editor.windows;
 import imgui.ImGui;
 import org.katia.Logger;
 import org.katia.editor.Editor;
+import org.katia.editor.EditorUtils;
+import org.katia.editor.managers.EditorAssetManager;
+import org.katia.editor.managers.ProjectManager;
 import org.katia.editor.popups.CreateNewProjectPopup;
 import org.lwjgl.glfw.GLFW;
 
@@ -29,11 +32,41 @@ public class MainMenuBar implements UIComponent {
             if (ImGui.beginMenu("File")) {
                 newProjectAction = ImGui.menuItem("New Project", "Ctrl+N");
                 if (ImGui.menuItem("Open Project", "Ctrl+O")) {
+                    String directory = EditorUtils.openFolderDialog();
+                    if (directory != null && !directory.isEmpty()) {
+                        try {
+                            ProjectManager.getInstance().openProject(directory);
+                        } catch (RuntimeException e) {
+                            Logger.log(Logger.Type.ERROR, e.getMessage());
+                        }
+                    }
+                }
+                if (ImGui.menuItem("Save", "Ctrl+S")) {
 
                 }
                 ImGui.separator();
                 if (ImGui.menuItem("Exit", "Ctrl+W")) {
                     GLFW.glfwSetWindowShouldClose(Editor.getInstance().getHandle(), true);
+                }
+                ImGui.endMenu();
+            }
+            if (ImGui.beginMenu("Scene")) {
+                if (ImGui.menuItem("New Scene")) {
+                }
+                if (ImGui.menuItem("Open Scene")) {
+                }
+                ImGui.endMenu();
+            }
+            if (ImGui.beginMenu("Project")) {
+                if (ImGui.menuItem("Settings/Configuration")) {
+                }
+                ImGui.endMenu();
+            }
+            if (ImGui.beginMenu("Editor")) {
+                ImGui.endMenu();
+            }
+            if (ImGui.beginMenu("Help")) {
+                if (ImGui.menuItem("About")) {
                 }
                 ImGui.endMenu();
             }
@@ -45,11 +78,11 @@ public class MainMenuBar implements UIComponent {
         }
         if (newProjectAction) {
             ImGui.openPopup("Create New Project Popup");
-
         }
         CreateNewProjectPopup.render();
-
     }
+
+
 
     @Override
     public void dispose() {

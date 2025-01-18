@@ -17,4 +17,5 @@ public class Icons {
     public static String FolderOpen = "\uf07c";
     public static String Gamepad = "\uf11b";
     public static String SquareX = "\uf2d3";
+    public static String TriangleError = "\uf071";
 }

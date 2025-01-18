@@ -9,8 +9,11 @@ import imgui.type.ImBoolean;
 import imgui.type.ImInt;
 import imgui.type.ImString;
 import org.katia.Icons;
+import org.katia.Logger;
 import org.katia.editor.EditorUtils;
 import org.katia.editor.managers.EditorAssetManager;
+import org.katia.editor.managers.ProjectManager;
+import org.katia.game.Configuration;
 
 /**
  * This class renders `Create new project` popup.
@@ -24,10 +27,11 @@ public class CreateNewProjectPopup {
     static ImString gameTitle = new ImString();
     static ImBoolean windowResizable = new ImBoolean(true);
     static ImBoolean gameVSync = new ImBoolean(true);
+    static ImString errorMessage = new ImString();
 
     public static void render() {
         ImVec2 workSize = ImGui.getMainViewport().getWorkSize();
-        ImVec2 modalSize = new ImVec2(800, 410);
+        ImVec2 modalSize = new ImVec2(800, 435);
 
         ImBoolean unusedOpen = new ImBoolean(true);
         ImGui.setNextWindowPos(workSize.x / 2 - modalSize.x / 2, workSize.y / 2 - modalSize.y / 2);
@@ -61,6 +65,17 @@ public class CreateNewProjectPopup {
         ImGui.endChild();
     }
 
+    private static void resetValues() {
+        name.set("");
+        path.set("");
+        windowWidth.set(800);
+        windowHeight.set(800);
+        gameTitle.set("");
+        windowResizable.set(true);
+        gameVSync.set(true);
+        errorMessage.set("");
+    }
+
     private static void renderCloseButton() {
         ImGui.pushStyleVar(ImGuiStyleVar.FrameBorderSize, 0);
         ImGui.pushStyleColor(ImGuiCol.Button, 0, 0, 0, 0);
@@ -70,6 +85,7 @@ public class CreateNewProjectPopup {
         ImVec2 cursor = ImGui.getCursorPos();
         if (ImGui.button("##CLOSE", 33, 33)) {
             ImGui.closeCurrentPopup();
+            resetValues();
         }
 
         renderButtonTextState(cursor, Icons.SquareX);
@@ -83,15 +99,23 @@ public class CreateNewProjectPopup {
         ImGui.pushStyleColor(ImGuiCol.ChildBg, 0, 0, 0, 0);
         ImGui.pushStyleColor(ImGuiCol.Border, 0, 0, 0, 0);
 
-        ImGui.beginChild("FormBodyChild", -1, 300, true, ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse);
+        ImGui.beginChild("FormBodyChild", -1, 325, true, ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse);
         {
             renderInputFields();
             renderConfigurationFields();
+            renderErrorMessage();
         }
         ImGui.endChild();
 
         ImGui.popStyleColor(2);
         ImGui.popStyleVar();
+    }
+
+    private static void renderErrorMessage() {
+        if (!errorMessage.get().isEmpty()) {
+            ImGui.separator();
+            ImGui.textColored(0.8f, 0.4f, 0.4f, 1.0f, errorMessage.get());
+        }
     }
 
     private static void renderInputFields() {
@@ -199,7 +223,21 @@ public class CreateNewProjectPopup {
         ImGui.setCursorPosX(ImGui.getWindowWidth() / 2 - 50);
         ImGui.setCursorPosY(ImGui.getCursorPosY() + 5);
         if (ImGui.button(" CREATE ")) {
-            // TODO: Handle project creation
+            try {
+                Configuration configuration = new Configuration();
+                configuration.setWidth(windowWidth.get());
+                configuration.setHeight(windowHeight.get());
+                configuration.setTitle(gameTitle.get());
+                configuration.setResizable(windowResizable.get());
+                configuration.setVSync(gameVSync.get());
+                ProjectManager.getInstance().createProject(path.get(), name.get(), configuration);
+                errorMessage.set("", true);
+
+            } catch (RuntimeException e) {
+                errorMessage.set(Icons.TriangleError + " " + e.getMessage(), true);
+                Logger.log(Logger.Type.ERROR, e.toString());
+            }
+            ImGui.closeCurrentPopup();
         }
 
         ImGui.endChild();

@@ -11,7 +11,6 @@ import org.katia.core.GameObject;
 import org.katia.core.Scene;
 import org.katia.core.components.CameraComponent;
 import org.katia.core.components.TransformComponent;
-import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.lib.jse.JsePlatform;
 
 public abstract class SceneFactory {
