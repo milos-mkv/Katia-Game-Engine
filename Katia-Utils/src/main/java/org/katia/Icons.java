@@ -13,6 +13,7 @@ public class Icons {
     public static String Translate = "\uf0b2";
     public static String Play = "\uf04b";
     public static String Pause = "\uf04c";
+    public static String Stop = "\uf04d";
     public static String Folder = "\uf07b";
     public static String FolderOpen = "\uf07c";
     public static String Gamepad = "\uf11b";

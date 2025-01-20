@@ -3,6 +3,7 @@ package org.katia.core;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.katia.Logger;
@@ -21,6 +22,7 @@ public class GameObject {
     private String name;
     private List<GameObject> children;
     private HashMap<Class<?>, Component> components;
+    @Getter
     private boolean active;
 
     @JsonIgnore

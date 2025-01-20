@@ -1,9 +1,11 @@
 package org.katia.editor;
 
 import imgui.ImGuiStyle;
+import imgui.ImVec2;
 import imgui.ImVec4;
 import imgui.flag.ImGuiCol;
 import imgui.flag.ImGuiConfigFlags;
+import imgui.flag.ImGuiWindowFlags;
 import imgui.gl3.ImGuiImplGl3;
 import imgui.glfw.ImGuiImplGlfw;
 import imgui.internal.ImGui;
@@ -15,13 +17,16 @@ import org.katia.editor.menubar.MainMenuBar;
 import org.katia.editor.menubar.MenuAction;
 import org.katia.editor.windows.UIRenderer;
 import org.lwjgl.glfw.GLFW;
+import org.lwjgl.glfw.GLFWDropCallback;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.system.MemoryUtil;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
-import static org.lwjgl.opengl.GL11.glViewport;
+import static org.lwjgl.opengl.GL11.*;
 
 @Data
 public class Editor {
@@ -33,12 +38,13 @@ public class Editor {
     ImGuiImplGlfw imGuiImplGlfw;
     ImGuiImplGl3 imGuiImplGl3;
     UIRenderer uiRenderer;
+    List<String> droppedFiles;
     public Editor() {
         Logger.log(Logger.Type.INFO, "Creating editor ...");
 
         createWindow();
         initializeImGui();
-
+        droppedFiles = new ArrayList<>();
         uiRenderer = new UIRenderer();
     }
 
@@ -82,7 +88,12 @@ public class Editor {
                 }
             }
         });
-
+        GLFW.glfwSetDropCallback(handle, GLFWDropCallback.create((win, count, names) -> {
+            droppedFiles.clear();
+            for (int i = 0; i < count; i++) {
+                droppedFiles.add(GLFWDropCallback.getName(names, i));
+            }
+        }));
     }
 
     /**
@@ -187,14 +198,28 @@ public class Editor {
         GLFW.glfwSwapInterval(0);
         while (!GLFW.glfwWindowShouldClose(handle)) {
             GLFW.glfwPollEvents();
+            glClearColor(0.14f, 0.16f, 0.18f, 1.0f);
+            glClear(GL_COLOR_BUFFER_BIT);
             imGuiImplGlfw.newFrame();
             ImGui.newFrame();
-            ImGui.dockSpaceOverViewport(ImGui.getMainViewport());
+            ImVec2 viewportPos = ImGui.getMainViewport().getPos();
+            ImVec2 viewportSize = ImGui.getMainViewport().getSize();
+
+            float padding = 10.0f;// Adjust dock space bounds
+            ImGui.setNextWindowPos(viewportPos.x + padding, viewportPos.y + padding + 50);
+            ImGui.setNextWindowSize(viewportSize.x - 2 * padding, viewportSize.y - 2 * padding);
+            ImGui.setNextWindowBgAlpha(0.0f); // Make it transparent if needed
+            ImGui.begin("DockSpace", ImGuiWindowFlags.NoTitleBar | ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoMove);
+            ImGui.dockSpace(ImGui.getID("DockSpace"));
+            ImGui.end();
+
+//            ImGui.dockSpaceOverViewport(ImGui.getMainViewport());
             ImGui.showDemoWindow();
             uiRenderer.render();
             ImGui.render();
             imGuiImplGl3.renderDrawData(ImGui.getDrawData());
             GLFW.glfwSwapBuffers(handle);
+            droppedFiles.clear();
         }
     }
 

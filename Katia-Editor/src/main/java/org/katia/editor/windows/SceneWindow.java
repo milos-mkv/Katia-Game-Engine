@@ -13,11 +13,6 @@ public class SceneWindow implements UIComponent {
     @Override
     public void render() {
         ImGui.begin("Scene");
-        ImGui.beginGroup();
-        ImGui.text("ASDSA");
-        ImGui.text("ASDSA");
-        ImGui.text("ASDSA");
-        ImGui.endGroup();
         ImGui.end();
     }
 

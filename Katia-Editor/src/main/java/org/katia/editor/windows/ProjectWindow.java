@@ -1,6 +1,7 @@
 package org.katia.editor.windows;
 
 import imgui.ImGui;
+import imgui.ImVec2;
 import lombok.Data;
 import org.katia.Logger;
 import org.katia.editor.Editor;
@@ -30,6 +31,7 @@ public class ProjectWindow implements UIComponent {
         } else {
             renderProjectNotOpen();
         }
+
         ImGui.end();
     }
 

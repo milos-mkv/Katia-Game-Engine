@@ -1,7 +1,11 @@
 package org.katia.editor.menubar;
 
 import imgui.ImGui;
+import imgui.flag.ImGuiCol;
+import imgui.flag.ImGuiStyleVar;
+import imgui.flag.ImGuiWindowFlags;
 import lombok.Data;
+import org.katia.Icons;
 import org.katia.Logger;
 import org.katia.editor.Editor;
 import org.katia.editor.EditorUtils;
@@ -37,7 +41,8 @@ public class MainMenuBar implements UIComponent {
     @Override
     public void render() {
         ImGui.pushFont(EditorAssetManager.getInstance().getFonts().get("Default25"));
-
+        ImGui.pushStyleVar(ImGuiStyleVar.FramePadding, 5, 10);
+        ImGui.pushStyleVar(ImGuiStyleVar.WindowBorderSize, 0);
         if (ImGui.beginMainMenuBar()) {
             ImGui.pushFont(EditorAssetManager.getInstance().getFonts().get("Default"));
             ImGui.textDisabled(" KATIA ");
@@ -49,11 +54,51 @@ public class MainMenuBar implements UIComponent {
             renderProjectMenu();
             renderEditorMenu();
             renderHelpMenu();
+
+            ImGui.sameLine();
+            ImGui.setCursorPosX(ImGui.getWindowWidth() - 300);
+            ImGui.setCursorPosY(5);
+            ImGui.pushStyleVar(ImGuiStyleVar.WindowPadding, 0, 0);
+            ImGui.beginChild("Run toolbar", 150, 35, true, ImGuiWindowFlags.NoScrollbar);
+            ImGui.pushFont(EditorAssetManager.getInstance().getFonts().get("Default"));
+
+//            ImGui.pushStyleColor(ImGuiCol.ButtonHovered, 0.0f, 0.0f, 0.0f, 0.0f);
+//            ImGui.pushStyleColor(ImGuiCol.Button, 0.0f, 0.0f, 0.0f, 0.0f);
+//            ImGui.pushStyleColor(ImGuiCol.ButtonActive, 0.0f, 0.0f, 0.0f, 0.0f);
+            ImGui.pushStyleVar(ImGuiStyleVar.FrameBorderSize, 0);
+            var cursor = ImGui.getCursorPos();
+            if (ImGui.button("##PLAY", 40, 35)) {
+
+            }
+            ImGui.setCursorPos(cursor.x + 11, cursor.y + 7);
+            ImGui.pushStyleColor(ImGuiCol.Text, 0.4f, 0.8f, 0.4f, 0.8f);
+            ImGui.text(Icons.Play);
+            ImGui.popStyleColor();
+            ImGui.sameLine();
+//            ImGui.setCursorPos(cursor.x, cursor.y);
+            ImGui.setCursorPos(ImGui.getCursorPosX()+5, cursor.y);
+            cursor = ImGui.getCursorPos();
+            if (ImGui.button("##PAUSE", 40, 35)) {
+
+            }
+            ImGui.setCursorPos(cursor.x + 12, cursor.y + 7);
+            ImGui.text(Icons.Pause);
+            ImGui.popFont();
+            ImGui.popStyleVar();
+//            ImGui.popStyleColor(3);
+
+            ImGui.endChild();
+            ImGui.popStyleVar();
+            ImGui.sameLine();
+
+
             ImGui.getIO().getDeltaTime();
+            ImGui.setCursorPosY(0);
             ImGui.setCursorPosX(ImGui.getWindowWidth() - 130);
             ImGui.textDisabled("FPS: " + (int) ImGui.getIO().getFramerate());
             ImGui.endMainMenuBar();
         }
+        ImGui.popStyleVar(2);
         ImGui.popFont();
         if (this.actions.get(MenuAction.CREATE_NEW_PROJECT)) {
             ImGui.openPopup("Create New Project Popup");

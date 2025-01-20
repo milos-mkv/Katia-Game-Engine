@@ -9,6 +9,7 @@ import imgui.flag.ImGuiWindowFlags;
 import imgui.type.ImString;
 import org.katia.FileSystem;
 import org.katia.Logger;
+import org.katia.editor.Editor;
 import org.katia.editor.managers.EditorAssetManager;
 import org.katia.factory.TextureFactory;
 import org.katia.gfx.Texture;
@@ -109,7 +110,11 @@ public class DirectoryExplorerWidget {
         ImGui.pushStyleColor(ImGuiCol.Button, 0, 0, 0, 0);
         ImGui.pushStyleColor(ImGuiCol.ButtonActive, 0, 0, 0, 0.4F);
         ImGui.pushStyleColor(ImGuiCol.ButtonHovered, 0.4f, 0.4f, 0.4f, 0.4F);
-
+        if (ImGui.isWindowHovered()) {
+            for (String g : Editor.getInstance().getDroppedFiles()) {
+                System.out.println(g);
+            }
+        }
 
         ImGui.pushFont(EditorAssetManager.getInstance().getFonts().get("Text15"));
         Path clickedDirectory = null;
@@ -196,6 +201,7 @@ public class DirectoryExplorerWidget {
         }
         ImGui.popFont();
         ImGui.popStyleColor(3);
+
         ImGui.endChild();
         ImGui.pushFont(EditorAssetManager.getInstance().getFonts().get("Text15"));
         ImGui.textDisabled(path);
