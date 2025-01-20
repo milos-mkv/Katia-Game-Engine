@@ -1,6 +1,7 @@
 package org.katia.editor.windows;
 
 import imgui.ImGui;
+import lombok.Data;
 import org.katia.Logger;
 import org.katia.editor.Editor;
 import org.katia.editor.managers.ProjectManager;
@@ -8,6 +9,7 @@ import org.katia.editor.menubar.MainMenuBar;
 import org.katia.editor.menubar.MenuAction;
 import org.katia.editor.widgets.DirectoryExplorerWidget;
 
+@Data
 public class ProjectWindow implements UIComponent {
 
     ProjectManager pm;
@@ -17,13 +19,13 @@ public class ProjectWindow implements UIComponent {
         Logger.log(Logger.Type.INFO, "Creating project window ...");
         pm = ProjectManager.getInstance();
         directoryExplorerWidget = new DirectoryExplorerWidget();
-        directoryExplorerWidget.setRootDirectory("C:\\Users\\milos\\Documents\\GitHub\\Katia-Game-Engine");
+//        directoryExplorerWidget.setRootDirectory("C:\\Users\\milos\\Documents\\GitHub\\Katia-Game-Engine");
     }
 
     @Override
     public void render() {
         ImGui.begin("Project");
-        if (!pm.isActive()) {
+        if (pm.isActive()) {
             renderProjectOpen();
         } else {
             renderProjectNotOpen();

@@ -8,6 +8,7 @@ import org.katia.editor.EditorUtils;
 import org.katia.editor.managers.EditorAssetManager;
 import org.katia.editor.managers.ProjectManager;
 import org.katia.editor.popups.CreateNewProjectPopup;
+import org.katia.editor.popups.ErrorPopup;
 import org.katia.editor.windows.UIComponent;
 import org.lwjgl.glfw.GLFW;
 
@@ -62,6 +63,7 @@ public class MainMenuBar implements UIComponent {
         }
         if (this.actions.get(MenuAction.SAVE_PROJECT)) {
             saveProjectAction();
+            ImGui.openPopup("Error Popup");
         }
         if (this.actions.get(MenuAction.EXIT)) {
             exitAction();
@@ -69,6 +71,7 @@ public class MainMenuBar implements UIComponent {
         CreateNewProjectPopup.render();
 
         actions.replaceAll((key, value) -> false);
+        ErrorPopup.render();
     }
 
     /**

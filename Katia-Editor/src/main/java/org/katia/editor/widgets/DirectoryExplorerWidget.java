@@ -5,6 +5,8 @@ import imgui.ImVec2;
 import imgui.flag.ImGuiCol;
 import imgui.flag.ImGuiHoveredFlags;
 import imgui.flag.ImGuiStyleVar;
+import imgui.flag.ImGuiWindowFlags;
+import imgui.type.ImString;
 import org.katia.FileSystem;
 import org.katia.Logger;
 import org.katia.editor.managers.EditorAssetManager;
@@ -24,6 +26,7 @@ public class DirectoryExplorerWidget {
     String path;
     List<Path> data;
     List<String> dirDepth;
+    ImString searchBarTxt;
 
     /**
      * Directory explorer widget constructor.
@@ -34,6 +37,7 @@ public class DirectoryExplorerWidget {
         this.path = null;
         this.data = new ArrayList<>();
         this.dirDepth = new ArrayList<>();
+        this.searchBarTxt = new ImString();
     }
 
     public void setRootDirectory(String path) {
@@ -66,6 +70,11 @@ public class DirectoryExplorerWidget {
     }
 
     public void render() {
+        ImGui.pushStyleColor(ImGuiCol.ChildBg, 0.16f, 0.18f, 0.2f, 1.0f);
+        ImGui.beginChild(root, -1, -1, false, ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse);
+        ImGui.pushStyleVar(ImGuiStyleVar.FrameBorderSize, 0);
+        ImGui.pushStyleColor(ImGuiCol.ChildBg, 0.2f, 0.22f, 0.24f, 1.0f);
+
         ImGui.beginChild("Path trail", -200, 39);
         ImGui.setCursorPos(10, 10);
         ImGui.text("\uf07c");
@@ -86,12 +95,21 @@ public class DirectoryExplorerWidget {
         }
 
         ImGui.endChild();
+        ImGui.sameLine();
+
+        ImGui.beginChild("Search bar", -1, 39);
+        ImGui.setCursorPos(10, 10);
+        ImGui.text("\uf0b0");
+        ImGui.sameLine();
+        ImGui.setCursorPosY(5);
+
+        ImGui.inputText("##Search", searchBarTxt);
+        ImGui.endChild();
         ImGui.beginChild("Directory data window", -1, -20);
         ImGui.pushStyleColor(ImGuiCol.Button, 0, 0, 0, 0);
         ImGui.pushStyleColor(ImGuiCol.ButtonActive, 0, 0, 0, 0.4F);
         ImGui.pushStyleColor(ImGuiCol.ButtonHovered, 0.4f, 0.4f, 0.4f, 0.4F);
 
-        ImGui.pushStyleVar(ImGuiStyleVar.FrameBorderSize, 0);
 
         ImGui.pushFont(EditorAssetManager.getInstance().getFonts().get("Text15"));
         Path clickedDirectory = null;
@@ -178,12 +196,19 @@ public class DirectoryExplorerWidget {
         }
         ImGui.popFont();
         ImGui.popStyleColor(3);
-        ImGui.popStyleVar();
         ImGui.endChild();
+        ImGui.pushFont(EditorAssetManager.getInstance().getFonts().get("Text15"));
+        ImGui.textDisabled(path);
 
+        ImGui.popFont();
         if (clickedDirectory != null) {
             loadDirectory(clickedDirectory.toString());
         }
+        ImGui.popStyleColor();
+        ImGui.popStyleVar();
+
+        ImGui.endChild();
+        ImGui.popStyleColor();
     }
 
     /**
