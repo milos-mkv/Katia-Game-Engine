@@ -5,6 +5,7 @@ import imgui.ImVec2;
 import imgui.ImVec4;
 import imgui.flag.ImGuiCol;
 import imgui.flag.ImGuiConfigFlags;
+import imgui.flag.ImGuiStyleVar;
 import imgui.flag.ImGuiWindowFlags;
 import imgui.gl3.ImGuiImplGl3;
 import imgui.glfw.ImGuiImplGlfw;
@@ -115,7 +116,7 @@ public class Editor {
         float[][] colors = ImGui.getStyle().getColors();
         colors[ImGuiCol.Text] = new float[]{0.8f, 0.8f, 0.8f, 1.0f}; // Light grey text
         colors[ImGuiCol.TextDisabled] = new float[]{0.5f, 0.5f, 0.5f, 1.0f}; // Dimmed grey text
-        colors[ImGuiCol.WindowBg] = new float[]{0.16f, 0.18f, 0.2f, 1.0f}; // Dark background
+        colors[ImGuiCol.WindowBg] = new float[]{0.14f, 0.16f, 0.18f, 1.0f}; // Dark background{0.16f, 0.18f, 0.2f, 1.0f};
         colors[ImGuiCol.ChildBg] = new float[]{0.14f, 0.16f, 0.18f, 1.0f}; // Slightly darker child window
         colors[ImGuiCol.PopupBg] = new float[]{0.18f, 0.2f, 0.22f, 1.0f}; // Dark popup background
         colors[ImGuiCol.Border] = new float[]{0.2f, 0.22f, 0.24f, 1.0f}; // Grey border
@@ -140,7 +141,7 @@ public class Editor {
         colors[ImGuiCol.Header] = new float[]{0.2f, 0.25f, 0.3f, 1.0f}; // Neutral header
         colors[ImGuiCol.HeaderHovered] = new float[]{0.3f, 0.6f, 0.8f, 0.8f}; // Hovered light blue header
         colors[ImGuiCol.HeaderActive] = new float[]{0.4f, 0.7f, 1.0f, 1.0f}; // Active bright blue header
-        colors[ImGuiCol.Separator] = new float[]{0.2f, 0.22f, 0.24f, 1.0f}; // Separator
+        colors[ImGuiCol.Separator] = new float[]{0.2f, 0.22f, 0.24f, 0.0f}; // Separator
         colors[ImGuiCol.SeparatorHovered] = new float[]{0.3f, 0.6f, 0.8f, 0.8f}; // Hovered light blue separator
         colors[ImGuiCol.SeparatorActive] = new float[]{0.4f, 0.7f, 1.0f, 1.0f}; // Active bright blue separator
         colors[ImGuiCol.ResizeGrip] = new float[]{0.3f, 0.6f, 0.8f, 0.8f}; // Resize grip
@@ -206,12 +207,15 @@ public class Editor {
             ImVec2 viewportSize = ImGui.getMainViewport().getSize();
 
             float padding = 10.0f;// Adjust dock space bounds
-            ImGui.setNextWindowPos(viewportPos.x + padding, viewportPos.y + padding + 50);
-            ImGui.setNextWindowSize(viewportSize.x - 2 * padding, viewportSize.y - 2 * padding);
+            ImGui.setNextWindowPos(viewportPos.x + padding, viewportPos.y + padding + 40);
+            ImGui.setNextWindowSize(viewportSize.x - 2 * padding, viewportSize.y - 2 * padding - 50);
             ImGui.setNextWindowBgAlpha(0.0f); // Make it transparent if needed
+            ImGui.pushStyleVar(ImGuiStyleVar.WindowPadding, 1, 1);
+            ImGui.pushStyleVar(ImGuiStyleVar.WindowBorderSize, 0);
             ImGui.begin("DockSpace", ImGuiWindowFlags.NoTitleBar | ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoMove);
             ImGui.dockSpace(ImGui.getID("DockSpace"));
             ImGui.end();
+            ImGui.popStyleVar(2);
 
 //            ImGui.dockSpaceOverViewport(ImGui.getMainViewport());
             ImGui.showDemoWindow();
