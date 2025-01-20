@@ -62,7 +62,7 @@ public class Game {
         int fps = 0;
         float tim = 0;
         float previousTime = (float) GLFW.glfwGetTime();
-        GLFW.glfwSwapInterval(1);
+        GLFW.glfwSwapInterval(0);
 
 //        GameObject g = scene.find("Test");
 //        TextComponent textComponent = new TextComponent();
@@ -77,6 +77,8 @@ public class Game {
             tim += deltaTime;
             fps++;
             if (tim >= 1) {
+                System.out.println(fps);
+
                 tim = 0;
                 fps = 0;
             }

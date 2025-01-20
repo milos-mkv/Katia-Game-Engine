@@ -1,7 +1,11 @@
 package org.katia.editor.windows;
 
+import lombok.Data;
+import org.katia.editor.menubar.MainMenuBar;
+
 import java.util.HashMap;
 
+@Data
 public class UIRenderer {
 
     HashMap<Class<?>, UIComponent> components;
@@ -14,6 +18,11 @@ public class UIRenderer {
         components.put(ConsoleWindow.class, new ConsoleWindow());
         components.put(SceneWindow.class, new SceneWindow());
         components.put(MainMenuBar.class, new MainMenuBar());
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T> T get(Class<T>  component) {
+        return (T) components.get(component);
     }
 
     public void render() {

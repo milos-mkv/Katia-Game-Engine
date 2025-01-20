@@ -1,5 +1,6 @@
 package org.katia.editor.managers;
 
+import lombok.Data;
 import lombok.Getter;
 import org.katia.FileSystem;
 import org.katia.Logger;
@@ -7,6 +8,7 @@ import org.katia.game.Configuration;
 
 import java.util.Objects;
 
+@Data
 /**
  * Project directory structure:
  *  - [folder] assets  - Keep all asset files in this folder (images, sounds, textures, prefabs)
@@ -22,6 +24,7 @@ public class ProjectManager {
     String name;
     String path;
     Configuration configuration;
+    boolean active;
 
     /**
      * Project manager constructor.
@@ -31,6 +34,7 @@ public class ProjectManager {
         name = null;
         path = null;
         configuration = null;
+        active = false;
     }
 
     /**
@@ -48,6 +52,7 @@ public class ProjectManager {
             throw new RuntimeException("Project structure is corrupted!");
         }
 
+        this.active = true;
     }
 
     /**

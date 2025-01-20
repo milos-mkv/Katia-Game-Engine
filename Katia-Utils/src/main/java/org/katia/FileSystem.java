@@ -126,7 +126,7 @@ public abstract class FileSystem {
      */
     public static String getFileExtension(String path) {
         int lastDotIndex = path.lastIndexOf('.');
-        if (lastDotIndex > 0 && lastDotIndex < path.length() - 1) {
+        if (lastDotIndex >= 0 && lastDotIndex < path.length() - 1) {
             return path.substring(lastDotIndex + 1);
         } else {
             return null;
@@ -141,7 +141,7 @@ public abstract class FileSystem {
      * @return boolean
      */
     public static boolean isImageFile(String file) {
-        return supportedImageExtensions.contains(getFileExtension(file));
+        return file != null && !Files.isDirectory(Path.of(file)) && file.contains(".") && supportedImageExtensions.contains(getFileExtension(file));
     }
 
     /**
@@ -156,6 +156,11 @@ public abstract class FileSystem {
         }
         return filename;
     }
+
+    public static String getFileName(String path) {
+        return Path.of(path).getFileName().toString();
+    }
+
 
     /**
      * Get all files and directories from provided root path directory.

@@ -11,6 +11,8 @@ import lombok.Data;
 import lombok.Getter;
 import org.katia.Logger;
 import org.katia.editor.managers.EditorAssetManager;
+import org.katia.editor.menubar.MainMenuBar;
+import org.katia.editor.menubar.MenuAction;
 import org.katia.editor.windows.UIRenderer;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWVidMode;
@@ -60,6 +62,27 @@ public class Editor {
         GLFW.glfwSetFramebufferSizeCallback(handle, (long handle, int w, int h) -> {
             glViewport(0, 0, w, h);
         });
+        GLFW.glfwSetKeyCallback(handle, (window, key, scancode, action, mods) -> {
+            if (action == GLFW.GLFW_PRESS || action == GLFW.GLFW_REPEAT) {
+                if ((mods & GLFW.GLFW_MOD_CONTROL) != 0) { // Check if Ctrl is pressed
+                    switch (key) {
+                        case GLFW.GLFW_KEY_N:
+                            uiRenderer.get(MainMenuBar.class).getActions().put(MenuAction.CREATE_NEW_PROJECT, true);
+                            break;
+                        case GLFW.GLFW_KEY_O:
+                            uiRenderer.get(MainMenuBar.class).getActions().put(MenuAction.OPEN_PROJECT, true);
+                            break;
+                        case GLFW.GLFW_KEY_S:
+                            uiRenderer.get(MainMenuBar.class).getActions().put(MenuAction.SAVE_PROJECT, true);
+                            break;
+                        case GLFW.GLFW_KEY_W:
+                            uiRenderer.get(MainMenuBar.class).getActions().put(MenuAction.EXIT, true);
+                            break;
+                    }
+                }
+            }
+        });
+
     }
 
     /**
@@ -114,7 +137,7 @@ public class Editor {
         colors[ImGuiCol.ResizeGripActive] = new float[]{0.5f, 0.8f, 1.0f, 1.0f}; // Active resize grip
         colors[ImGuiCol.Tab] = new float[]{0.2f, 0.25f, 0.3f, 1.0f}; // Neutral tab
         colors[ImGuiCol.TabHovered] = new float[]{0.3f, 0.6f, 0.8f, 0.8f}; // Hovered light blue tab
-        colors[ImGuiCol.TabActive] = new float[]{0.4f, 0.7f, 1.0f, 1.0f}; // Active bright blue tab
+        colors[ImGuiCol.TabActive] = new float[]{0.26f, 0.28f, 0.3f, 0.8f}; // Active bright blue tab
         colors[ImGuiCol.TabUnfocused] = new float[]{0.16f, 0.18f, 0.2f, 1.0f}; // Unfocused tab
         colors[ImGuiCol.TabUnfocusedActive] = new float[]{0.2f, 0.25f, 0.3f, 1.0f}; // Unfocused active tab
         colors[ImGuiCol.DockingPreview] = new float[]{0.3f, 0.6f, 0.8f, 0.7f}; // Light blue docking preview
@@ -175,60 +198,6 @@ public class Editor {
         }
     }
 
-    public static void setupImGuiStyle2() {
-        float textR = 236f / 255f, textG = 240f / 255f, textB = 241f / 255f;
-        float headR = 41f / 255f, headG = 128f / 255f, headB = 185f / 255f;
-        float areaR = 57f / 255f, areaG = 79f / 255f, areaB = 105f / 255f;
-        float bodyR = 44f / 255f, bodyG = 62f / 255f, bodyB = 80f / 255f;
-        float popsR = 33f / 255f, popsG = 46f / 255f, popsB = 60f / 255f;
-
-        ImGui.getStyle().setColor(ImGuiCol.Text, textR, textG, textB, 1.0f);
-        ImGui.getStyle().setColor(ImGuiCol.TextDisabled, textR, textG, textB, 0.58f);
-        ImGui.getStyle().setColor(ImGuiCol.WindowBg, bodyR, bodyG, bodyB, 0.95f);
-        ImGui.getStyle().setColor(ImGuiCol.ChildBg, areaR, areaG, areaB, 0.58f);
-        ImGui.getStyle().setColor(ImGuiCol.Border, 0.5f, 0.5f, 0.5f, 1.0f);
-        ImGui.getStyle().setColor(ImGuiCol.FrameBg, areaR, areaG, areaB, 1.0f);
-        ImGui.getStyle().setColor(ImGuiCol.FrameBgHovered, headR, headG, headB, 0.78f);
-        ImGui.getStyle().setColor(ImGuiCol.FrameBgActive, headR, headG, headB, 1.0f);
-        ImGui.getStyle().setColor(ImGuiCol.TitleBg, areaR, areaG, areaB, 1.0f);
-        ImGui.getStyle().setColor(ImGuiCol.TitleBgActive, headR, headG, headB, 1.0f);
-        ImGui.getStyle().setColor(ImGuiCol.MenuBarBg, areaR, areaG, areaB, 0.47f);
-        ImGui.getStyle().setColor(ImGuiCol.ScrollbarBg, areaR, areaG, areaB, 1.0f);
-        ImGui.getStyle().setColor(ImGuiCol.ScrollbarGrab, headR, headG, headB, 0.21f);
-        ImGui.getStyle().setColor(ImGuiCol.ScrollbarGrabHovered, headR, headG, headB, 0.78f);
-        ImGui.getStyle().setColor(ImGuiCol.Button, headR, headG, headB, 0.50f);
-        ImGui.getStyle().setColor(ImGuiCol.ButtonHovered, headR, headG, headB, 0.86f);
-        ImGui.getStyle().setColor(ImGuiCol.ButtonActive, headR, headG, headB, 1.0f);
-        ImGui.getStyle().setColor(ImGuiCol.TextSelectedBg, headR, headG, headB, 0.43f);
-        ImGui.getStyle().setColor(ImGuiCol.PopupBg, popsR, popsG, popsB, 0.92f);
-        ImGui.getStyle().setColor(ImGuiCol.ModalWindowDimBg, areaR, areaG, areaB, 0.73f);
-
-
-
-        ImGuiStyle style = ImGui.getStyle();
-        style.setWindowPadding(8.00f, 8.00f);
-        style.setFramePadding(5.00f, 2.00f);
-        style.setCellPadding(6.00f, 6.00f);
-        style.setItemSpacing(6.00f, 6.00f);
-        style.setItemInnerSpacing(6.00f, 6.00f);
-        style.setTouchExtraPadding(0.00f, 0.00f);
-        style.setIndentSpacing(25.0f);
-        style.setScrollbarSize(15.0f);
-        style.setGrabMinSize(10.0f);
-        style.setWindowBorderSize(1.0f);
-        style.setChildBorderSize(1.0f);
-        style.setPopupBorderSize(1.0f);
-        style.setFrameBorderSize(1.0f);
-        style.setTabBorderSize(1.0f);
-        style.setWindowRounding(7.0f);
-        style.setChildRounding(4.0f);
-        style.setFrameRounding(3.0f);
-        style.setPopupRounding(4.0f);
-        style.setScrollbarRounding(9.0f);
-        style.setGrabRounding(3.0f);
-        style.setLogSliderDeadzone(4.0f);
-        style.setTabRounding(4.0f);
-    }
     /**
      * Dispose of editor.
      */

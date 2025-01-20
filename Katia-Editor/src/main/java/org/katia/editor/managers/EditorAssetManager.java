@@ -6,6 +6,7 @@ import imgui.ImGuiIO;
 import imgui.internal.ImGui;
 import lombok.Data;
 import lombok.Getter;
+import org.katia.factory.TextureFactory;
 import org.katia.gfx.Texture;
 
 import java.util.HashMap;
@@ -22,7 +23,7 @@ public class EditorAssetManager {
 
     public EditorAssetManager() {
         loadFonts();
-//        loadImages();
+        loadImages();
     }
 
     private void loadFonts() {
@@ -43,10 +44,25 @@ public class EditorAssetManager {
         io.getFonts().addFontFromFileTTF("./Katia-Editor/src/main/resources/fonts/fa-solid-900.ttf", 25.0f, config, iconRanges);
         io.getFonts().build();
 
-
+        fonts.put("Default25", io.getFonts().addFontFromFileTTF("./Katia-Editor/src/main/resources/fonts/JetBrainsMono-Medium.ttf", 25.0f));
         fonts.put("Default15", io.getFonts().addFontFromFileTTF("./Katia-Editor/src/main/resources/fonts/Roboto-Regular.ttf", 25.0f));
+        fonts.put("Default10", io.getFonts().addFontFromFileTTF("./Katia-Editor/src/main/resources/fonts/Roboto-Regular.ttf", 10));
+        fonts.put("Text15", io.getFonts().addFontFromFileTTF("./Katia-Editor/src/main/resources/fonts/Roboto-Regular.ttf", 15));
+
         fonts.put("Default40", io.getFonts().addFontFromFileTTF("./Katia-Editor/src/main/resources/fonts/Roboto-ExtraBold.ttf", 40.0f));
         io.getFonts().addFontFromFileTTF("./Katia-Editor/src/main/resources/fonts/fa-solid-900.ttf", 40.0f, config, iconRanges);
         io.getFonts().build();
+    }
+
+    private void loadImages() {
+        images = new HashMap<>();
+        images.put("LuaFileIcon", TextureFactory.createTexture("./Katia-Editor/src/main/resources/images/lua.png"));
+        images.put("FolderIcon", TextureFactory.createTexture("./Katia-Editor/src/main/resources/images/computer-folder.png"));
+        images.put("FileIcon", TextureFactory.createTexture("./Katia-Editor/src/main/resources/images/file.png"));
+        images.put("JsonFileIcon", TextureFactory.createTexture("./Katia-Editor/src/main/resources/images/json.png"));
+        images.put("UnknownFileIcon", TextureFactory.createTexture("./Katia-Editor/src/main/resources/images/unknown.png"));
+        images.put("BinaryFileIcon", TextureFactory.createTexture("./Katia-Editor/src/main/resources/images/binary.png"));
+        images.put("SceneFileIcon", TextureFactory.createTexture("./Katia-Editor/src/main/resources/images/scene.png"));
+        images.put("ImageFileIcon", TextureFactory.createTexture("./Katia-Editor/src/main/resources/images/image.png"));
     }
 }
