@@ -18,6 +18,7 @@ import org.katia.core.components.TransformComponent;
 import org.katia.editor.managers.EditorAssetManager;
 import org.katia.factory.GameObjectFactory;
 import org.katia.factory.TextureFactory;
+import org.katia.gfx.Texture;
 
 import java.lang.ref.WeakReference;
 import java.util.LinkedHashMap;
@@ -36,7 +37,7 @@ public class InspectorWindow implements UIComponent {
         gameObject = new WeakReference<GameObject>(null);
         gameObject1 = GameObjectFactory.createGameObject("Test 1");
         SpriteComponent spriteComponent = new SpriteComponent();
-        spriteComponent.setTexture("C:\\Users\\milos\\Documents\\GitHub\\Katia-Game-Engine\\Katia-Editor\\src\\main\\resources\\images\\logo.png");
+        spriteComponent.setTexture("C:\\Users\\milos\\Documents\\GitHub\\Katia-Game-Engine\\Katia-Editor\\src\\main\\resources\\images\\image1.png");
         gameObject1.addComponent(spriteComponent);
         gameObject = new WeakReference<>(gameObject1);
         components = new LinkedHashMap<>();
@@ -50,7 +51,7 @@ public class InspectorWindow implements UIComponent {
                 ImGuiDockNodeFlags.NoDockingOverMe | ImGuiDockNodeFlags.NoDockingSplitMe | ImGuiDockNodeFlags.NoCloseButton | ImGuiDockNodeFlags.NoTabBar);
 
     }
-    public void renderCheckerboardWithImage(int textureId, int textureWidth, int textureHeight, float displayWidth, float displayHeight) {
+    public void renderCheckerboardWithImage(Texture texture, int textureWidth, int textureHeight, float displayWidth, float displayHeight) {
         // Get ImGui's draw list to draw the checkerboard
         ImDrawList drawList = ImGui.getWindowDrawList();
 
@@ -101,22 +102,68 @@ public class InspectorWindow implements UIComponent {
         float imageX = startPos.x + (displayWidth - scaledWidth) / 2.0f;
         float imageY = startPos.y + (displayHeight - scaledHeight) / 2.0f;
 
-        // Render the image on top of the checkerboard
-        ImGui.getWindowDrawList().addImage(textureId, imageX, imageY, imageX + scaledWidth, imageY + scaledHeight);
-    }
+        if (texture != null) {
+            // Render the image on top of the checkerboard
+            ImGui.getWindowDrawList().addImage(texture.getId(), imageX, imageY, imageX + scaledWidth, imageY + scaledHeight);
+            String text = texture.getWidth() + "x" + texture.getHeight();
+            ImVec2 textSize = ImGui.calcTextSize(text);
 
+// Adjust the position dynamically
+            float adjustedX = startPos.x + displayWidth - textSize.x + 30.0f; // Subtract text width and margin
+            float adjustedY = startPos.y + displayHeight - textSize.y + 10.0f; // Subtract text height and margin
+
+// Render the outlined text with dynamic positioning
+            renderOutlinedText(drawList, text, adjustedX, adjustedY, ImColor.intToColor(255, 255, 255, 255), ImColor.intToColor(0, 0, 0, 255));
+        }
+    }
+    public void renderOutlinedText(ImDrawList drawList, String text, float x, float y, int textColor, int outlineColor) {
+        float outlineThickness = 1.0f; // Thickness of the outline
+
+        // Adjust text position for centering
+        ImVec2 textSize = ImGui.calcTextSize(text);
+        float centerX = x - textSize.x / 2.0f;
+        float centerY = y - textSize.y / 2.0f;
+
+        // Draw the outline by rendering the text in 8 surrounding positions
+        drawList.addText(centerX - outlineThickness, centerY, outlineColor, text); // Left
+        drawList.addText(centerX + outlineThickness, centerY, outlineColor, text); // Right
+        drawList.addText(centerX, centerY - outlineThickness, outlineColor, text); // Top
+        drawList.addText(centerX, centerY + outlineThickness, outlineColor, text); // Bottom
+        drawList.addText(centerX - outlineThickness, centerY - outlineThickness, outlineColor, text); // Top-left
+        drawList.addText(centerX + outlineThickness, centerY - outlineThickness, outlineColor, text); // Top-right
+        drawList.addText(centerX - outlineThickness, centerY + outlineThickness, outlineColor, text); // Bottom-left
+        drawList.addText(centerX + outlineThickness, centerY + outlineThickness, outlineColor, text); // Bottom-right
+
+        // Draw the main text in the center
+        drawList.addText(centerX, centerY, textColor, text);
+    }
     /**
      * Render sprite component items.
      */
     private void renderSpriteComponent() {
         SpriteComponent spriteComponent = gameObject.get().getComponent(SpriteComponent.class);
         if (ImGui.collapsingHeader("Sprite Component")) {
-            int textureWidth = spriteComponent.getTexture().getWidth();
-            int textureHeight = spriteComponent.getTexture().getHeight();
-            renderCheckerboardWithImage(spriteComponent.getTexture().getId(),
+            ImGui.columns(2);
+            ImGui.button("     ", 90, 30);
+            ImGui.sameLine();
+            ImGui.pushFont(EditorAssetManager.getInstance().getFonts().get("Default"));
+            ImGui.setCursorPosX(ImGui.getCursorPosX() - 62);
+            ImGui.setCursorPosY(ImGui.getCursorPosY() + 2);
+            ImGui.text(Icons.Image);
+            ImGui.popFont();
+            ImGui.nextColumn();
+            ImString path = new ImString("");
+            ImGui.setNextItemWidth(-1);
+            ImGui.beginDisabled();
+            ImGui.inputText("##TexturePath", path);
+            ImGui.endDisabled();
+            ImGui.columns(1);
+
+            Texture texture = spriteComponent.getTexture();
+            int textureWidth = texture != null ? texture.getWidth() : 0;
+            int textureHeight = texture != null ? texture.getHeight() : 0;
+            renderCheckerboardWithImage(spriteComponent.getTexture(),
                     textureWidth, textureHeight, ImGui.getWindowWidth() - 20, 300);
-            // Render the image
-//            ImGui.image(spriteComponent.getTexture().getId(), scaledWidth, scaledHeight);
         }
     }
 
