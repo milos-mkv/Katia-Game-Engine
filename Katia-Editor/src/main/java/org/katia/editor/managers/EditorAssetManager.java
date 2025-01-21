@@ -32,8 +32,8 @@ public class EditorAssetManager {
         ImGuiIO io = ImGui.getIO();
 
         ImFontConfig config = new ImFontConfig();
-        config.setOversampleH(4);
-        config.setOversampleV(4);
+        config.setOversampleH(2);
+        config.setOversampleV(2);
         config.setPixelSnapH(false);
         config.setMergeMode(false);
 
@@ -46,7 +46,6 @@ public class EditorAssetManager {
 
         fonts.put("Default25", io.getFonts().addFontFromFileTTF("./Katia-Editor/src/main/resources/fonts/JetBrainsMono-Medium.ttf", 25.0f));
         fonts.put("Default15", io.getFonts().addFontFromFileTTF("./Katia-Editor/src/main/resources/fonts/Roboto-Regular.ttf", 25.0f));
-        fonts.put("Default10", io.getFonts().addFontFromFileTTF("./Katia-Editor/src/main/resources/fonts/Roboto-Regular.ttf", 10));
         fonts.put("Text15", io.getFonts().addFontFromFileTTF("./Katia-Editor/src/main/resources/fonts/Roboto-Regular.ttf", 15));
 
         fonts.put("Default40", io.getFonts().addFontFromFileTTF("./Katia-Editor/src/main/resources/fonts/Roboto-ExtraBold.ttf", 40.0f));
