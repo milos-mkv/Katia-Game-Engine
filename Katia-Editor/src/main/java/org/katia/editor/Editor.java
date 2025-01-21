@@ -3,10 +3,7 @@ package org.katia.editor;
 import imgui.ImGuiStyle;
 import imgui.ImVec2;
 import imgui.ImVec4;
-import imgui.flag.ImGuiCol;
-import imgui.flag.ImGuiConfigFlags;
-import imgui.flag.ImGuiStyleVar;
-import imgui.flag.ImGuiWindowFlags;
+import imgui.flag.*;
 import imgui.gl3.ImGuiImplGl3;
 import imgui.glfw.ImGuiImplGlfw;
 import imgui.internal.ImGui;
@@ -117,7 +114,7 @@ public class Editor {
         colors[ImGuiCol.Text] = new float[]{0.8f, 0.8f, 0.8f, 1.0f}; // Light grey text
         colors[ImGuiCol.TextDisabled] = new float[]{0.5f, 0.5f, 0.5f, 1.0f}; // Dimmed grey text
         colors[ImGuiCol.WindowBg] = new float[]{0.14f, 0.16f, 0.18f, 1.0f}; // Dark background{0.16f, 0.18f, 0.2f, 1.0f};
-        colors[ImGuiCol.ChildBg] = new float[]{0.14f, 0.16f, 0.18f, 1.0f}; // Slightly darker child window
+        colors[ImGuiCol.ChildBg] = new float[]{0.16f, 0.18f, 0.2f, 1.0f}; // Slightly darker child window
         colors[ImGuiCol.PopupBg] = new float[]{0.18f, 0.2f, 0.22f, 1.0f}; // Dark popup background
         colors[ImGuiCol.Border] = new float[]{0.2f, 0.22f, 0.24f, 1.0f}; // Grey border
         colors[ImGuiCol.BorderShadow] = new float[]{0.0f, 0.0f, 0.0f, 0.0f}; // No border shadow
@@ -141,7 +138,7 @@ public class Editor {
         colors[ImGuiCol.Header] = new float[]{0.2f, 0.25f, 0.3f, 1.0f}; // Neutral header
         colors[ImGuiCol.HeaderHovered] = new float[]{0.3f, 0.6f, 0.8f, 0.8f}; // Hovered light blue header
         colors[ImGuiCol.HeaderActive] = new float[]{0.4f, 0.7f, 1.0f, 1.0f}; // Active bright blue header
-        colors[ImGuiCol.Separator] = new float[]{0.2f, 0.22f, 0.24f, 0.0f}; // Separator
+        colors[ImGuiCol.Separator] = new float[]{0.2f, 0.22f, 0.24f, 1.0f}; // Separator
         colors[ImGuiCol.SeparatorHovered] = new float[]{0.3f, 0.6f, 0.8f, 0.8f}; // Hovered light blue separator
         colors[ImGuiCol.SeparatorActive] = new float[]{0.4f, 0.7f, 1.0f, 1.0f}; // Active bright blue separator
         colors[ImGuiCol.ResizeGrip] = new float[]{0.3f, 0.6f, 0.8f, 0.8f}; // Resize grip
@@ -190,6 +187,7 @@ public class Editor {
         style.setGrabRounding(3.0f);
         style.setLogSliderDeadzone(4.0f);
         style.setTabRounding(4.0f);
+//        style.setWindowMenuButtonPosition(-1);
     }
     /**
      * Run editor.
@@ -213,7 +211,7 @@ public class Editor {
             ImGui.pushStyleVar(ImGuiStyleVar.WindowPadding, 1, 1);
             ImGui.pushStyleVar(ImGuiStyleVar.WindowBorderSize, 0);
             ImGui.begin("DockSpace", ImGuiWindowFlags.NoTitleBar | ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoMove);
-            ImGui.dockSpace(ImGui.getID("DockSpace"));
+            ImGui.dockSpace(ImGui.getID("DockSpace"));//, 0, 0,  ImGuiDockNodeFlags.AutoHideTabBar);
             ImGui.end();
             ImGui.popStyleVar(2);
 
