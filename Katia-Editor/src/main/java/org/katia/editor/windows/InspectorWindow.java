@@ -316,7 +316,7 @@ public class InspectorWindow implements UIComponent {
         ImGui.beginChild("##InspectorChild", -1, -1, true);
 
         ImGui.pushFont(EditorAssetManager.getInstance().getFonts().get("Default25"));
-        if (gameObject != null && gameObject.get() != null) {
+        if (false && gameObject != null && gameObject.get() != null) {
             GameObject go = gameObject.get();
             ImGui.columns(2);
             ImGui.setColumnWidth(-1, 100);

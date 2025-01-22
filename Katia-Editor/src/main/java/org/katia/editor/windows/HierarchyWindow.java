@@ -20,7 +20,8 @@ public class HierarchyWindow implements UIComponent {
     @Override
     public void render() {
         ImGui.setNextWindowClass(windowClass);
-        ImGui.pushStyleVar(ImGuiStyleVar.WindowPadding, 10, 5);
+
+        ImGui.pushStyleVar(ImGuiStyleVar.WindowPadding, 5, 5);
         ImGui.begin("Hierarchy");
 
         ImGui.textDisabled("HIERARCHY");

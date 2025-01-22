@@ -46,6 +46,25 @@ public abstract class FileSystem {
     }
 
     /**
+     * Check if provided file is scene file.
+     * @param path Path to file.
+     * @return boolean
+     */
+    public static boolean isSceneFile(String path) {
+        return (!Files.isDirectory(Paths.get(path))) && Objects.equals(getFileExtension(path), "scene");
+    }
+
+    /**
+     * Check if provided file is prefab file.
+     * @param path Path to file.
+     * @return boolean
+     */
+    public static boolean isPrefabFile(String path) {
+        return (!Files.isDirectory(Paths.get(path))) && Objects.equals(getFileExtension(path), "prefab");
+    }
+
+
+    /**
      * Check if provided file is lua file.
      * @param path Path to file.
      * @return boolean
@@ -63,6 +82,18 @@ public abstract class FileSystem {
         return (!Files.isDirectory(Paths.get(path))) && (
                 Objects.equals(getFileExtension(path), "ttf") || Objects.equals(getFileExtension(path), "otf") ||
                 Objects.equals(getFileExtension(path), "TTF") || Objects.equals(getFileExtension(path), "OTF")
+        );
+    }
+
+
+    /**
+     * Check if provided file is sound file.
+     * @param path Path to file.
+     * @return boolean
+     */
+    public static boolean isSoundFile(String path) {
+        return (!Files.isDirectory(Paths.get(path))) && (
+                Objects.equals(getFileExtension(path), "mp3") || Objects.equals(getFileExtension(path), "wav")
         );
     }
 

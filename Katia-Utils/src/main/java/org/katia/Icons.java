@@ -1,6 +1,7 @@
 package org.katia;
 
 public class Icons {
+    public static String Filter = "\uf0b0";
     public static String FileCode = "\uf1c9";
     public static String Image = "\uf03e";
     public static String Cube = "\uf1b2";
@@ -20,4 +21,5 @@ public class Icons {
     public static String Gamepad = "\uf11b";
     public static String SquareX = "\uf2d3";
     public static String TriangleError = "\uf071";
+    public static String NextPart = "\uf0da";
 }

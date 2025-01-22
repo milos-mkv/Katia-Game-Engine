@@ -63,5 +63,9 @@ public class EditorAssetManager {
         images.put("BinaryFileIcon", TextureFactory.createTexture("./Katia-Editor/src/main/resources/images/binary.png"));
         images.put("SceneFileIcon", TextureFactory.createTexture("./Katia-Editor/src/main/resources/images/scene.png"));
         images.put("ImageFileIcon", TextureFactory.createTexture("./Katia-Editor/src/main/resources/images/image.png"));
+        images.put("SoundFileIcon", TextureFactory.createTexture("./Katia-Editor/src/main/resources/images/sound.png"));
+        images.put("PrefabFileIcon", TextureFactory.createTexture("./Katia-Editor/src/main/resources/images/prefab.png"));
+        images.put("FontFileIcon", TextureFactory.createTexture("./Katia-Editor/src/main/resources/images/font.png"));
+
     }
 }

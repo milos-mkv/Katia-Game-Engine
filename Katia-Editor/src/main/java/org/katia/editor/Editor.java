@@ -1,5 +1,6 @@
 package org.katia.editor;
 
+import imgui.ImGuiIO;
 import imgui.ImGuiStyle;
 import imgui.ImVec2;
 import imgui.ImVec4;
@@ -125,8 +126,8 @@ public class Editor {
         colors[ImGuiCol.TitleBgActive] = new float[]{0.2f, 0.25f, 0.3f, 1.0f}; // Active dark title background
         colors[ImGuiCol.TitleBgCollapsed] = new float[]{0.14f, 0.16f, 0.18f, 1.0f}; // Collapsed dark title
         colors[ImGuiCol.MenuBarBg] = new float[]{0.14f, 0.16f, 0.18f, 1.0f}; // Dark grey menu bar
-        colors[ImGuiCol.ScrollbarBg] = new float[]{0.14f, 0.16f, 0.18f, 1.0f}; // Dark scrollbar background
-        colors[ImGuiCol.ScrollbarGrab] = new float[]{0.3f, 0.6f, 0.8f, 0.8f}; // Light blue scrollbar grab
+        colors[ImGuiCol.ScrollbarBg] = new float[]{0.14f, 0.16f, 0.18f, 0.0f}; // Dark scrollbar background
+        colors[ImGuiCol.ScrollbarGrab] = new float[]{0.3f, 0.3f, 0.3f, 0.6f}; // Light blue scrollbar grab
         colors[ImGuiCol.ScrollbarGrabHovered] = new float[]{0.4f, 0.7f, 1.0f, 1.0f}; // Hovered light blue scrollbar
         colors[ImGuiCol.ScrollbarGrabActive] = new float[]{0.5f, 0.8f, 1.0f, 1.0f}; // Active bright blue scrollbar
         colors[ImGuiCol.CheckMark] = new float[]{0.3f, 0.6f, 0.8f, 1.0f}; // Light blue checkmark
@@ -218,7 +219,6 @@ public class Editor {
             ImGui.popStyleColor();
             ImGui.popStyleVar(2);
 
-            ImGui.showDemoWindow();
             uiRenderer.render();
             ImGui.render();
             imGuiImplGl3.renderDrawData(ImGui.getDrawData());

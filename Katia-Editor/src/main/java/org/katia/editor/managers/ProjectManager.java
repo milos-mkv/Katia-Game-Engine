@@ -5,6 +5,7 @@ import lombok.Getter;
 import org.katia.FileSystem;
 import org.katia.Logger;
 import org.katia.editor.Editor;
+import org.katia.editor.project.ProjectAssetManager;
 import org.katia.editor.windows.ProjectWindow;
 import org.katia.game.Configuration;
 
@@ -56,6 +57,7 @@ public class ProjectManager {
 
         this.active = true;
         Editor.getInstance().getUiRenderer().get(ProjectWindow.class).getDirectoryExplorerWidget().setRootDirectory(path);
+        ProjectAssetManager.getInstance().loadProject(path);
     }
 
     /**

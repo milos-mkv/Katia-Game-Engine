@@ -34,7 +34,7 @@ C  0x000002345cd40b72  (no source info available)
 The last pc belongs to native method entry point (kind = native) (printed below).
 Java frames: (J=compiled Java code, j=interpreted, Vv=VM code)
 j  imgui.ImGui.beginChild(Ljava/lang/String;FFZI)Z+0
-j  org.katia.editor.widgets.DirectoryExplorerWidget.render()V+22
+j  org.katia.editor.widgets.ProjectDirectoryExplorerWidget.render()V+22
 J 1272 c1 org.katia.editor.windows.ProjectWindow.render()V (31 bytes) @ 0x0000023455970b64 [0x0000023455970a00+0x0000000000000164]
 J 1295 c2 java.util.HashMap.forEach(Ljava/util/function/BiConsumer;)V java.base@23.0.1 (112 bytes) @ 0x000002345d32508c [0x000002345d324f40+0x000000000000014c]
 J 1270 c1 org.katia.editor.windows.UIRenderer.render()V (13 bytes) @ 0x00000234559703dc [0x0000023455970240+0x000000000000019c]
