@@ -172,7 +172,7 @@ public class Editor {
         style.setItemInnerSpacing(6.00f, 6.00f);
         style.setTouchExtraPadding(0.00f, 0.00f);
         style.setIndentSpacing(25.0f);
-        style.setScrollbarSize(15.0f);
+        style.setScrollbarSize(10.0f);
         style.setGrabMinSize(10.0f);
         style.setWindowBorderSize(1.0f);
         style.setChildBorderSize(1.0f);
@@ -210,9 +210,12 @@ public class Editor {
             ImGui.setNextWindowBgAlpha(0.0f); // Make it transparent if needed
             ImGui.pushStyleVar(ImGuiStyleVar.WindowPadding, 1, 1);
             ImGui.pushStyleVar(ImGuiStyleVar.WindowBorderSize, 0);
+            ImGui.pushStyleColor(ImGuiCol.Separator, 0.0f, 0.0f, 0.0f, 0.0f);
+
             ImGui.begin("DockSpace", ImGuiWindowFlags.NoTitleBar | ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoMove);
             ImGui.dockSpace(ImGui.getID("DockSpace"));//, 0, 0,  ImGuiDockNodeFlags.AutoHideTabBar);
             ImGui.end();
+            ImGui.popStyleColor();
             ImGui.popStyleVar(2);
 
 //            ImGui.dockSpaceOverViewport(ImGui.getMainViewport());

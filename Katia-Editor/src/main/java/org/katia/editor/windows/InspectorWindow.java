@@ -12,9 +12,7 @@ import org.joml.Vector3f;
 import org.katia.Icons;
 import org.katia.Logger;
 import org.katia.core.GameObject;
-import org.katia.core.components.Component;
-import org.katia.core.components.SpriteComponent;
-import org.katia.core.components.TransformComponent;
+import org.katia.core.components.*;
 import org.katia.editor.managers.EditorAssetManager;
 import org.katia.factory.GameObjectFactory;
 import org.katia.factory.TextureFactory;
@@ -37,20 +35,59 @@ public class InspectorWindow implements UIComponent {
         gameObject = new WeakReference<GameObject>(null);
         gameObject1 = GameObjectFactory.createGameObject("Test 1");
         SpriteComponent spriteComponent = new SpriteComponent();
-        spriteComponent.setTexture("C:\\Users\\milos\\Documents\\GitHub\\Katia-Game-Engine\\Katia-Editor\\src\\main\\resources\\images\\image1.png");
+        spriteComponent.setTexture("C:\\Users\\milos\\Documents\\GitHub\\Katia-Game-Engine\\Katia-Editor\\src\\main\\resources\\images\\logo.png");
         gameObject1.addComponent(spriteComponent);
+
+        ScriptComponent scriptComponent = new ScriptComponent();
+        gameObject1.addComponent(scriptComponent);
+
+        TextComponent textComponent = new TextComponent();
+        gameObject1.addComponent(textComponent);
+        gameObject1.addComponent(new CameraComponent());
         gameObject = new WeakReference<>(gameObject1);
         components = new LinkedHashMap<>();
         components.put("Transform", this::renderTransformComponent);
         components.put("Sprite", this::renderSpriteComponent);
         components.put("Script", this::renderScriptComponent);
         components.put("Camera", this::renderCameraComponent);
+        components.put("Text", this::renderTextComponent);
 
         windowClass= new ImGuiWindowClass();
         windowClass.setDockNodeFlagsOverrideSet(
                 ImGuiDockNodeFlags.NoDockingOverMe | ImGuiDockNodeFlags.NoDockingSplitMe | ImGuiDockNodeFlags.NoCloseButton | ImGuiDockNodeFlags.NoTabBar);
 
     }
+
+    private void renderTextComponent() {
+        TextComponent textComponent = gameObject.get().getComponent(TextComponent.class);
+        if (ImGui.collapsingHeader("Text Component")) {
+            ImGui.columns(2);
+            ImGui.text("Font");
+            ImGui.nextColumn();
+            ImGui.setNextItemWidth(-1);
+            ImGui.inputText("##Font", new ImString(""));
+            ImGui.nextColumn();
+            ImGui.text("Text");
+            ImGui.nextColumn();
+            ImString textt = new ImString("");
+            ImGui.inputTextMultiline("##Text", textt, -1, 70 );
+            ImGui.nextColumn();
+            ImGui.text("Color");
+            ImGui.nextColumn();
+            float[] colors = new float[] { 1.0f, 1.0f, 0.5f, 1.0f };
+            ImGui.setNextItemWidth(-1);
+            ImGui.colorEdit4("##Color", colors);
+            ImGui.nextColumn();
+            ImGui.text("Scale");
+            ImGui.nextColumn();
+            float[] scale = new float[] { 1.0f };
+            ImGui.setNextItemWidth(-1);
+            ImGui.dragFloat("##Scale", scale);
+            ImGui.columns(1);
+            ImGui.separator();
+        }
+    }
+
     public void renderCheckerboardWithImage(Texture texture, int textureWidth, int textureHeight, float displayWidth, float displayHeight) {
         // Get ImGui's draw list to draw the checkerboard
         ImDrawList drawList = ImGui.getWindowDrawList();
@@ -103,21 +140,18 @@ public class InspectorWindow implements UIComponent {
         float imageY = startPos.y + (displayHeight - scaledHeight) / 2.0f;
 
         if (texture != null) {
-            // Render the image on top of the checkerboard
             ImGui.getWindowDrawList().addImage(texture.getId(), imageX, imageY, imageX + scaledWidth, imageY + scaledHeight);
             String text = texture.getWidth() + "x" + texture.getHeight();
             ImVec2 textSize = ImGui.calcTextSize(text);
 
-// Adjust the position dynamically
             float adjustedX = startPos.x + displayWidth - textSize.x + 30.0f; // Subtract text width and margin
             float adjustedY = startPos.y + displayHeight - textSize.y + 10.0f; // Subtract text height and margin
 
-// Render the outlined text with dynamic positioning
             renderOutlinedText(drawList, text, adjustedX, adjustedY, ImColor.intToColor(255, 255, 255, 255), ImColor.intToColor(0, 0, 0, 255));
         }
     }
     public void renderOutlinedText(ImDrawList drawList, String text, float x, float y, int textColor, int outlineColor) {
-        float outlineThickness = 1.0f; // Thickness of the outline
+        float outlineThickness = 2.0f; // Thickness of the outline
 
         // Adjust text position for centering
         ImVec2 textSize = ImGui.calcTextSize(text);
@@ -164,14 +198,54 @@ public class InspectorWindow implements UIComponent {
             int textureHeight = texture != null ? texture.getHeight() : 0;
             renderCheckerboardWithImage(spriteComponent.getTexture(),
                     textureWidth, textureHeight, ImGui.getWindowWidth() - 20, 300);
+            ImGui.separator();
         }
     }
 
     private void renderScriptComponent() {
-        
+        ScriptComponent scriptComponent = gameObject.get().getComponent(ScriptComponent.class);
+        if (ImGui.collapsingHeader("Script Component")) {
+            ImGui.columns(2);
+            ImGui.text("Script");
+            ImGui.nextColumn();
+            ImString path = new ImString("");
+            ImGui.setNextItemWidth(-50);
+            ImGui.beginDisabled();
+            ImGui.inputText("##TexturePath", path);
+            ImGui.endDisabled();
+            ImGui.sameLine();
+            ImGui.button("ADD");
+            ImGui.columns(1);
+            ImGui.separator();
+        }
     }
 
     private void renderCameraComponent() {
+        CameraComponent cameraComponent = gameObject.get().getComponent(CameraComponent.class);
+        if (ImGui.collapsingHeader("Camera Component")) {
+            ImGui.columns(2);
+            ImGui.text("Viewport");
+            ImGui.nextColumn();
+            float[] viewportX = new float[] { 1.0f };
+            float[] viewportY = new float[] { 1.0f };
+            ImGui.textColored(1.0f, 0.5f, 0.5f, 1.0f, " w ");
+            ImGui.sameLine();
+            ImGui.setNextItemWidth(-1);
+            ImGui.dragFloat("##X", viewportX);
+
+            ImGui.textColored(0.5f, 1.0f, 0.5f, 1.0f, " h ");
+            ImGui.sameLine();
+            ImGui.setNextItemWidth(-1);
+            ImGui.dragFloat("##Y",viewportY);
+            ImGui.nextColumn();
+            ImGui.text("Color");
+            ImGui.nextColumn();
+            float[] color = new float[] { 1.0f, 1.0f, 1.0f };
+            ImGui.setNextItemWidth(-1);
+            ImGui.colorEdit3("##Color", color);
+            ImGui.columns(1);
+            ImGui.separator();
+        }
     }
 
     /**
@@ -235,13 +309,16 @@ public class InspectorWindow implements UIComponent {
         ImGui.begin("Inspector" );
         ImGui.pushStyleVar(ImGuiStyleVar.WindowPadding, 10, 5);
 
-        ImGui.beginChild("##InspectorChild", -1, -1, true);
         ImGui.textDisabled("INSPECTOR");
+        ImGui.beginChild("##InspectorChild", -1, -1, true);
+
         ImGui.pushFont(EditorAssetManager.getInstance().getFonts().get("Default25"));
         if (gameObject != null && gameObject.get() != null) {
             GameObject go = gameObject.get();
             ImGui.columns(2);
             ImGui.setColumnWidth(-1, 100);
+            ImGui.columns(1);
+            ImGui.columns(2);
             ImGui.text("ID");
             ImGui.nextColumn();
             ImString id = new ImString(Objects.requireNonNull(go).getId().toString());

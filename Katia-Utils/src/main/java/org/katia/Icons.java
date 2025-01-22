@@ -1,6 +1,7 @@
 package org.katia;
 
 public class Icons {
+    public static String FileCode = "\uf1c9";
     public static String Image = "\uf03e";
     public static String Cube = "\uf1b2";
     public static String Plus = "\uf055";
