@@ -71,10 +71,10 @@ public class DirectoryExplorerWidget {
     }
 
     public void render() {
-        ImGui.pushStyleColor(ImGuiCol.ChildBg, 0.16f, 0.18f, 0.2f, 1.0f);
+        ImGui.pushStyleColor(ImGuiCol.ChildBg, 0.16f, 0.18f, 0.2f, 0.0f);
         ImGui.beginChild(root, -1, -1, false, ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse);
         ImGui.pushStyleVar(ImGuiStyleVar.FrameBorderSize, 0);
-        ImGui.pushStyleColor(ImGuiCol.ChildBg, 0.2f, 0.22f, 0.24f, 1.0f);
+        ImGui.pushStyleColor(ImGuiCol.ChildBg, 0.2f, 0.22f, 0.24f, 0.0f);
 
         ImGui.beginChild("Path trail", -200, 39);
         ImGui.setCursorPos(10, 10);

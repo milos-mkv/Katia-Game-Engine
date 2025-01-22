@@ -306,10 +306,13 @@ public class InspectorWindow implements UIComponent {
     @Override
     public void render() {
         ImGui.setNextWindowClass(windowClass);
+        ImGui.pushStyleVar(ImGuiStyleVar.WindowPadding, 5, 5);
+
         ImGui.begin("Inspector" );
-        ImGui.pushStyleVar(ImGuiStyleVar.WindowPadding, 10, 5);
 
         ImGui.textDisabled("INSPECTOR");
+        ImGui.pushStyleVar(ImGuiStyleVar.WindowPadding, 10, 5);
+
         ImGui.beginChild("##InspectorChild", -1, -1, true);
 
         ImGui.pushFont(EditorAssetManager.getInstance().getFonts().get("Default25"));
@@ -353,6 +356,8 @@ public class InspectorWindow implements UIComponent {
         ImGui.endChild();
         ImGui.popStyleVar();
         ImGui.end();
+        ImGui.popStyleVar();
+
     }
 
     @Override
