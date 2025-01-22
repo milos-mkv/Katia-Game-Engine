@@ -71,16 +71,15 @@ public class DirectoryExplorerWidget {
     }
 
     public void render() {
-        ImGui.pushStyleColor(ImGuiCol.ChildBg, 0.16f, 0.18f, 0.2f, 0.0f);
         ImGui.beginChild(root, -1, -1, false, ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse);
         ImGui.pushStyleVar(ImGuiStyleVar.FrameBorderSize, 0);
-        ImGui.pushStyleColor(ImGuiCol.ChildBg, 0.2f, 0.22f, 0.24f, 0.0f);
 
         ImGui.beginChild("Path trail", -200, 39);
         ImGui.setCursorPos(10, 10);
         ImGui.text("\uf07c");
         ImGui.sameLine();
         ImGui.setCursorPosY(5);
+        ImGui.pushStyleColor(ImGuiCol.Button, 0, 0, 0, 0);
 
         for (int i = 0; i < dirDepth.size(); i++) {
             if (ImGui.button(FileSystem.getFileName(dirDepth.get(i)))) {
@@ -94,7 +93,7 @@ public class DirectoryExplorerWidget {
                 ImGui.setCursorPosY(5);
             }
         }
-
+        ImGui.popStyleColor();
         ImGui.endChild();
         ImGui.sameLine();
 
@@ -102,9 +101,13 @@ public class DirectoryExplorerWidget {
         ImGui.setCursorPos(10, 10);
         ImGui.text("\uf0b0");
         ImGui.sameLine();
-        ImGui.setCursorPosY(5);
-
+        ImGui.setCursorPosY(7);
+        ImGui.setNextItemWidth(-1);
+        ImGui.pushStyleColor(ImGuiCol.Border, 0.3f, 0.3f, 0.3f, 1.0f);
+        ImGui.pushStyleVar(ImGuiStyleVar.FrameBorderSize, 1);
         ImGui.inputText("##Search", searchBarTxt);
+        ImGui.popStyleVar();
+        ImGui.popStyleColor();
         ImGui.endChild();
         ImGui.beginChild("Directory data window", -1, -20);
         ImGui.pushStyleColor(ImGuiCol.Button, 0, 0, 0, 0);
@@ -210,11 +213,9 @@ public class DirectoryExplorerWidget {
         if (clickedDirectory != null) {
             loadDirectory(clickedDirectory.toString());
         }
-        ImGui.popStyleColor();
         ImGui.popStyleVar();
 
         ImGui.endChild();
-        ImGui.popStyleColor();
     }
 
     /**

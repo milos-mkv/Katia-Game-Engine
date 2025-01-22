@@ -218,7 +218,6 @@ public class Editor {
             ImGui.popStyleColor();
             ImGui.popStyleVar(2);
 
-//            ImGui.dockSpaceOverViewport(ImGui.getMainViewport());
             ImGui.showDemoWindow();
             uiRenderer.render();
             ImGui.render();
