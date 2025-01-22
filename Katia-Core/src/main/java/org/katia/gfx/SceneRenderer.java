@@ -22,14 +22,14 @@ public class SceneRenderer {
     FontRenderer fontRenderer;
     Matrix4f cameraTransform;
     GameObject camera;
-
+    GridRenderer gridRenderer;
     /**
      * Scene renderer constructor.
      */
     public SceneRenderer() {
         Logger.log(Logger.Type.INFO, "Creating scene renderer!");
         fontRenderer = new FontRenderer();
-
+        gridRenderer = new GridRenderer();
 
     }
 
@@ -48,7 +48,9 @@ public class SceneRenderer {
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+        gridRenderer.render(camera);
         AxisMesh.getInstance().render(camera);
+
         QuadMesh.getInstance().use(
                 cameraComponent.getCameraProjection(),
                 camera.getComponent(TransformComponent.class).getTransformMatrix().invert()

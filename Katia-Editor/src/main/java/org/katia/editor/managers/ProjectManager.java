@@ -78,7 +78,7 @@ public class ProjectManager {
             throw new RuntimeException("Failed to create project!");
         }
 
-        String[] dirs = { "assets", "scripts", "scenes" };
+        String[] dirs = { "images", "sounds", "fonts", "prefabs" , "scripts", "scenes" };
         for (String dir : dirs) {
             if (!FileSystem.createDirectory(projectPath + "/" + dir)) {
                 throw new RuntimeException("Failed to create directory : " + dir);
@@ -105,7 +105,7 @@ public class ProjectManager {
         if (configuration == null) {
             return false;
         }
-        String[] dirs = { "assets", "scripts", "scenes" };
+        String[] dirs = { "images", "sounds", "fonts", "prefabs" , "scripts", "scenes" };
         for (String dir : dirs) {
             if (!FileSystem.doesDirectoryExists(path + "/" + dir)) {
                 return false;
