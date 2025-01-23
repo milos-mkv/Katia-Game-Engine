@@ -1,106 +1,140 @@
 package org.katia.editor.popups;
 
-import imgui.ImColor;
-import imgui.ImDrawList;
-import imgui.ImGui;
-import imgui.ImVec2;
-import imgui.flag.ImGuiCol;
-import imgui.flag.ImGuiKey;
-import imgui.flag.ImGuiStyleVar;
-import imgui.flag.ImGuiWindowFlags;
+import imgui.*;
+import imgui.flag.*;
 import imgui.type.ImBoolean;
 import org.katia.FileSystem;
 import org.katia.Icons;
-import org.katia.editor.managers.EditorAssetManager;
+import org.katia.editor.Editor;
+import org.katia.editor.managers.EditorInputManager;
 import org.katia.factory.TextureFactory;
 import org.katia.gfx.Texture;
+import org.lwjgl.glfw.GLFW;
 
 public class ImagePreviewPopup {
 
-    static Texture image;
-    static String path;
+    private static Texture image;
+    private static String path;
+
     public static void setImage(String path) {
         image = TextureFactory.createTexture(path);
         ImagePreviewPopup.path = path;
     }
 
+    /**
+     * Render image preview popup.
+     */
     public static void render() {
         ImVec2 workSize = ImGui.getMainViewport().getWorkSize();
         ImVec2 modalSize = new ImVec2(700, 600);
 
-        ImBoolean unusedOpen = new ImBoolean(true);
-        ImGui.setNextWindowPos(workSize.x / 2 - modalSize.x / 2, workSize.y / 2 - modalSize.y / 2);
+        ImGui.setNextWindowPos((workSize.x - modalSize.x) / 2, (workSize.y - modalSize.y) / 2);
         ImGui.setNextWindowSize(modalSize.x, modalSize.y);
 
-        int flags = ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse | ImGuiWindowFlags.NoTitleBar;
-        ImGui.pushStyleVar(ImGuiStyleVar.WindowPadding, 0, 5);
-        if (ImGui.beginPopupModal("Image Preview", unusedOpen, flags)) {
-            String text = FileSystem.getFileName(path);
-            ImGui.textDisabled(" IMAGE");
-            ImGui.sameLine();
-            ImGui.setCursorPosX(ImGui.getWindowWidth() / 2 - ImGui.calcTextSize(text).x / 2);
-            ImGui.text(text);
-            ImGui.pushFont(EditorAssetManager.getInstance().getFonts().get("Default25"));
-            ImGui.pushStyleColor(ImGuiCol.ScrollbarGrab, 0.8f, 0.4f, 0.4f, 1.0f);
-            ImGui.beginChild("Image Body", -1, -1);
-            renderCheckerboardWithImage(image, image.getWidth(), image.getHeight(), 700, 550);
-            ImGui.endChild();
-            ImGui.popStyleColor();
-            ImGui.popFont();
+        int flags = ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoScrollbar |
+                ImGuiWindowFlags.NoScrollWithMouse | ImGuiWindowFlags.NoTitleBar;
 
-            if (ImGui.isKeyDown(ImGuiKey.Escape)) {
+        ImGui.pushStyleVar(ImGuiStyleVar.WindowPadding, 0, 5);
+        ImGui.pushStyleVar(ImGuiStyleVar.WindowBorderSize, 2);
+        ImGui.pushStyleColor(ImGuiCol.Border, 0.4f, 0.4f, 0.4f, 0.5f);
+
+        if (ImGui.beginPopupModal("Image Preview", new ImBoolean(true), flags)) {
+            renderHeader();
+            renderCheckerboardWithImage(image, image.getWidth(), image.getHeight(), 700, 550);
+            if (EditorInputManager.getInstance().isKeyJustPressed(GLFW.GLFW_KEY_ESCAPE)) {
                 ImGui.closeCurrentPopup();
             }
             ImGui.endPopup();
         }
+
+        ImGui.popStyleColor();
+        ImGui.popStyleVar(2);
+    }
+
+    private static void renderHeader() {
+        String fileName = FileSystem.getFileName(path);
+
+        ImGui.textDisabled(" IMAGE");
+        ImGui.sameLine();
+        centerText(fileName);
+        ImGui.sameLine();
+        ImGui.setCursorPosX(ImGui.getWindowWidth() - 30);
+        setupCloseButton();
+        ImGui.sameLine();
+        ImGui.setCursorPosX(ImGui.getWindowWidth() - 30);
+        ImGui.text(Icons.SquareX);
+        ImGui.popStyleColor();
+    }
+
+    private static void centerText(String text) {
+        ImGui.setCursorPosX((ImGui.getWindowWidth() - ImGui.calcTextSize(text).x) / 2);
+        ImGui.text(text);
+    }
+
+    private static void setupCloseButton() {
+        ImGui.pushStyleVar(ImGuiStyleVar.FrameBorderSize, 0);
+        ImGui.pushStyleColor(ImGuiCol.Button, 0, 0, 0, 0);
+        ImGui.pushStyleColor(ImGuiCol.ButtonHovered, 0, 0, 0, 0);
+        ImGui.pushStyleColor(ImGuiCol.ButtonActive, 0, 0, 0, 0);
+
+        if (ImGui.button(" ")) {
+            ImGui.closeCurrentPopup();
+        }
         ImGui.popStyleVar();
+        ImGui.popStyleColor(3);
+        updateCloseButtonColor();
+    }
+
+    private static void updateCloseButtonColor() {
+        if (ImGui.isItemActive()) {
+            ImGui.pushStyleColor(ImGuiCol.Text, 0.8f, 0.4f, 0.4f, 1.0f);
+        } else if (ImGui.isItemHovered()) {
+            ImGui.pushStyleColor(ImGuiCol.Text, 0.3f, 0.6f, 0.8f, 0.8f);
+        } else {
+            ImGui.pushStyleColor(ImGuiCol.Text, 0.8f, 0.8f, 0.8f, 1.0f);
+        }
     }
 
     public static void renderCheckerboardWithImage(Texture texture, int textureWidth, int textureHeight, float displayWidth, float displayHeight) {
-        // Get ImGui's draw list to draw the checkerboard
         ImDrawList drawList = ImGui.getWindowDrawList();
-
-        // Get the top-left corner of the available space in the current ImGui window
         ImVec2 startPos = ImGui.getCursorScreenPos();
 
-        // Checkerboard settings
-        float checkerSize = 16.0f; // Size of each checkerboard square
+        drawCheckerboard(drawList, startPos, displayWidth, displayHeight);
+        reserveCheckerboardSpace(displayWidth, displayHeight);
+
+        drawImage(texture, textureWidth, textureHeight, displayWidth, displayHeight, startPos);
+    }
+
+    private static void drawCheckerboard(ImDrawList drawList, ImVec2 startPos, float displayWidth, float displayHeight) {
+        float checkerSize = 16.0f;
         int numColumns = (int) Math.ceil(displayWidth / checkerSize);
         int numRows = (int) Math.ceil(displayHeight / checkerSize);
 
-        // Draw the checkerboard pattern
         for (int row = 0; row < numRows; row++) {
             for (int col = 0; col < numColumns; col++) {
-                // Alternate colors
                 boolean isDark = (row + col) % 2 == 0;
                 int color = isDark ? ImColor.intToColor(50, 50, 50, 255) : ImColor.intToColor(100, 100, 100, 255);
-
-                float x0 = startPos.x + col * checkerSize;
-                float y0 = startPos.y + row * checkerSize;
-                float x1 = x0 + checkerSize;
-                float y1 = y0 + checkerSize;
-
-                drawList.addRectFilled(x0, y0, x1, y1, color);
+                drawList.addRectFilled(
+                        startPos.x + col * checkerSize,
+                        startPos.y + row * checkerSize,
+                        startPos.x + (col + 1) * checkerSize,
+                        startPos.y + (row + 1) * checkerSize,
+                        color
+                );
             }
         }
+    }
 
-        // Reserve space for the checkerboard background
+    private static void reserveCheckerboardSpace(float displayWidth, float displayHeight) {
         ImGui.dummy(displayWidth, displayHeight);
-        // Draw the border around the checkerboard
-        int borderColor = ImColor.intToColor(0, 0, 0, 0); // Light gray border color
-        float borderThickness = 2.0f; // Thickness of the border
-        drawList.addRect(startPos.x, startPos.y, startPos.x + displayWidth + 10, startPos.y + displayHeight + 12, borderColor, 0.0f, 0, borderThickness);
+    }
 
-        // Calculate the image's aspect ratio
+    private static void drawImage(Texture texture, int textureWidth, int textureHeight, float displayWidth, float displayHeight, ImVec2 startPos) {
         float aspectRatio = (float) textureWidth / textureHeight;
-
-
-        // Determine the image size
         float scaledWidth = textureWidth;
         float scaledHeight = textureHeight;
 
         if (textureWidth > displayWidth || textureHeight > displayHeight) {
-            // Scale the image only if it exceeds the display dimensions
             scaledWidth = displayWidth;
             scaledHeight = displayWidth / aspectRatio;
 
@@ -109,41 +143,37 @@ public class ImagePreviewPopup {
                 scaledWidth = displayHeight * aspectRatio;
             }
         }
-        // Center the image within the checkerboard
+
         float imageX = startPos.x + (displayWidth - scaledWidth) / 2.0f;
         float imageY = startPos.y + (displayHeight - scaledHeight) / 2.0f;
 
         if (texture != null) {
             ImGui.getWindowDrawList().addImage(texture.getId(), imageX, imageY, imageX + scaledWidth, imageY + scaledHeight);
-            String text = texture.getWidth() + "x" + texture.getHeight();
-            ImVec2 textSize = ImGui.calcTextSize(text);
-
-            float adjustedX = startPos.x + displayWidth - textSize.x + 30.0f; // Subtract text width and margin
-            float adjustedY = startPos.y + displayHeight - textSize.y + 10.0f; // Subtract text height and margin
-
-            renderOutlinedText(drawList, text, adjustedX, adjustedY, ImColor.intToColor(255, 255, 255, 255), ImColor.intToColor(0, 0, 0, 255));
+            renderImageInfo(ImGui.getWindowDrawList(), texture, displayWidth, displayHeight, startPos);
         }
     }
-    public static void renderOutlinedText(ImDrawList drawList, String text, float x, float y, int textColor, int outlineColor) {
-        float outlineThickness = 2.0f; // Thickness of the outline
 
-        // Adjust text position for centering
-        ImVec2 textSize = ImGui.calcTextSize(text);
-        float centerX = x - textSize.x / 2.0f - 20;
-        float centerY = y - textSize.y / 2.0f;
+    private static void renderImageInfo(ImDrawList drawList, Texture texture, float displayWidth, float displayHeight, ImVec2 startPos) {
+        String dimensions = texture.getWidth() + "x" + texture.getHeight();
+        ImVec2 textSize = ImGui.calcTextSize(dimensions);
 
-        // Draw the outline by rendering the text in 8 surrounding positions
-        drawList.addText(centerX - outlineThickness, centerY, outlineColor, text); // Left
-        drawList.addText(centerX + outlineThickness, centerY, outlineColor, text); // Right
-        drawList.addText(centerX, centerY - outlineThickness, outlineColor, text); // Top
-        drawList.addText(centerX, centerY + outlineThickness, outlineColor, text); // Bottom
-        drawList.addText(centerX - outlineThickness, centerY - outlineThickness, outlineColor, text); // Top-left
-        drawList.addText(centerX + outlineThickness, centerY - outlineThickness, outlineColor, text); // Top-right
-        drawList.addText(centerX - outlineThickness, centerY + outlineThickness, outlineColor, text); // Bottom-left
-        drawList.addText(centerX + outlineThickness, centerY + outlineThickness, outlineColor, text); // Bottom-right
+        float adjustedX = startPos.x + displayWidth - textSize.x - 10;
+        float adjustedY = startPos.y + displayHeight - textSize.y - 10;
 
-        // Draw the main text in the center
-        drawList.addText(centerX, centerY, textColor, text);
+        renderOutlinedText(drawList, dimensions, adjustedX, adjustedY, ImColor.intToColor(255, 255, 255, 255), ImColor.intToColor(0, 0, 0, 255));
     }
 
+    private static void renderOutlinedText(ImDrawList drawList, String text, float x, float y, int textColor, int outlineColor) {
+        float outlineThickness = 2.0f;
+
+        for (int dx = -1; dx <= 1; dx++) {
+            for (int dy = -1; dy <= 1; dy++) {
+                if (dx != 0 || dy != 0) {
+                    drawList.addText(x + dx * outlineThickness, y + dy * outlineThickness, outlineColor, text);
+                }
+            }
+        }
+
+        drawList.addText(x, y, textColor, text);
+    }
 }
