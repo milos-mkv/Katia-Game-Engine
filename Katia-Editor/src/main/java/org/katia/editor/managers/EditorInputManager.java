@@ -27,9 +27,9 @@ public class EditorInputManager {
         this.mouseButtonStates = new boolean[GLFW.GLFW_MOUSE_BUTTON_LAST + 1];
         this.lastCursorPosition = new Vector2f(0, 0);
 
-        GLFW.glfwSetScrollCallback(Editor.getInstance().getHandle(), (win, xOffset, yOffset) -> {
-            scrollOffset = yOffset;
-        });
+//        GLFW.glfwSetScrollCallback(Editor.getInstance().getHandle(), (win, xOffset, yOffset) -> {
+//            scrollOffset = yOffset;
+//        });
     }
 
 

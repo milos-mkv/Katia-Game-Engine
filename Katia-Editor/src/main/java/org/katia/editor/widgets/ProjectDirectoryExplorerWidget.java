@@ -1,6 +1,7 @@
 package org.katia.editor.widgets;
 
 import imgui.ImGui;
+import imgui.ImGuiWindowClass;
 import imgui.ImVec2;
 import imgui.flag.ImGuiCol;
 import imgui.flag.ImGuiHoveredFlags;
@@ -12,6 +13,7 @@ import org.katia.Icons;
 import org.katia.Logger;
 import org.katia.editor.Editor;
 import org.katia.editor.managers.EditorAssetManager;
+import org.katia.editor.popups.FontCreatorPopup;
 import org.katia.editor.popups.ImagePreviewPopup;
 import org.katia.factory.TextureFactory;
 import org.katia.gfx.Texture;
@@ -127,6 +129,7 @@ public class ProjectDirectoryExplorerWidget {
         }
         ImGui.endChild();
         Path clickedDirectory = null;
+        Path clickedFile = null;
 
         ImGui.beginChild("Directory data window", -1, -20);
         {
@@ -134,8 +137,9 @@ public class ProjectDirectoryExplorerWidget {
             ImGui.pushStyleColor(ImGuiCol.ButtonActive, 0, 0, 0, 0.4F);
             ImGui.pushStyleColor(ImGuiCol.ButtonHovered, 0.4f, 0.4f, 0.4f, 0.4F);
             ImGui.pushFont(EditorAssetManager.getInstance().getFonts().get("Text15"));
-
+            int fileIndex = 0;
             for (Path entry : data) {
+                fileIndex++;
                 String filename = FileSystem.getFilenameWithoutExtension(entry.getFileName().toString());
 
                 if (!searchBarTxt.get().isEmpty() && !filename.contains(searchBarTxt.get())) {
@@ -164,13 +168,16 @@ public class ProjectDirectoryExplorerWidget {
                 renderTruncatedText(filename, 90);
                 ImGui.setCursorPos(cur.x, cur.y);
 
-                if (ImGui.button("##" + filename, 100, 110)) {
+                if (ImGui.button("##" + filename + fileIndex , 100, 110)) {
                     if (Files.isDirectory(entry)) {
+
                         clickedDirectory = entry;
-                    }
-                    if (FileSystem.isImageFile(entry.getFileName().toString())) {
-                        ImGui.openPopup("Image Preview");
-                        ImagePreviewPopup.setImage(entry.toString());
+                        Logger.log(clickedDirectory.toString());
+
+                    } else {
+//                    if (FileSystem.isImageFile(entry.getFileName().toString())) {
+                        clickedFile = entry;
+                        Logger.log(clickedFile.toString());
                     }
                 }
                 if (ImGui.isItemHovered(ImGuiHoveredFlags.None)) {
@@ -197,7 +204,6 @@ public class ProjectDirectoryExplorerWidget {
             ImGui.popFont();
             ImGui.popStyleColor(3);
         }
-        ImagePreviewPopup.render();
         ImGui.endChild();
         ImGui.pushFont(EditorAssetManager.getInstance().getFonts().get("Text15"));
         ImGui.textDisabled(path);
@@ -206,9 +212,24 @@ public class ProjectDirectoryExplorerWidget {
         if (clickedDirectory != null) {
             loadDirectory(clickedDirectory.toString());
         }
+
         ImGui.popStyleVar();
 
         ImGui.endChild();
+        if (clickedFile != null) {
+            if (FileSystem.isImageFile(clickedFile.toString())) {
+                ImGui.openPopup("Image Preview");
+                ImagePreviewPopup.setImage(clickedFile.toString());
+            }
+            if (FileSystem.isFontFile(clickedFile.toString())) {
+                System.out.println("WT");
+                ImGui.openPopup("Font Creator");
+                FontCreatorPopup.setFont(clickedFile.toString());
+            }
+        }
+        ImagePreviewPopup.render();
+
+        FontCreatorPopup.render();
     }
 
     /**

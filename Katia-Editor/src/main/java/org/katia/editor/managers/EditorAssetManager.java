@@ -6,6 +6,7 @@ import imgui.ImGuiIO;
 import imgui.internal.ImGui;
 import lombok.Data;
 import lombok.Getter;
+import org.katia.factory.FontFactory;
 import org.katia.factory.TextureFactory;
 import org.katia.gfx.Texture;
 
@@ -51,6 +52,8 @@ public class EditorAssetManager {
         fonts.put("Default40", io.getFonts().addFontFromFileTTF("./Katia-Editor/src/main/resources/fonts/Roboto-ExtraBold.ttf", 40.0f));
         io.getFonts().addFontFromFileTTF("./Katia-Editor/src/main/resources/fonts/fa-solid-900.ttf", 40.0f, config, iconRanges);
         io.getFonts().build();
+
+        FontFactory.initialize();
     }
 
     private void loadImages() {

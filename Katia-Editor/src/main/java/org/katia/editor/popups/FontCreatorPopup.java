@@ -1,26 +1,35 @@
 package org.katia.editor.popups;
 
-import imgui.*;
-import imgui.flag.*;
+import imgui.ImColor;
+import imgui.ImDrawList;
+import imgui.ImGui;
+import imgui.ImVec2;
+import imgui.flag.ImGuiCol;
+import imgui.flag.ImGuiStyleVar;
+import imgui.flag.ImGuiWindowFlags;
 import imgui.type.ImBoolean;
 import org.katia.FileSystem;
 import org.katia.Icons;
-import org.katia.editor.Editor;
+import org.katia.Logger;
 import org.katia.editor.managers.EditorInputManager;
+import org.katia.factory.FontFactory;
 import org.katia.factory.TextureFactory;
+import org.katia.gfx.Font;
 import org.katia.gfx.Texture;
 import org.lwjgl.glfw.GLFW;
 
-public class ImagePreviewPopup {
+public class FontCreatorPopup {
 
-    private static Texture image;
+
     private static String path;
     private static boolean isSet = false;
+    static Font font;
 
-    public static void setImage(String path) {
-        image = TextureFactory.createTexture(path);
-        ImagePreviewPopup.path = path;
+    public static void setFont(String path) {
+        FontCreatorPopup.path = path;
         isSet = true;
+        font = FontFactory.createFont(path, 120, 512, 512);
+        Logger.log("WTF");
     }
 
     /**
@@ -43,9 +52,9 @@ public class ImagePreviewPopup {
         ImGui.pushStyleVar(ImGuiStyleVar.WindowBorderSize, 2);
         ImGui.pushStyleColor(ImGuiCol.Border, 0.4f, 0.4f, 0.4f, 0.5f);
 
-        if (ImGui.beginPopupModal("Image Preview", new ImBoolean(true), flags)) {
+        if (ImGui.beginPopupModal("Font Creator", new ImBoolean(true), flags)) {
             renderHeader();
-            renderCheckerboardWithImage(image, image.getWidth(), image.getHeight(), 700, 550);
+            renderBody();
             if (EditorInputManager.getInstance().isKeyJustPressed(GLFW.GLFW_KEY_ESCAPE)) {
                 ImGui.closeCurrentPopup();
                 isSet = false;
@@ -57,10 +66,16 @@ public class ImagePreviewPopup {
         ImGui.popStyleVar(2);
     }
 
+    private static void renderBody() {
+        ImGui.beginChild("##FontBody", -1, -1, true);
+        ImGui.image(font.getTexture().getId(), 512, 512);
+        ImGui.endChild();
+    }
+
     private static void renderHeader() {
         String fileName = FileSystem.getFileName(path);
 
-        ImGui.textDisabled(" IMAGE");
+        ImGui.textDisabled(" FONT");
         ImGui.sameLine();
         centerText(fileName);
         ImGui.sameLine();
@@ -183,4 +198,5 @@ public class ImagePreviewPopup {
 
         drawList.addText(x, y, textColor, text);
     }
+
 }

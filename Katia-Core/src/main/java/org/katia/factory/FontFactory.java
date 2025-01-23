@@ -1,5 +1,9 @@
 package org.katia.factory;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import org.katia.FileSystem;
 import org.katia.Logger;
 import org.katia.gfx.Font;
@@ -61,6 +65,16 @@ public abstract class FontFactory {
             font.setTexture(TextureFactory.createTexture(imagePath));
             fonts.put(path, font);
 
+            ObjectMapper objectMapper = new ObjectMapper();
+            objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+            objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+            objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
+            try {
+               String json = objectMapper.writeValueAsString(font);
+                Logger.log(Logger.Type.SUCCESS, json);
+            } catch (JsonProcessingException e) {
+                Logger.log(Logger.Type.ERROR, e.toString());
+            }
             return font;
         } catch (IOException e) {
             Logger.log(Logger.Type.ERROR, "Failed to load font file:", path, e.toString());

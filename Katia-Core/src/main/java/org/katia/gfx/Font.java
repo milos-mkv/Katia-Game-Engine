@@ -1,6 +1,7 @@
 package org.katia.gfx;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,6 +13,7 @@ import java.nio.ByteBuffer;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@JsonSerialize
 public class Font {
 
     String path;
@@ -19,7 +21,9 @@ public class Font {
     int bitmapWidth;
     int bitmapHeight;
     STBTTBakedChar.Buffer charData;
+    @JsonIgnore
     ByteBuffer bitmap;
+    @JsonIgnore
     Texture texture;
 
     /**
