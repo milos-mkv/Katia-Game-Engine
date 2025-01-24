@@ -47,12 +47,13 @@ public class EditorAssetManager {
         io.getFonts().build();
 
         fonts.put("Default25", io.getFonts().addFontFromFileTTF("./Katia-Editor/src/main/resources/fonts/JetBrainsMono-Medium.ttf", 25.0f));
+        io.getFonts().addFontFromFileTTF("./Katia-Editor/src/main/resources/fonts/fa-solid-900.ttf", 25.0f, config, iconRanges);
+        io.getFonts().build();
         fonts.put("Default15", io.getFonts().addFontFromFileTTF("./Katia-Editor/src/main/resources/fonts/Roboto-Regular.ttf", 25.0f));
         fonts.put("Text15", io.getFonts().addFontFromFileTTF("./Katia-Editor/src/main/resources/fonts/Roboto-Regular.ttf", 15));
 
         fonts.put("Default40", io.getFonts().addFontFromFileTTF("./Katia-Editor/src/main/resources/fonts/Roboto-ExtraBold.ttf", 40.0f));
-        io.getFonts().addFontFromFileTTF("./Katia-Editor/src/main/resources/fonts/fa-solid-900.ttf", 40.0f, config, iconRanges);
-        io.getFonts().build();
+
 
         FontFactory.initialize();
         SceneFactory.initialize();

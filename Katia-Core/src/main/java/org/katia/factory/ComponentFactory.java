@@ -15,6 +15,7 @@ public abstract class ComponentFactory {
             case "Sprite" -> new SpriteComponent();
             case "Camera" -> new CameraComponent();
             case "Script" -> new ScriptComponent();
+            case "Text" -> new TextComponent();
             default -> null;
         };
     }

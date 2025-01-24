@@ -14,6 +14,7 @@ import org.katia.Logger;
 import org.katia.core.GameObject;
 import org.katia.core.components.*;
 import org.katia.editor.managers.EditorAssetManager;
+import org.katia.factory.ComponentFactory;
 import org.katia.factory.GameObjectFactory;
 import org.katia.factory.TextureFactory;
 import org.katia.gfx.Texture;
@@ -33,18 +34,18 @@ public class InspectorWindow implements UIComponent {
     public InspectorWindow() {
         Logger.log(Logger.Type.INFO, "Creating inspector window ...");
         gameObject = new WeakReference<GameObject>(null);
-        gameObject1 = GameObjectFactory.createGameObject("Test 1");
-        SpriteComponent spriteComponent = new SpriteComponent();
-        spriteComponent.setTexture("C:\\Users\\milos\\Documents\\GitHub\\Katia-Game-Engine\\Katia-Editor\\src\\main\\resources\\images\\logo.png");
-        gameObject1.addComponent(spriteComponent);
-
-        ScriptComponent scriptComponent = new ScriptComponent();
-        gameObject1.addComponent(scriptComponent);
-
-        TextComponent textComponent = new TextComponent();
-        gameObject1.addComponent(textComponent);
-        gameObject1.addComponent(new CameraComponent());
-        gameObject = new WeakReference<>(gameObject1);
+//        gameObject1 = GameObjectFactory.createGameObject("Test 1");
+//        SpriteComponent spriteComponent = new SpriteComponent();
+//        spriteComponent.setTexture("C:\\Users\\milos\\Documents\\GitHub\\Katia-Game-Engine\\Katia-Editor\\src\\main\\resources\\images\\logo.png");
+//        gameObject1.addComponent(spriteComponent);
+//
+//        ScriptComponent scriptComponent = new ScriptComponent();
+//        gameObject1.addComponent(scriptComponent);
+//
+//        TextComponent textComponent = new TextComponent();
+//        gameObject1.addComponent(textComponent);
+//        gameObject1.addComponent(new CameraComponent());
+//        gameObject = new WeakReference<>(gameObject1);
         components = new LinkedHashMap<>();
         components.put("Transform", this::renderTransformComponent);
         components.put("Sprite", this::renderSpriteComponent);
@@ -56,6 +57,39 @@ public class InspectorWindow implements UIComponent {
         windowClass.setDockNodeFlagsOverrideSet(
                 ImGuiDockNodeFlags.NoDockingOverMe | ImGuiDockNodeFlags.NoDockingSplitMe | ImGuiDockNodeFlags.NoCloseButton | ImGuiDockNodeFlags.NoTabBar);
 
+    }
+    private void renderAddComponentContextMenu(GameObject gameObject) {
+        if (ImGui.beginPopup("Add Component Menu")) {
+            for (String componentType : components.keySet()) {
+                boolean hasComponent = gameObject.getComponent(Component.components.get(componentType)) != null;
+
+                if (componentType.equals("Transform")) {
+                    ImGui.beginDisabled();
+                }
+                if (ImGui.menuItem(componentType, hasComponent ? Icons.Check : null)) {
+                    if (hasComponent) {
+                        gameObject.removeComponent(componentType);
+                    } else {
+                        gameObject.addComponent(Objects.requireNonNull(ComponentFactory.createComponent(componentType)));
+                    }
+                }
+                if (componentType.equals("Transform")) {
+                    ImGui.endDisabled();
+                }
+            }
+            ImGui.endPopup();
+        }
+    }
+
+    public void removeSelectedGameObjectEventCallback(Object object) {
+        GameObject gameObject = (GameObject) object;
+        if ((this.gameObject.get() == gameObject) || (gameObject.isChild(this.gameObject.get()))) {
+            this.gameObject.clear();
+        }
+    }
+
+    public void setGameObject(GameObject gameObject) {
+        this.gameObject = new WeakReference<>(gameObject);
     }
 
     private void renderTextComponent() {
@@ -316,7 +350,7 @@ public class InspectorWindow implements UIComponent {
         ImGui.beginChild("##InspectorChild", -1, -1, true);
 
         ImGui.pushFont(EditorAssetManager.getInstance().getFonts().get("Default25"));
-        if (false && gameObject != null && gameObject.get() != null) {
+        if (gameObject != null && gameObject.get() != null) {
             GameObject go = gameObject.get();
             ImGui.columns(2);
             ImGui.setColumnWidth(-1, 100);
@@ -347,10 +381,15 @@ public class InspectorWindow implements UIComponent {
             ImGui.columns(1);
             ImGui.separator();
             ImGui.text("Components");
-
+            ImGui.sameLine();
+            if (ImGui.button(Icons.Plus)) {
+                ImGui.openPopup("Add Component Menu");
+            }
             for (Component component : go.getComponents().values()) {
                 components.get(component.getComponentType()).run();
             }
+
+            renderAddComponentContextMenu(gameObject.get());
         }
         ImGui.popFont();
         ImGui.endChild();

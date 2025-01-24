@@ -2,15 +2,23 @@ package org.katia.editor.windows;
 
 import imgui.ImGui;
 import imgui.ImGuiWindowClass;
+import imgui.ImVec2;
+import imgui.flag.ImGuiMouseButton;
 import imgui.flag.ImGuiStyleVar;
 import imgui.internal.flag.ImGuiDockNodeFlags;
 import org.katia.Logger;
 import org.katia.editor.popups.ErrorPopup;
+import org.katia.editor.renderer.EditorCameraController;
+import org.katia.editor.renderer.EditorSceneRenderer;
+import org.katia.editor.renderer.Settings;
 import org.katia.factory.TextureFactory;
 
 public class SceneWindow implements UIComponent {
     ImGuiWindowClass windowClass;
+    private ImVec2 mouseLastPosition;
+
     public SceneWindow() {
+        mouseLastPosition = new ImVec2(0, 0);
         Logger.log(Logger.Type.INFO, "Creating scene window ...");
         windowClass= new ImGuiWindowClass();
         windowClass.setDockNodeFlagsOverrideSet(
@@ -23,15 +31,29 @@ public class SceneWindow implements UIComponent {
         ImGui.pushStyleVar(ImGuiStyleVar.WindowPadding, 5, 5);
 
         ImGui.begin("Scene");
+        Settings.w = ImGui.getWindowWidth();
+        Settings.h = ImGui.getWindowHeight();
         ImGui.pushStyleVar(ImGuiStyleVar.WindowPadding, 10, 5);
 
         ImGui.textDisabled("SCENE");
         ImGui.beginChild("##SceneChild", -1, -1, true);
-        if (ImGui.button("ASD")) {
-            ErrorPopup.open("ASD");
+        ImGui.image(EditorSceneRenderer.getInstance().getFrameBuffer().getTexture(), ImGui.getWindowWidth(), ImGui.getWindowHeight());
+
+
+        ImVec2 currentMouseCursor = ImGui.getMousePos();
+
+
+        if (ImGui.isWindowHovered() && ImGui.isMouseDragging(ImGuiMouseButton.Right)) {
+            EditorCameraController.getInstance()
+                    .move((mouseLastPosition.x -currentMouseCursor.x), (mouseLastPosition.y - currentMouseCursor.y ));
         }
 
-        ErrorPopup.render();
+        if (ImGui.isWindowHovered() && ImGui.getIO().getMouseWheel() != 0.0f) {
+            EditorCameraController.getInstance().zoom((float) (ImGui.getIO().getMouseWheel() * 0.1));
+        }
+
+        mouseLastPosition = currentMouseCursor;
+
         ImGui.endChild();
         ImGui.popStyleVar();
 

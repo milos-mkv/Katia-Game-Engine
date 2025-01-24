@@ -34,12 +34,34 @@ public class SceneRenderer {
 
     }
 
+    public void render(Scene scene, GameObject camera) {
+        this.camera = camera;
+        scene.setSize(new Vector2i(0, 0));
+        CameraComponent cameraComponent = camera.getComponent(CameraComponent.class);
+        var backgroundColor = cameraComponent.getBackground();
+        cameraTransform = camera.getComponent(TransformComponent.class).getTransformMatrix();
+        glClearColor(backgroundColor.x, backgroundColor.y, backgroundColor.z, 0.0f);
+        glClear(GL_COLOR_BUFFER_BIT);
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glEnable(GL_LINE_SMOOTH);
+        glLineWidth(2);
+        gridRenderer.render(camera);
+        AxisMesh.getInstance().render(camera);
+
+        QuadMesh.getInstance().use(
+                cameraComponent.getCameraProjection(),
+                camera.getComponent(TransformComponent.class).getTransformMatrix().invert()
+        );
+        renderGameObject(scene.getRootGameObject());
+    }
+
     /**
      * Render provided scene.
      * @param scene Scene.
      */
     public void render(Scene scene) {
-         camera = scene.find("Main Camera");
+        camera = scene.find("Main Camera");
         scene.setSize(new Vector2i(0, 0));
         CameraComponent cameraComponent = camera.getComponent(CameraComponent.class);
         var backgroundColor = cameraComponent.getBackground();

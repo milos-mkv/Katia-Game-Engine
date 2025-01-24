@@ -14,6 +14,7 @@ import org.katia.Logger;
 import org.katia.editor.managers.EditorAssetManager;
 import org.katia.editor.menubar.MainMenuBar;
 import org.katia.editor.menubar.MenuAction;
+import org.katia.editor.renderer.EditorSceneRenderer;
 import org.katia.editor.windows.UIRenderer;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWDropCallback;
@@ -198,6 +199,7 @@ public class Editor {
         GLFW.glfwSwapInterval(0);
         while (!GLFW.glfwWindowShouldClose(handle)) {
             GLFW.glfwPollEvents();
+            EditorSceneRenderer.getInstance().render(800, 600);
             glClearColor(0.14f, 0.16f, 0.18f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT);
             imGuiImplGlfw.newFrame();
