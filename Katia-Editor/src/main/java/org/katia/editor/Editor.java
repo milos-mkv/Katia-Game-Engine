@@ -218,7 +218,7 @@ public class Editor {
             ImGui.end();
             ImGui.popStyleColor();
             ImGui.popStyleVar(2);
-
+            ImGui.showDemoWindow();
             uiRenderer.render();
             ImGui.render();
             imGuiImplGl3.renderDrawData(ImGui.getDrawData());

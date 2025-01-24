@@ -34,7 +34,7 @@ public abstract class SceneFactory {
      * @return Scene
      */
     public static Scene createScene(String name, int width, int height) {
-        Scene scene = new Scene(name, width, height);
+        Scene scene = new Scene(name);
         addCustomScriptPath(scene);
 
         GameObject mainCameraGameObject = GameObjectFactory.createGameObject("Main Camera");

@@ -135,12 +135,12 @@ public class ImagePreviewPopup {
     private static void reserveCheckerboardSpace(float displayWidth, float displayHeight) {
         ImGui.dummy(displayWidth, displayHeight);
     }
-
     private static void drawImage(Texture texture, int textureWidth, int textureHeight, float displayWidth, float displayHeight, ImVec2 startPos) {
         float aspectRatio = (float) textureWidth / textureHeight;
         float scaledWidth = textureWidth;
         float scaledHeight = textureHeight;
 
+        // Scale the image to fit within the display area
         if (textureWidth > displayWidth || textureHeight > displayHeight) {
             scaledWidth = displayWidth;
             scaledHeight = displayWidth / aspectRatio;
@@ -155,10 +155,52 @@ public class ImagePreviewPopup {
         float imageY = startPos.y + (displayHeight - scaledHeight) / 2.0f;
 
         if (texture != null) {
+            // Draw the main image
             ImGui.getWindowDrawList().addImage(texture.getId(), imageX, imageY, imageX + scaledWidth, imageY + scaledHeight);
+
+            // Check if the mouse is hovering over the image
+            if (ImGui.isMouseHoveringRect(imageX, imageY, imageX + scaledWidth, imageY + scaledHeight)) {
+               ImGui.pushStyleVar(ImGuiStyleVar.WindowPadding, 5, 5);
+                ImGui.beginTooltip();
+
+                // Display image dimensions
+//                ImGui.text(String.format("Dimensions: %dx%d", textureWidth, textureHeight));
+
+                // Calculate the mouse position relative to the image
+                float mouseX = ImGui.getMousePosX() - imageX;
+                float mouseY = ImGui.getMousePosY() - imageY;
+
+                // Normalize mouse coordinates to UV space (0.0 to 1.0)
+                float uvMouseX = mouseX / scaledWidth;
+                float uvMouseY = mouseY / scaledHeight;
+
+                // Define the zoom level
+                float zoomFactor = 0.05f; // 25% of the image
+
+                // Calculate UV coordinates for the zoomed-in area
+                float uvStartX = Math.max(uvMouseX - zoomFactor / 2, 0.0f);
+                float uvStartY = Math.max(uvMouseY - zoomFactor / 2, 0.0f);
+                float uvEndX = Math.min(uvMouseX + zoomFactor / 2, 1.0f);
+                float uvEndY = Math.min(uvMouseY + zoomFactor / 2, 1.0f);
+
+                // Ensure UVs stay within valid bounds
+                if (uvStartX < 0.0f) uvStartX = 0.0f;
+                if (uvStartY < 0.0f) uvStartY = 0.0f;
+                if (uvEndX > 1.0f) uvEndX = 1.0f;
+                if (uvEndY > 1.0f) uvEndY = 1.0f;
+
+                // Render the zoomed-in part of the image in the tooltip
+                float zoomSize = 150.0f; // Size of the zoom preview
+                ImGui.image(texture.getId(), zoomSize, zoomSize, uvStartX, uvStartY, uvEndX, uvEndY);
+
+                ImGui.endTooltip();
+                ImGui.popStyleVar();
+            }
+
             renderImageInfo(ImGui.getWindowDrawList(), texture, displayWidth, displayHeight, startPos);
         }
     }
+
 
     private static void renderImageInfo(ImDrawList drawList, Texture texture, float displayWidth, float displayHeight, ImVec2 startPos) {
         String dimensions = texture.getWidth() + "x" + texture.getHeight();

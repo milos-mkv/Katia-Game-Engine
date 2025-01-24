@@ -25,9 +25,9 @@ public class Scene {
      * Constructor.
      * @param name Scene name.
      */
-    public Scene(String name, int width, int height) {
+    public Scene(String name) {
         this.name = name;
-        this.size = new Vector2i(width, height);
+        this.size = new Vector2i(0, 0);
         this.rootGameObject = GameObjectFactory.createGameObject("Root");
     }
 

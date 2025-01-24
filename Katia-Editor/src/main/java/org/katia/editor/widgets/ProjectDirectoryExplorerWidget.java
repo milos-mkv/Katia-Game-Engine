@@ -13,6 +13,7 @@ import org.katia.Icons;
 import org.katia.Logger;
 import org.katia.editor.Editor;
 import org.katia.editor.managers.EditorAssetManager;
+import org.katia.editor.popups.ErrorPopup;
 import org.katia.editor.popups.FontCreatorPopup;
 import org.katia.editor.popups.ImagePreviewPopup;
 import org.katia.factory.TextureFactory;
@@ -228,7 +229,7 @@ public class ProjectDirectoryExplorerWidget {
             }
         }
         ImagePreviewPopup.render();
-
+        ErrorPopup.render();
         FontCreatorPopup.render();
     }
 

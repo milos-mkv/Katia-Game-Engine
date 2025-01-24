@@ -2,6 +2,7 @@ package org.katia.gfx;
 
 import lombok.Getter;
 import org.joml.Matrix4f;
+import org.joml.Vector2i;
 import org.katia.Logger;
 import org.katia.core.GameObject;
 import org.katia.core.Scene;
@@ -39,7 +40,7 @@ public class SceneRenderer {
      */
     public void render(Scene scene) {
          camera = scene.find("Main Camera");
-
+        scene.setSize(new Vector2i(0, 0));
         CameraComponent cameraComponent = camera.getComponent(CameraComponent.class);
         var backgroundColor = cameraComponent.getBackground();
         cameraTransform = camera.getComponent(TransformComponent.class).getTransformMatrix();

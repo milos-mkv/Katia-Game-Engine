@@ -5,6 +5,7 @@ import imgui.ImGuiWindowClass;
 import imgui.flag.ImGuiStyleVar;
 import imgui.internal.flag.ImGuiDockNodeFlags;
 import org.katia.Logger;
+import org.katia.editor.popups.ErrorPopup;
 import org.katia.factory.TextureFactory;
 
 public class SceneWindow implements UIComponent {
@@ -26,7 +27,11 @@ public class SceneWindow implements UIComponent {
 
         ImGui.textDisabled("SCENE");
         ImGui.beginChild("##SceneChild", -1, -1, true);
+        if (ImGui.button("ASD")) {
+            ErrorPopup.open("ASD");
+        }
 
+        ErrorPopup.render();
         ImGui.endChild();
         ImGui.popStyleVar();
 

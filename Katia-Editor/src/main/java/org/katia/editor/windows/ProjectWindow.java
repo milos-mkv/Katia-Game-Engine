@@ -43,7 +43,7 @@ public class ProjectWindow implements UIComponent {
         ImGui.beginChild("##ProjectChild", -1, -1, true);
 
 
-        if (!pm.isActive()) {
+        if (pm.isActive()) {
             renderProjectOpen();
         } else {
             renderProjectNotOpen();

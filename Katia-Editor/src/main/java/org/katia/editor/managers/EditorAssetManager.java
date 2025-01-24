@@ -7,6 +7,7 @@ import imgui.internal.ImGui;
 import lombok.Data;
 import lombok.Getter;
 import org.katia.factory.FontFactory;
+import org.katia.factory.SceneFactory;
 import org.katia.factory.TextureFactory;
 import org.katia.gfx.Texture;
 
@@ -54,6 +55,7 @@ public class EditorAssetManager {
         io.getFonts().build();
 
         FontFactory.initialize();
+        SceneFactory.initialize();
     }
 
     private void loadImages() {

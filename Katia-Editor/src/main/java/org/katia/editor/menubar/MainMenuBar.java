@@ -12,7 +12,9 @@ import org.katia.editor.EditorUtils;
 import org.katia.editor.managers.EditorAssetManager;
 import org.katia.editor.managers.ProjectManager;
 import org.katia.editor.popups.CreateNewProjectPopup;
+import org.katia.editor.popups.CreateNewScenePopup;
 import org.katia.editor.popups.ErrorPopup;
+import org.katia.editor.popups.OpenScenePopup;
 import org.katia.editor.windows.UIComponent;
 import org.lwjgl.glfw.GLFW;
 
@@ -113,10 +115,17 @@ public class MainMenuBar implements UIComponent {
         if (this.actions.get(MenuAction.EXIT)) {
             exitAction();
         }
+        if (this.actions.get(MenuAction.CREATE_NEW_SCENE)) {
+            CreateNewScenePopup.getInstance().open();
+        }
+        if (this.actions.get(MenuAction.OPEN_SCENE)) {
+            OpenScenePopup.getInstance().open();
+        }
         CreateNewProjectPopup.render();
-
+        CreateNewScenePopup.getInstance().render();
+        OpenScenePopup.getInstance().render();
         actions.replaceAll((key, value) -> false);
-        ErrorPopup.render();
+//        ErrorPopup.render();
     }
 
     /**

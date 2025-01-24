@@ -1,5 +1,9 @@
 package org.katia.editor.managers;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import lombok.Data;
 import lombok.Getter;
 import org.katia.FileSystem;
@@ -54,8 +58,10 @@ public class ProjectManager {
         if (!validateProjectStructure(path)) {
             throw new RuntimeException("Project structure is corrupted!");
         }
-
+        this.path = path;
         this.active = true;
+        this.configuration = Configuration.load(path + "/katia-conf.json");
+        System.out.println(configuration);
         Editor.getInstance().getUiRenderer().get(ProjectWindow.class).getDirectoryExplorerWidget().setRootDirectory(path);
         ProjectAssetManager.getInstance().loadProject(path);
     }
