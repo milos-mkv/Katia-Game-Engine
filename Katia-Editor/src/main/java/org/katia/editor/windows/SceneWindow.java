@@ -38,7 +38,7 @@ public class SceneWindow implements UIComponent {
 
         ImGui.textDisabled("SCENE");
         ImGui.beginChild("##SceneChild", -1, -1, true, ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse);
-        ImGui.image(EditorSceneRenderer.getInstance().getFrameBuffer().getTexture(), ImGui.getWindowWidth() -6, ImGui.getWindowHeight()- 6);
+        ImGui.image(EditorSceneRenderer.getInstance().getFrameBuffer().getTexture(), ImGui.getWindowWidth() -6, ImGui.getWindowHeight() - 6, 0, 1, 1, 0);
 
 
         ImVec2 currentMouseCursor = ImGui.getMousePos();
@@ -46,7 +46,7 @@ public class SceneWindow implements UIComponent {
 
         if (ImGui.isWindowHovered() && ImGui.isMouseDragging(ImGuiMouseButton.Right)) {
             EditorCameraController.getInstance()
-                    .move((mouseLastPosition.x -currentMouseCursor.x), (mouseLastPosition.y - currentMouseCursor.y ));
+                    .move((mouseLastPosition.x -currentMouseCursor.x), ( currentMouseCursor.y - mouseLastPosition.y ));
         }
 
         if (ImGui.isWindowHovered() && ImGui.getIO().getMouseWheel() != 0.0f) {

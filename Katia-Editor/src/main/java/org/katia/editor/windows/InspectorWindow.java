@@ -14,6 +14,7 @@ import org.katia.Icons;
 import org.katia.Logger;
 import org.katia.core.GameObject;
 import org.katia.core.components.*;
+import org.katia.editor.EditorUtils;
 import org.katia.editor.managers.EditorAssetManager;
 import org.katia.editor.popups.SelectImagePopup;
 import org.katia.factory.ComponentFactory;
@@ -220,7 +221,15 @@ public class InspectorWindow implements UIComponent {
 
             var cursor = ImGui.getCursorPos();
             if (ImGui.button("  ")) {
-                SelectImagePopup.getInstance().open();
+//                SelectImagePopup.getInstance().open();
+
+               String o = EditorUtils.openFileDialog();
+               if (o != null) {
+                   spriteComponent.setTexture(o);
+//                   spriteComponent.setPath(o);
+               }
+
+
             }
             ImGui.popStyleVar();
             ImGui.popStyleColor(3);

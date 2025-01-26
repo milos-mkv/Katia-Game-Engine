@@ -87,6 +87,7 @@ public class SceneRenderer {
      * @param gameObject Game Object.
      */
     private void renderGameObject(GameObject gameObject) {
+
         SpriteComponent spriteComponent = gameObject.getComponent(SpriteComponent.class);
         // NOTE: Render only game object that has sprite component and which texture is set.
         if (spriteComponent != null && spriteComponent.getTexture() != null) {
