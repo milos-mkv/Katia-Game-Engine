@@ -5,6 +5,7 @@ import imgui.ImGuiWindowClass;
 import imgui.ImVec2;
 import imgui.flag.ImGuiMouseButton;
 import imgui.flag.ImGuiStyleVar;
+import imgui.flag.ImGuiWindowFlags;
 import imgui.internal.flag.ImGuiDockNodeFlags;
 import org.katia.Logger;
 import org.katia.editor.popups.ErrorPopup;
@@ -33,11 +34,11 @@ public class SceneWindow implements UIComponent {
         ImGui.begin("Scene");
         Settings.w = ImGui.getWindowWidth();
         Settings.h = ImGui.getWindowHeight();
-        ImGui.pushStyleVar(ImGuiStyleVar.WindowPadding, 10, 5);
+        ImGui.pushStyleVar(ImGuiStyleVar.WindowPadding, 3, 3);
 
         ImGui.textDisabled("SCENE");
-        ImGui.beginChild("##SceneChild", -1, -1, true);
-        ImGui.image(EditorSceneRenderer.getInstance().getFrameBuffer().getTexture(), ImGui.getWindowWidth(), ImGui.getWindowHeight());
+        ImGui.beginChild("##SceneChild", -1, -1, true, ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse);
+        ImGui.image(EditorSceneRenderer.getInstance().getFrameBuffer().getTexture(), ImGui.getWindowWidth() -6, ImGui.getWindowHeight()- 6);
 
 
         ImVec2 currentMouseCursor = ImGui.getMousePos();

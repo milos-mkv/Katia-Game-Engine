@@ -24,7 +24,7 @@ public class EditorCameraController {
     public EditorCameraController() {
         camera = GameObjectFactory.createGameObject("Editor Camera Controller");
         camera.addComponent(new CameraComponent());
-        camera.getComponent(CameraComponent.class).setBackground(new Vector3f(0.15f, 0.15f, 0.15f));
+        camera.getComponent(CameraComponent.class).setBackground(new Vector3f(0.1f, 0.1f, 0.1f));
         camera.getComponent(TransformComponent.class).setPosition(new Vector3f(0, 0, 0));
     }
 

@@ -1,6 +1,7 @@
 package org.katia.editor.windows;
 
 import imgui.*;
+import imgui.flag.ImGuiCol;
 import imgui.flag.ImGuiStyleVar;
 import imgui.flag.ImGuiWindowFlags;
 import imgui.internal.flag.ImGuiDockNodeFlags;
@@ -14,6 +15,7 @@ import org.katia.Logger;
 import org.katia.core.GameObject;
 import org.katia.core.components.*;
 import org.katia.editor.managers.EditorAssetManager;
+import org.katia.editor.popups.SelectImagePopup;
 import org.katia.factory.ComponentFactory;
 import org.katia.factory.GameObjectFactory;
 import org.katia.factory.TextureFactory;
@@ -34,18 +36,7 @@ public class InspectorWindow implements UIComponent {
     public InspectorWindow() {
         Logger.log(Logger.Type.INFO, "Creating inspector window ...");
         gameObject = new WeakReference<GameObject>(null);
-//        gameObject1 = GameObjectFactory.createGameObject("Test 1");
-//        SpriteComponent spriteComponent = new SpriteComponent();
-//        spriteComponent.setTexture("C:\\Users\\milos\\Documents\\GitHub\\Katia-Game-Engine\\Katia-Editor\\src\\main\\resources\\images\\logo.png");
-//        gameObject1.addComponent(spriteComponent);
-//
-//        ScriptComponent scriptComponent = new ScriptComponent();
-//        gameObject1.addComponent(scriptComponent);
-//
-//        TextComponent textComponent = new TextComponent();
-//        gameObject1.addComponent(textComponent);
-//        gameObject1.addComponent(new CameraComponent());
-//        gameObject = new WeakReference<>(gameObject1);
+
         components = new LinkedHashMap<>();
         components.put("Transform", this::renderTransformComponent);
         components.put("Sprite", this::renderSpriteComponent);
@@ -205,26 +196,48 @@ public class InspectorWindow implements UIComponent {
         // Draw the main text in the center
         drawList.addText(centerX, centerY, textColor, text);
     }
+
     /**
      * Render sprite component items.
      */
     private void renderSpriteComponent() {
-        SpriteComponent spriteComponent = gameObject.get().getComponent(SpriteComponent.class);
+        SpriteComponent spriteComponent = Objects.requireNonNull(gameObject.get()).getComponent(SpriteComponent.class);
         if (ImGui.collapsingHeader("Sprite Component")) {
             ImGui.columns(2);
-            ImGui.button("     ", 90, 30);
-            ImGui.sameLine();
-            ImGui.pushFont(EditorAssetManager.getInstance().getFonts().get("Default"));
-            ImGui.setCursorPosX(ImGui.getCursorPosX() - 62);
-            ImGui.setCursorPosY(ImGui.getCursorPosY() + 2);
-            ImGui.text(Icons.Image);
-            ImGui.popFont();
+//            ImGui.button("     ", 90, 30);
+            ImGui.text("Sprite");
             ImGui.nextColumn();
             ImString path = new ImString("");
-            ImGui.setNextItemWidth(-1);
+            ImGui.setNextItemWidth(-30);
             ImGui.beginDisabled();
             ImGui.inputText("##TexturePath", path);
             ImGui.endDisabled();
+            ImGui.sameLine();
+            ImGui.pushStyleVar(ImGuiStyleVar.FrameBorderSize, 0);
+            ImGui.pushStyleColor(ImGuiCol.Button, 0, 0, 0, 0);
+            ImGui.pushStyleColor(ImGuiCol.ButtonHovered, 0, 0, 0, 0);
+            ImGui.pushStyleColor(ImGuiCol.ButtonActive, 0, 0, 0, 0);
+
+            var cursor = ImGui.getCursorPos();
+            if (ImGui.button("  ")) {
+                SelectImagePopup.getInstance().open();
+            }
+            ImGui.popStyleVar();
+            ImGui.popStyleColor(3);
+
+            if (ImGui.isItemActive()) {
+                ImGui.pushStyleColor(ImGuiCol.Text, 0.8f, 0.4f, 0.4f, 1.0f);
+            } else if (ImGui.isItemHovered()) {
+                ImGui.pushStyleColor(ImGuiCol.Text, 0.3f, 0.6f, 0.8f, 0.8f);
+            } else {
+                ImGui.pushStyleColor(ImGuiCol.Text, 0.8f, 0.8f, 0.8f, 1.0f);
+            }
+            ImGui.sameLine();
+            ImGui.setCursorPos(cursor.x + 1, cursor.y + 2);
+            ImGui.text(Icons.Folder);
+            ImGui.popStyleColor();
+
+//            ImGui.popFont();
             ImGui.columns(1);
 
             Texture texture = spriteComponent.getTexture();
@@ -233,7 +246,10 @@ public class InspectorWindow implements UIComponent {
             renderCheckerboardWithImage(spriteComponent.getTexture(),
                     textureWidth, textureHeight, ImGui.getWindowWidth() - 20, 300);
             ImGui.separator();
+
         }
+        SelectImagePopup.getInstance().render();
+
     }
 
     private void renderScriptComponent() {

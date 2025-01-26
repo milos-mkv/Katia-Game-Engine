@@ -12,10 +12,13 @@ import lombok.Data;
 import lombok.Getter;
 import org.katia.Logger;
 import org.katia.editor.managers.EditorAssetManager;
+import org.katia.editor.managers.EditorSceneManager;
+import org.katia.editor.managers.ProjectManager;
 import org.katia.editor.menubar.MainMenuBar;
 import org.katia.editor.menubar.MenuAction;
 import org.katia.editor.renderer.EditorSceneRenderer;
 import org.katia.editor.windows.UIRenderer;
+import org.katia.managers.SceneManager;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWDropCallback;
 import org.lwjgl.glfw.GLFWVidMode;
@@ -197,6 +200,9 @@ public class Editor {
     public void run() {
         Logger.log(Logger.Type.INFO, "Run editor ...");
         GLFW.glfwSwapInterval(0);
+
+        ProjectManager.getInstance().openProject("C:\\Users\\milos\\Desktop\\Demo Game");
+        EditorSceneManager.getInstance().openScene("C:\\Users\\milos\\Desktop\\Demo Game\\scenes\\MainScene.scene");
         while (!GLFW.glfwWindowShouldClose(handle)) {
             GLFW.glfwPollEvents();
             EditorSceneRenderer.getInstance().render(800, 600);
