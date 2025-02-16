@@ -201,8 +201,8 @@ public class Editor {
         Logger.log(Logger.Type.INFO, "Run editor ...");
         GLFW.glfwSwapInterval(0);
 
-        ProjectManager.getInstance().openProject("C:\\Users\\milos\\Desktop\\Demo Game");
-        EditorSceneManager.getInstance().openScene("C:\\Users\\milos\\Desktop\\Demo Game\\scenes\\MainScene.scene");
+//        ProjectManager.getInstance().openProject("C:\\Users\\milos\\Desktop\\Demo Game");
+//        EditorSceneManager.getInstance().openScene("C:\\Users\\milos\\Desktop\\Demo Game\\scenes\\MainScene.scene");
         while (!GLFW.glfwWindowShouldClose(handle)) {
             GLFW.glfwPollEvents();
             EditorSceneRenderer.getInstance().render(800, 600);

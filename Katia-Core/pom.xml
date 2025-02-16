@@ -18,7 +18,7 @@
         <lwjgl.version>3.3.3</lwjgl.version>
         <joml.version>1.10.7</joml.version>
         <joml-primitives.version>1.10.0</joml-primitives.version>
-        <lwjgl.natives>natives-windows</lwjgl.natives>
+        <lwjgl.natives>natives-linux</lwjgl.natives>
     </properties>
 
 
@@ -67,6 +67,7 @@
             <groupId>org.lwjgl</groupId>
             <artifactId>lwjgl-freetype</artifactId>
         </dependency>
+
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>

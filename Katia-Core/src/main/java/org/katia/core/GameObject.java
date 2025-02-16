@@ -201,13 +201,13 @@ public class GameObject {
         return false;
     }
 
-    @Override
-    protected void finalize() throws Throwable {
-        try {
-            System.out.println("Removing: " + this.name + " : " + this.id);
-            super.finalize();
-        } catch (Throwable e) {
-            throw new RuntimeException(e);
-        }
-    }
+//    @Override
+//    protected void finalize() throws Throwable {
+//        try {
+//            System.out.println("Removing: " + this.name + " : " + this.id);
+//            super.finalize();
+//        } catch (Throwable e) {
+//            throw new RuntimeException(e);
+//        }
+//    }
 }
