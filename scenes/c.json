@@ -47,12 +47,6 @@
       "name" : "Test",
       "children" : [ ],
       "components" : {
-        "org.katia.core.components.ScriptComponent" : {
-          "type" : "ScriptComponent",
-          "componentType" : "Script",
-          "name" : null,
-          "path" : "C:\\Users\\milos\\Documents\\Github\\Katia-Game-Engine\\Katia-Core\\src\\main\\resources\\scripts\\Behaviour.lua"
-        },
         "org.katia.core.components.TransformComponent" : {
           "type" : "TransformComponent",
           "componentType" : "Transform",

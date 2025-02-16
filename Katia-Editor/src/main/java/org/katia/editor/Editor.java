@@ -201,8 +201,8 @@ public class Editor {
         Logger.log(Logger.Type.INFO, "Run editor ...");
         GLFW.glfwSwapInterval(0);
 
-//        ProjectManager.getInstance().openProject("C:\\Users\\milos\\Desktop\\Demo Game");
-//        EditorSceneManager.getInstance().openScene("C:\\Users\\milos\\Desktop\\Demo Game\\scenes\\MainScene.scene");
+        ProjectManager.getInstance().openProject("/home/mmilicevic/Desktop/test");
+        EditorSceneManager.getInstance().openScene("/home/mmilicevic/Desktop/test/scenes/MainScene.scene");
         while (!GLFW.glfwWindowShouldClose(handle)) {
             GLFW.glfwPollEvents();
             EditorSceneRenderer.getInstance().render(800, 600);
@@ -226,7 +226,6 @@ public class Editor {
             ImGui.end();
             ImGui.popStyleColor();
             ImGui.popStyleVar(2);
-            ImGui.showDemoWindow();
             uiRenderer.render();
             ImGui.render();
             imGuiImplGl3.renderDrawData(ImGui.getDrawData());

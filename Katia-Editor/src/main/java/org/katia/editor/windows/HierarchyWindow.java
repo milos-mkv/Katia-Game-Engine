@@ -2,17 +2,22 @@ package org.katia.editor.windows;
 
 import imgui.ImGui;
 import imgui.ImGuiWindowClass;
+import imgui.ImVec2;
+import imgui.flag.ImGuiCol;
 import imgui.flag.ImGuiHoveredFlags;
 import imgui.flag.ImGuiStyleVar;
 import imgui.flag.ImGuiTreeNodeFlags;
 import imgui.internal.flag.ImGuiDockNodeFlags;
+import org.joml.Vector3f;
 import org.katia.Icons;
 import org.katia.Logger;
 import org.katia.core.GameObject;
 import org.katia.core.Scene;
+import org.katia.core.components.TransformComponent;
 import org.katia.editor.Editor;
 import org.katia.editor.managers.EditorAssetManager;
 import org.katia.editor.managers.EditorSceneManager;
+import org.katia.editor.renderer.EditorCameraController;
 import org.katia.factory.GameObjectFactory;
 
 public class HierarchyWindow implements UIComponent {
@@ -20,6 +25,7 @@ public class HierarchyWindow implements UIComponent {
     private GameObject gameObjectToMove;
     private GameObject gameObjectToMoveTo;
     private int gameObjectToMoveNewIndex;
+    private int treeIndex;
 
     private GameObject gameObjectToDelete;
     public HierarchyWindow() {
@@ -31,6 +37,7 @@ public class HierarchyWindow implements UIComponent {
         gameObjectToMoveTo = null;
         gameObjectToDelete = null;
         gameObjectToMoveNewIndex = 0;
+        treeIndex = 0;
     }
 
     @Override
@@ -46,6 +53,7 @@ public class HierarchyWindow implements UIComponent {
 
         Scene scene = EditorSceneManager.getInstance().getScene();
         if (scene != null) {
+            treeIndex = 0;
             ImGui.text(scene.getName());
             ImGui.pushFont(EditorAssetManager.getInstance().getFonts().get("Default25"));
             int index = 0;
@@ -67,11 +75,29 @@ public class HierarchyWindow implements UIComponent {
     }
 
     private void displayGameObject(GameObject gameObject) {
+        treeIndex++;
         ImGui.pushID(gameObject.getId().toString());
+        boolean isEvenRow = treeIndex % 2 == 0;
+
+        if (isEvenRow) {
+            ImVec2 cursorPos = ImGui.getCursorScreenPos();
+            ImVec2 availableSize = ImGui.getContentRegionAvail();
+            ImGui.getWindowDrawList().addRectFilled(0, cursorPos.y - 5,
+                    cursorPos.x + availableSize.x + 3, cursorPos.y + ImGui.getTextLineHeightWithSpacing(),
+                    ImGui.getColorU32(0.1f, 0.1f, 0.1f, 0.3f)); // Dark gray color
+        }
         int flag = (ImGuiTreeNodeFlags.SpanFullWidth | ImGuiTreeNodeFlags.OpenOnArrow);
         boolean open = ImGui.treeNodeEx(Icons.Cube + " " + gameObject.getName(), flag);
+
         if (ImGui.isItemHovered(ImGuiHoveredFlags.None)) {
             if (ImGui.isMouseDoubleClicked(0)) {
+                EditorCameraController.getInstance().getCamera().getComponent(TransformComponent.class).setPosition(
+                       new Vector3f(
+                               gameObject.getComponent(TransformComponent.class).getPosition().x,
+                               gameObject.getComponent(TransformComponent.class).getPosition().y,
+                               0
+                       )
+                );
 //                EngineCameraController
 //                        .getInstance().getTransform().getPosition().x = gameObject.getComponent(TransformComponent.class).getPosition().x;
 //                EngineCameraController
@@ -96,12 +122,12 @@ public class HierarchyWindow implements UIComponent {
 
 
             displayGameObjectContextMenu(gameObject);
-            int index = 0;
+            int childIndex = 0;
             for (GameObject childGameObject : gameObject.getChildren()) {
                 ImGui.separator();
-                setDragTargetForGameObjectReorder(index, gameObject);
+                setDragTargetForGameObjectReorder(childIndex, gameObject);
                 displayGameObject(childGameObject);
-                index++;
+                childIndex++;
             }
             ImGui.treePop();
         } else {
