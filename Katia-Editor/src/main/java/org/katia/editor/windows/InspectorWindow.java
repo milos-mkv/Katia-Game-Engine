@@ -9,7 +9,9 @@ import imgui.type.ImBoolean;
 import imgui.type.ImFloat;
 import imgui.type.ImString;
 import lombok.Data;
+import org.joml.Vector2f;
 import org.joml.Vector3f;
+import org.katia.FileSystem;
 import org.katia.Icons;
 import org.katia.Logger;
 import org.katia.core.GameObject;
@@ -23,6 +25,8 @@ import org.katia.factory.TextureFactory;
 import org.katia.gfx.Texture;
 
 import java.lang.ref.WeakReference;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -32,8 +36,9 @@ public class InspectorWindow implements UIComponent {
 
     WeakReference<GameObject> gameObject;
     GameObject gameObject1;
-     Map<String, Runnable> components;
-     ImGuiWindowClass windowClass;
+    Map<String, Runnable> components;
+    ImGuiWindowClass windowClass;
+
     public InspectorWindow() {
         Logger.log(Logger.Type.INFO, "Creating inspector window ...");
         gameObject = new WeakReference<GameObject>(null);
@@ -48,8 +53,8 @@ public class InspectorWindow implements UIComponent {
         windowClass= new ImGuiWindowClass();
         windowClass.setDockNodeFlagsOverrideSet(
                 ImGuiDockNodeFlags.NoDockingOverMe | ImGuiDockNodeFlags.NoDockingSplitMe | ImGuiDockNodeFlags.NoCloseButton | ImGuiDockNodeFlags.NoTabBar);
-
     }
+
     private void renderAddComponentContextMenu(GameObject gameObject) {
         if (ImGui.beginPopup("Add Component Menu")) {
             for (String componentType : components.keySet()) {
@@ -205,13 +210,23 @@ public class InspectorWindow implements UIComponent {
         SpriteComponent spriteComponent = Objects.requireNonNull(gameObject.get()).getComponent(SpriteComponent.class);
         if (ImGui.collapsingHeader("Sprite Component")) {
             ImGui.columns(2);
-//            ImGui.button("     ", 90, 30);
             ImGui.text("Sprite");
             ImGui.nextColumn();
-            ImString path = new ImString("");
+            ImString path = new ImString(
+                    spriteComponent.getPath() != null ?
+                    Paths.get(spriteComponent.getPath()).getFileName().toString()
+                    : "");
             ImGui.setNextItemWidth(-30);
             ImGui.beginDisabled();
             ImGui.inputText("##TexturePath", path);
+            if (ImGui.beginDragDropTarget()) {
+                Path payload = ImGui.acceptDragDropPayload("ImageFile");
+                if (payload != null ) {
+                    System.out.println(payload.toString());
+                    spriteComponent.setTexture(payload.toString());
+                }
+                ImGui.endDragDropTarget();
+            }
             ImGui.endDisabled();
             ImGui.sameLine();
             ImGui.pushStyleVar(ImGuiStyleVar.FrameBorderSize, 0);
@@ -221,15 +236,8 @@ public class InspectorWindow implements UIComponent {
 
             var cursor = ImGui.getCursorPos();
             if (ImGui.button("  ")) {
-//                SelectImagePopup.getInstance().open();
-
-               String o = EditorUtils.openFileDialog();
-               if (o != null) {
-                   spriteComponent.setTexture(o);
-//                   spriteComponent.setPath(o);
-               }
-
-
+                gameObject.get().removeComponent("Sprite");
+                gameObject.get().addComponent(ComponentFactory.createComponent("Sprite"));
             }
             ImGui.popStyleVar();
             ImGui.popStyleColor(3);
@@ -243,7 +251,7 @@ public class InspectorWindow implements UIComponent {
             }
             ImGui.sameLine();
             ImGui.setCursorPos(cursor.x + 1, cursor.y + 2);
-            ImGui.text(Icons.Folder);
+            ImGui.text(Icons.Trash);
             ImGui.popStyleColor();
 
 //            ImGui.popFont();
@@ -261,32 +269,64 @@ public class InspectorWindow implements UIComponent {
 
     }
 
+    /**
+     * Render script component.
+     */
     private void renderScriptComponent() {
-        ScriptComponent scriptComponent = gameObject.get().getComponent(ScriptComponent.class);
+        ScriptComponent scriptComponent = Objects.requireNonNull(gameObject.get()).getComponent(ScriptComponent.class);
         if (ImGui.collapsingHeader("Script Component")) {
             ImGui.columns(2);
             ImGui.text("Script");
             ImGui.nextColumn();
-            ImString path = new ImString("");
-            ImGui.setNextItemWidth(-50);
+            ImString path = new ImString(scriptComponent.getPath() != null ? scriptComponent.getName() : "");
+            ImGui.setNextItemWidth(-35);
             ImGui.beginDisabled();
-            ImGui.inputText("##TexturePath", path);
+            ImGui.inputText("##sciptPath", path);
+            if (ImGui.beginDragDropTarget()) {
+                Path payload = ImGui.acceptDragDropPayload("LuaScript");
+                if (payload != null ) {
+                    System.out.println(payload.toString());
+                    scriptComponent.addScriptFile(payload.getFileName().toString(), payload.toString());
+                }
+                ImGui.endDragDropTarget();
+            }
             ImGui.endDisabled();
             ImGui.sameLine();
-            ImGui.button("ADD");
+            var cur = ImGui.getCursorPos();
+            ImGui.pushStyleVar(ImGuiStyleVar.FrameBorderSize, 0);
+            ImGui.pushStyleColor(ImGuiCol.Button, 0, 0, 0, 0);
+            ImGui.pushStyleColor(ImGuiCol.ButtonActive, 0, 0, 0, 0);
+            ImGui.pushStyleColor(ImGuiCol.ButtonHovered, 0, 0, 0, 0);
+            if (ImGui.button("  ##AddScript")) {
+                gameObject.get().removeComponent("Scrpit");
+                gameObject.get().addComponent(ComponentFactory.createComponent("Script"));
+            }
+            ImGui.popStyleColor(3);
+            ImGui.popStyleVar();
+            if (ImGui.isItemHovered()) {
+                ImGui.pushStyleColor(ImGuiCol.Text, 0.3f, 0.3f, 0.3f, 0.9f);
+            } else {
+                ImGui.pushStyleColor(ImGuiCol.Text, 0.4f, 0.4f, 0.4f, 0.9f);
+            }
+            ImGui.setCursorPos(cur.x + 5, cur.y + 3);
+            ImGui.text(Icons.Trash);
+            ImGui.popStyleColor();
             ImGui.columns(1);
             ImGui.separator();
         }
     }
 
+    /**
+     * Render camera component.
+     */
     private void renderCameraComponent() {
-        CameraComponent cameraComponent = gameObject.get().getComponent(CameraComponent.class);
+        CameraComponent cameraComponent = Objects.requireNonNull(gameObject.get()).getComponent(CameraComponent.class);
         if (ImGui.collapsingHeader("Camera Component")) {
             ImGui.columns(2);
             ImGui.text("Viewport");
             ImGui.nextColumn();
-            float[] viewportX = new float[] { 1.0f };
-            float[] viewportY = new float[] { 1.0f };
+            float[] viewportX = new float[] { cameraComponent.getViewport().x };
+            float[] viewportY = new float[] { cameraComponent.getViewport().y };
             ImGui.textColored(1.0f, 0.5f, 0.5f, 1.0f, " w ");
             ImGui.sameLine();
             ImGui.setNextItemWidth(-1);
@@ -298,12 +338,17 @@ public class InspectorWindow implements UIComponent {
             ImGui.dragFloat("##Y",viewportY);
             ImGui.nextColumn();
             ImGui.text("Color");
+
+            cameraComponent.setViewport(new Vector2f(viewportX[0], viewportY[0]));
+
             ImGui.nextColumn();
-            float[] color = new float[] { 1.0f, 1.0f, 1.0f };
+            Vector3f bgColor = cameraComponent.getBackground();
+            float[] color = new float[] { bgColor.x, bgColor.y, bgColor.z };
             ImGui.setNextItemWidth(-1);
             ImGui.colorEdit3("##Color", color);
             ImGui.columns(1);
             ImGui.separator();
+            cameraComponent.setBackground(new Vector3f(color[0], color[1], color[2]));
         }
     }
 
@@ -311,10 +356,9 @@ public class InspectorWindow implements UIComponent {
      * Render transform component items.
      */
     private void renderTransformComponent() {
-        TransformComponent transformComponent = gameObject.get().getComponent(TransformComponent.class);
+        TransformComponent transformComponent = Objects.requireNonNull(gameObject.get()).getComponent(TransformComponent.class);
         if (ImGui.collapsingHeader("Transform Component")) {
             ImGui.columns(2);
-
             float[] positionX = new float[] { transformComponent.getPosition().x };
             float[] positionY = new float[] { transformComponent.getPosition().y };
             ImGui.text("Position");
@@ -362,6 +406,9 @@ public class InspectorWindow implements UIComponent {
         }
     }
 
+    /**
+     * Render inspector window.
+     */
     @Override
     public void render() {
         ImGui.setNextWindowClass(windowClass);
@@ -405,15 +452,30 @@ public class InspectorWindow implements UIComponent {
             go.setActive(active.get());
             ImGui.columns(1);
             ImGui.separator();
-            ImGui.text("Components");
+            ImGui.textDisabled("Components");
             ImGui.sameLine();
-            if (ImGui.button(Icons.Plus)) {
+            ImGui.pushStyleColor(ImGuiCol.Button, 0, 0, 0, 0);
+            ImGui.pushStyleColor(ImGuiCol.ButtonHovered, 0, 0, 0, 0);
+            ImGui.pushStyleColor(ImGuiCol.ButtonActive, 0, 0, 0, 0);
+            ImGui.pushStyleVar(ImGuiStyleVar.FrameBorderSize, 0);
+            var cur = ImGui.getCursorPos();
+            if (ImGui.button("  ##AddComponent")) {
                 ImGui.openPopup("Add Component Menu");
             }
+            ImGui.popStyleVar();
+            ImGui.popStyleColor(3);
+
+            if (ImGui.isItemHovered()) {
+                ImGui.pushStyleColor(ImGuiCol.Text, 0.8f, 0.3f, 0.3f, 1f);
+            } else {
+                ImGui.pushStyleColor(ImGuiCol.Text, 0.3f, 0.8f, 0.3f, 1f);
+            }
+            ImGui.setCursorPos(cur.x + 4, cur.y + 3);
+            ImGui.text(Icons.Plus);
+            ImGui.popStyleColor();
             for (Component component : go.getComponents().values()) {
                 components.get(component.getComponentType()).run();
             }
-
             renderAddComponentContextMenu(gameObject.get());
         }
         ImGui.popFont();
@@ -421,7 +483,6 @@ public class InspectorWindow implements UIComponent {
         ImGui.popStyleVar();
         ImGui.end();
         ImGui.popStyleVar();
-
     }
 
     @Override

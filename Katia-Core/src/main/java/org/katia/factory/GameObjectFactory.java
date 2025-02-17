@@ -43,6 +43,19 @@ public class GameObjectFactory {
         return gameObject;
     }
 
+    public static GameObject copy(GameObject gameObject) {
+        GameObject copy = generateGameObjectFromJson(generateJsonFromGameObject(gameObject));
+        setUUID(copy);
+        return copy;
+    }
+
+    private static void setUUID(GameObject gameObject) {
+        gameObject.setId(UUID.randomUUID());
+        for (var child : gameObject.getChildren()) {
+            setUUID(child);
+        }
+    }
+
     /**
      * Create game object with provided component.
      * @param component Component type.

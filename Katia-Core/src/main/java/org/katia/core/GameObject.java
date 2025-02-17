@@ -21,7 +21,7 @@ public class GameObject {
     private UUID id;
     private String name;
     private List<GameObject> children;
-    private HashMap<Class<?>, Component> components;
+    private Map<Class<?>, Component> components;
     @Getter
     private boolean active;
 

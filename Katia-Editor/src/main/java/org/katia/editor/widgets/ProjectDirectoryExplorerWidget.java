@@ -181,6 +181,22 @@ public class ProjectDirectoryExplorerWidget {
                         Logger.log(clickedFile.toString());
                     }
                 }
+                if (!Files.isDirectory(entry) && Objects.equals(ext, "lua")) {
+                    if (ImGui.beginDragDropSource()) {
+                        ImGui.setDragDropPayload("LuaScript", entry);
+                        ImGui.text(entry.toString());
+                        ImGui.endDragDropSource();
+                    }
+                }
+                if (FileSystem.isImageFile(entry.toString())) {
+                    if (ImGui.beginDragDropSource()) {
+                        ImGui.setDragDropPayload("ImageFile", entry);
+                        ImGui.text(entry.toString());
+                        ImGui.endDragDropSource();
+                    }
+                }
+
+
                 if (ImGui.isItemHovered(ImGuiHoveredFlags.None)) {
                     if (ImGui.isMouseDoubleClicked(0) && Desktop.isDesktopSupported()) {
                         if (!Files.isDirectory(entry) && Objects.equals(ext, "lua")) {

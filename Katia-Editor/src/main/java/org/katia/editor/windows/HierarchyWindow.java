@@ -222,9 +222,7 @@ public class HierarchyWindow implements UIComponent {
                 ImGui.beginDisabled();
             }
             if (ImGui.menuItem(" Paste") && copyGameObject != null) {
-                GameObject copy = GameObjectFactory.generateGameObjectFromJson(GameObjectFactory.generateJsonFromGameObject(copyGameObject));
-                copy.setId(UUID.randomUUID());
-                scene.addGameObject(copy);
+                scene.addGameObject(GameObjectFactory.copy(copyGameObject));
             }
             if (copyGameObject == null) {
                 ImGui.endDisabled();
@@ -261,9 +259,7 @@ public class HierarchyWindow implements UIComponent {
                 ImGui.beginDisabled();
             }
             if (ImGui.menuItem(" Paste") && copyGameObject != null) {
-                GameObject copy = GameObjectFactory.generateGameObjectFromJson(GameObjectFactory.generateJsonFromGameObject(copyGameObject));
-                copy.setId(UUID.randomUUID());
-                gameObject.addChild(copy);
+                gameObject.addChild(GameObjectFactory.copy(copyGameObject));
             }
             if (copyGameObject == null) {
                 ImGui.endDisabled();

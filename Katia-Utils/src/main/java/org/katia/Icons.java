@@ -1,6 +1,8 @@
 package org.katia;
 
 public class Icons {
+    public static String Trash = "\uf1f8";
+    public static String Pen = "\uf304";
     public static String Code = "\uf1c9";
     public static String Camera = "\uf030";
     public static String Font = "\uf031";
