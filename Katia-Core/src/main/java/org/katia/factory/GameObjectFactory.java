@@ -44,6 +44,17 @@ public class GameObjectFactory {
     }
 
     /**
+     * Create game object with provided component.
+     * @param component Component type.
+     * @return GameObject
+     */
+    public static GameObject createGameObjectWithComponent(String component) {
+        GameObject gameObject = GameObjectFactory.createGameObject();
+        gameObject.addComponent(Objects.requireNonNull(ComponentFactory.createComponent(component)));
+        return gameObject;
+    }
+
+    /**
      * Generate json from game object.
      * @param gameObject Game Object.
      * @return String

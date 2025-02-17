@@ -5,15 +5,16 @@ Katia Game Engine
 
 ---
 #### Windows (Docks)
-- [ ] Hierarchy Window
+- [x] Hierarchy Window
+  - [x] Improve looks (Add icons etc.)
   - [x] Create game object
   - [x] Delete game object
   - [x] Reorder game objects
-  - [ ] Create component based game objects
-  - [ ] Copy game object
+  - [x] Create component based game objects
+  - [x] Copy/Paste game object
   - [x] Add stripes
-  - [ ] Click on game object open in inspector
-  - [ ] Double click on game object move camera on it
+  - [x] Click on game object open in inspector
+  - [x] Double click on game object move camera on it
 - [ ] Scene Window
 - [ ] Project Window
 - [ ] Inspector Window

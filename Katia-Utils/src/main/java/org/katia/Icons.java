@@ -1,6 +1,9 @@
 package org.katia;
 
 public class Icons {
+    public static String Code = "\uf1c9";
+    public static String Camera = "\uf030";
+    public static String Font = "\uf031";
     public static String FileVideo = "\uf1c8";
     public static String Filter = "\uf0b0";
     public static String FileCode = "\uf1c9";
