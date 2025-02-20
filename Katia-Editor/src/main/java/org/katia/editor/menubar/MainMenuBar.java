@@ -5,17 +5,21 @@ import imgui.flag.ImGuiCol;
 import imgui.flag.ImGuiStyleVar;
 import imgui.flag.ImGuiWindowFlags;
 import lombok.Data;
+import org.katia.FileSystem;
 import org.katia.Icons;
 import org.katia.Logger;
+import org.katia.core.Scene;
 import org.katia.editor.Editor;
 import org.katia.editor.EditorUtils;
 import org.katia.editor.managers.EditorAssetManager;
+import org.katia.editor.managers.EditorSceneManager;
 import org.katia.editor.managers.ProjectManager;
 import org.katia.editor.popups.CreateNewProjectPopup;
 import org.katia.editor.popups.CreateNewScenePopup;
 import org.katia.editor.popups.ErrorPopup;
 import org.katia.editor.popups.OpenScenePopup;
 import org.katia.editor.windows.UIComponent;
+import org.katia.factory.SceneFactory;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.HashMap;
@@ -121,6 +125,15 @@ public class MainMenuBar implements UIComponent {
         if (this.actions.get(MenuAction.OPEN_SCENE)) {
             OpenScenePopup.getInstance().open();
         }
+        if (this.actions.get(MenuAction.SAVE_SCENE)) {
+            Logger.log(Logger.Type.INFO, "SAVE SCENE!");
+            Scene scene = EditorSceneManager.getInstance().getScene();
+            String json = SceneFactory.generateJsonFromScene(scene);
+
+            FileSystem.saveToFile(EditorSceneManager.getInstance().getPath(),
+                    json);
+
+        }
         CreateNewProjectPopup.render();
         CreateNewScenePopup.getInstance().render();
         OpenScenePopup.getInstance().render();
@@ -146,6 +159,7 @@ public class MainMenuBar implements UIComponent {
         if (ImGui.beginMenu("Scene")) {
             this.actions.put(MenuAction.CREATE_NEW_SCENE, ImGui.menuItem("New Scene"));
             this.actions.put(MenuAction.OPEN_SCENE, ImGui.menuItem("Open Scene"));
+            this.actions.put(MenuAction.SAVE_SCENE, ImGui.menuItem("Save Scene"));
             ImGui.endMenu();
         }
     }

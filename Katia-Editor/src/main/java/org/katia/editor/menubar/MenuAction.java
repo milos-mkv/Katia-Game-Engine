@@ -8,6 +8,7 @@ public enum MenuAction {
 
     CREATE_NEW_SCENE,
     OPEN_SCENE,
+    SAVE_SCENE,
 
     PROJECT_SETTINGS,
 

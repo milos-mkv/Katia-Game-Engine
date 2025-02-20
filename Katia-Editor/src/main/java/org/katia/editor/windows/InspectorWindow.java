@@ -11,6 +11,7 @@ import imgui.type.ImString;
 import lombok.Data;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
+import org.joml.Vector4f;
 import org.katia.FileSystem;
 import org.katia.Icons;
 import org.katia.Logger;
@@ -20,8 +21,10 @@ import org.katia.editor.EditorUtils;
 import org.katia.editor.managers.EditorAssetManager;
 import org.katia.editor.popups.SelectImagePopup;
 import org.katia.factory.ComponentFactory;
+import org.katia.factory.FontFactory;
 import org.katia.factory.GameObjectFactory;
 import org.katia.factory.TextureFactory;
+import org.katia.gfx.Font;
 import org.katia.gfx.Texture;
 
 import java.lang.ref.WeakReference;
@@ -95,25 +98,62 @@ public class InspectorWindow implements UIComponent {
             ImGui.columns(2);
             ImGui.text("Font");
             ImGui.nextColumn();
-            ImGui.setNextItemWidth(-1);
-            ImGui.inputText("##Font", new ImString(""));
+            ImGui.setNextItemWidth(-35);
+            ImGui.beginDisabled();
+            ImGui.inputText("##Font", new ImString(textComponent.getFont() != null ?
+                    Paths.get(textComponent.getFontPath()).getFileName().toString() : ""));
+            if (ImGui.beginDragDropTarget()) {
+                Path payload = ImGui.acceptDragDropPayload("FontFile");
+                if (payload != null ) {
+                    Font font = FontFactory.createFont(payload.toString(), 72, 512, 512);
+                    textComponent.setFont(font);
+                    textComponent.setFontPath(payload.toString());
+                }
+                ImGui.endDragDropTarget();
+            }
+            ImGui.endDisabled();
+            ImGui.sameLine();
+            var cur = ImGui.getCursorPos();
+            ImGui.pushStyleVar(ImGuiStyleVar.FrameBorderSize, 0);
+            ImGui.pushStyleColor(ImGuiCol.Button, 0, 0, 0, 0);
+            ImGui.pushStyleColor(ImGuiCol.ButtonActive, 0, 0, 0, 0);
+            ImGui.pushStyleColor(ImGuiCol.ButtonHovered, 0, 0, 0, 0);
+            if (ImGui.button("  ##AddFont")) {
+            }
+            ImGui.popStyleColor(3);
+            ImGui.popStyleVar();
+            if (ImGui.isItemHovered()) {
+                ImGui.pushStyleColor(ImGuiCol.Text, 0.3f, 0.3f, 0.3f, 0.9f);
+            } else {
+                ImGui.pushStyleColor(ImGuiCol.Text, 0.4f, 0.4f, 0.4f, 0.9f);
+            }
+            ImGui.setCursorPos(cur.x + 5, cur.y + 3);
+            ImGui.text(Icons.Trash);
+            ImGui.popStyleColor();
             ImGui.nextColumn();
             ImGui.text("Text");
             ImGui.nextColumn();
-            ImString textt = new ImString("");
-            ImGui.inputTextMultiline("##Text", textt, -1, 70 );
+            ImString textt = new ImString();
+            textt.set(textComponent.getText());
+            ImGui.inputTextMultiline("##Text", textt, -1, 70);
             ImGui.nextColumn();
+            textComponent.setText(textt.toString());
+
             ImGui.text("Color");
             ImGui.nextColumn();
-            float[] colors = new float[] { 1.0f, 1.0f, 0.5f, 1.0f };
+            Vector4f textColor = textComponent.getColor();
+            float[] colors = new float[] { textColor.x, textColor.y, textColor.z, textColor.w };
             ImGui.setNextItemWidth(-1);
             ImGui.colorEdit4("##Color", colors);
+
+            textComponent.setColor(new Vector4f(colors[0], colors[1], colors[2], colors[3]));
             ImGui.nextColumn();
             ImGui.text("Scale");
             ImGui.nextColumn();
-            float[] scale = new float[] { 1.0f };
+            float[] scale = new float[] { textComponent.getScale() };
             ImGui.setNextItemWidth(-1);
-            ImGui.dragFloat("##Scale", scale);
+            ImGui.dragFloat("##Scale", scale, 0.01f);
+            textComponent.setScale(scale[0]);
             ImGui.columns(1);
             ImGui.separator();
         }
@@ -236,8 +276,7 @@ public class InspectorWindow implements UIComponent {
 
             var cursor = ImGui.getCursorPos();
             if (ImGui.button("  ")) {
-                gameObject.get().removeComponent("Sprite");
-                gameObject.get().addComponent(ComponentFactory.createComponent("Sprite"));
+                gameObject.get().getComponents().put(SpriteComponent.class, new SpriteComponent());
             }
             ImGui.popStyleVar();
             ImGui.popStyleColor(3);
@@ -298,8 +337,7 @@ public class InspectorWindow implements UIComponent {
             ImGui.pushStyleColor(ImGuiCol.ButtonActive, 0, 0, 0, 0);
             ImGui.pushStyleColor(ImGuiCol.ButtonHovered, 0, 0, 0, 0);
             if (ImGui.button("  ##AddScript")) {
-                gameObject.get().removeComponent("Scrpit");
-                gameObject.get().addComponent(ComponentFactory.createComponent("Script"));
+                gameObject.get().getComponents().put(ScriptComponent.class, new ScriptComponent());
             }
             ImGui.popStyleColor(3);
             ImGui.popStyleVar();
@@ -322,6 +360,7 @@ public class InspectorWindow implements UIComponent {
     private void renderCameraComponent() {
         CameraComponent cameraComponent = Objects.requireNonNull(gameObject.get()).getComponent(CameraComponent.class);
         if (ImGui.collapsingHeader("Camera Component")) {
+            ImGui.pushID("Start Camera Component ID");
             ImGui.columns(2);
             ImGui.text("Viewport");
             ImGui.nextColumn();
@@ -349,6 +388,7 @@ public class InspectorWindow implements UIComponent {
             ImGui.columns(1);
             ImGui.separator();
             cameraComponent.setBackground(new Vector3f(color[0], color[1], color[2]));
+            ImGui.popID();
         }
     }
 
@@ -383,7 +423,7 @@ public class InspectorWindow implements UIComponent {
             ImGui.text("   ");
             ImGui.sameLine();
             ImGui.setNextItemWidth(-1);
-            ImGui.dragFloat("##R",rot);
+            ImGui.dragFloat("##R",rot, 0.01f);
             transformComponent.setRotation(rot[0]);
 
             float[] scaleX = new float[] { transformComponent.getScale().x };
@@ -394,12 +434,12 @@ public class InspectorWindow implements UIComponent {
             ImGui.textColored(1.0f, 0.5f, 0.5f, 1.0f, " x ");
             ImGui.sameLine();
             ImGui.setNextItemWidth(-1);
-            ImGui.dragFloat("##W",scaleX);
+            ImGui.dragFloat("##W",scaleX, 0.01f);
 
             ImGui.textColored(0.5f, 1.0f, 0.5f, 1.0f, " y ");
             ImGui.sameLine();
             ImGui.setNextItemWidth(-1);
-            ImGui.dragFloat("##H",scaleY);
+            ImGui.dragFloat("##H",scaleY, 0.01f);
             transformComponent.setScale(new Vector3f(scaleX[0], scaleY[0], 1));
             ImGui.columns(1);
             ImGui.separator();

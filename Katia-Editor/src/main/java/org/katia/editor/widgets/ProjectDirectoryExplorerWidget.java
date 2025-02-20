@@ -195,6 +195,13 @@ public class ProjectDirectoryExplorerWidget {
                         ImGui.endDragDropSource();
                     }
                 }
+                if (FileSystem.isFontFile(entry.toString())) {
+                    if (ImGui.beginDragDropSource()) {
+                        ImGui.setDragDropPayload("FontFile", entry);
+                        ImGui.text(entry.toString());
+                        ImGui.endDragDropSource();
+                    }
+                }
 
 
                 if (ImGui.isItemHovered(ImGuiHoveredFlags.None)) {

@@ -108,6 +108,7 @@ public class GameObjectFactory {
 
             if (component == TextComponent.class) {
                 TextComponent textComponent = gameObject.getComponent(TextComponent.class);
+                if (textComponent.getFontPath() != null && !textComponent.getFontPath().isEmpty())
                 textComponent.setFont(Objects.requireNonNull(FontFactory.createFont(textComponent.getFontPath(), 72, 512, 512)));
             }
 

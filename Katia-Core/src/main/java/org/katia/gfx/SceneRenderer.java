@@ -3,6 +3,7 @@ package org.katia.gfx;
 import lombok.Getter;
 import org.joml.Matrix4f;
 import org.joml.Vector2i;
+import org.joml.Vector3f;
 import org.katia.Logger;
 import org.katia.core.GameObject;
 import org.katia.core.Scene;
@@ -10,7 +11,9 @@ import org.katia.core.components.CameraComponent;
 import org.katia.core.components.SpriteComponent;
 import org.katia.core.components.TextComponent;
 import org.katia.core.components.TransformComponent;
+import org.katia.factory.ShaderProgramFactory;
 import org.katia.gfx.meshes.AxisMesh;
+import org.katia.gfx.meshes.LineRectangleMesh;
 import org.katia.gfx.meshes.QuadMesh;
 
 import static org.lwjgl.opengl.GL11.*;
@@ -87,24 +90,58 @@ public class SceneRenderer {
      * @param gameObject Game Object.
      */
     private void renderGameObject(GameObject gameObject) {
-
-        SpriteComponent spriteComponent = gameObject.getComponent(SpriteComponent.class);
-        // NOTE: Render only game object that has sprite component and which texture is set.
-        if (spriteComponent != null && spriteComponent.getTexture() != null) {
-            QuadMesh.getInstance().render(
-                    spriteComponent.getTexture(),
-//                    TextureFactory.createTexture("test.png"),
-                    gameObject.getComponent(TransformComponent.class).getWorldTransformMatrix()
-            );
+        if (!gameObject.isActive()) {
+            return;
         }
+        CameraComponent cameraComponent = gameObject.getComponent(CameraComponent.class);
+        if (cameraComponent != null) {
+            renderCameraObject(gameObject);
+        }
+
+        // NOTE: Render only game object that has sprite component and which texture is set.
+        SpriteComponent spriteComponent = gameObject.getComponent(SpriteComponent.class);
+        if (spriteComponent != null && spriteComponent.getTexture() != null) {
+            var texture = spriteComponent.getTexture();
+            var transform = gameObject.getComponent(TransformComponent.class)
+                    .getWorldTransformMatrix()
+                    .scale(texture.getWidth(), texture.getHeight(), 1);
+            QuadMesh.getInstance().render(texture, transform);
+        }
+
         TextComponent textComponent = gameObject.getComponent(TextComponent.class);
-        if (textComponent != null) {
+        if (textComponent != null && textComponent.getFont() != null) {
             fontRenderer.renderText(gameObject, camera);
-//            fontRenderer.renderText("KATIA", -200, 300,1f, camera.getCameraProjection());
         }
         for (GameObject child : gameObject.getChildren()) {
             renderGameObject(child);
         }
     }
+    private void renderCameraObject(GameObject gameObject) {
 
+        ShaderProgram shaderProgram = ShaderProgramFactory.getShaderProgram("Default");
+        CameraComponent cameraComponent = gameObject.getComponent(CameraComponent.class);
+
+        TransformComponent transformComponent = gameObject.getComponent(TransformComponent.class);
+        shaderProgram.setUniformBoolean("isCamera", 1);
+
+        transformComponent.setScale(new Vector3f(
+                cameraComponent.getViewport().x,
+                cameraComponent.getViewport().y, 1.0f
+        ));
+        Matrix4f worldTransform = transformComponent.getWorldTransformMatrix();
+
+        shaderProgram.setUniformMatrix4("model", worldTransform);
+        shaderProgram.setUniformVec3("bgColor", cameraComponent.getBackground());
+
+//        spriteRenderer.render();
+
+//        glEnable(GL_LINE_SMOOTH);
+//
+//        glEnable(GL_BLEND);
+//        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        LineRectangleMesh.getInstance().render();
+//        glDisable(GL_LINE_SMOOTH);
+
+//        transformComponent.setScale(new Vector3f(1.0f, 1.0f, 1.0f));
+    }
 }

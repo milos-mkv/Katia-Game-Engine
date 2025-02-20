@@ -1,5 +1,11 @@
 Katia Game Engine 
 ---
+
+### Katia Core
+
+---
+- [ ] Render text into frame buffer
+- [ ] Add sounds
 ---
 ### Katia Editor
 
@@ -21,7 +27,7 @@ Katia Game Engine
   - [x] Camera component
   - [x] Script component
   - [ ] Text component
-  - [ ] Sprite component
+  - [x] Sprite component
 - [ ] Scene Window
 - [ ] Project Window
 

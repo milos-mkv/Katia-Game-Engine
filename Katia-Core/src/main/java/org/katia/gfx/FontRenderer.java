@@ -125,9 +125,10 @@ public class FontRenderer {
                 float yoff = glyph.yoff() * textComponent.getScale();
                 float width = (glyph.x1() - glyph.x0()) * textComponent.getScale();
                 float height = (glyph.y1() - glyph.y0()) * textComponent.getScale();
+                float yy = cursorY + (textComponent.getFont().getTexture().getHeight() - glyph.yoff() * textComponent.getScale()) - height - textComponent.getFont().getTexture().getHeight() ;
 
                 Matrix4f model = new Matrix4f()
-                        .translate(new Vector3f(cursorX + xoff, cursorY + yoff - (glyph.yoff() * textComponent.getScale()), 0))
+                        .translate(new Vector3f(cursorX + xoff, yy, 0))
                         .scale(width, height, 1.0f);
 
                 float[] matrixArray = new float[16];
@@ -141,7 +142,7 @@ public class FontRenderer {
                         .put(Math.map(glyph.x1(), 0, 512, 0, 1))
                         .put(Math.map( glyph.y1(), 0, 512, 0, 1));
 
-                cursorX += (glyph.x1() - glyph.x0()) * textComponent.getScale() + 10;
+                cursorX += textComponent.getScale() + (glyph.xadvance() * textComponent.getScale()) ;
             }
 
             instanceBuffer.flip();

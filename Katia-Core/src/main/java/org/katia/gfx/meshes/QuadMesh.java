@@ -1,5 +1,6 @@
 package org.katia.gfx.meshes;
 
+import lombok.Data;
 import lombok.Getter;
 import org.joml.Matrix4f;
 import org.katia.Logger;
@@ -18,6 +19,7 @@ import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
 import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
 import static org.lwjgl.opengl.GL30.*;
 
+@Data
 public class QuadMesh {
 
     @Getter
@@ -80,6 +82,7 @@ public class QuadMesh {
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, texture.getId());
         shaderProgram.setUniformMatrix4("model", transform);
+        shaderProgram.setUniformBoolean("isCamera", 0);
 
         glBindVertexArray(vao);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);

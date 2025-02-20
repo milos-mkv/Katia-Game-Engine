@@ -28,7 +28,7 @@ public class FontCreatorPopup {
     public static void setFont(String path) {
         FontCreatorPopup.path = path;
         isSet = true;
-        font = FontFactory.createFont(path, 20, 512, 512);
+        font = FontFactory.createFont(path, 70, 512, 512);
         Logger.log("WTF");
     }
 
