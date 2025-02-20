@@ -27,6 +27,7 @@ public class SceneRenderer {
     Matrix4f cameraTransform;
     GameObject camera;
     GridRenderer gridRenderer;
+    boolean isSelectMode = false;
     /**
      * Scene renderer constructor.
      */
@@ -38,6 +39,7 @@ public class SceneRenderer {
     }
 
     public void render(Scene scene, GameObject camera) {
+        isSelectMode = false;
         this.camera = camera;
         scene.setSize(new Vector2i(0, 0));
         CameraComponent cameraComponent = camera.getComponent(CameraComponent.class);
@@ -55,6 +57,30 @@ public class SceneRenderer {
         QuadMesh.getInstance().use(
                 cameraComponent.getCameraProjection(),
                 camera.getComponent(TransformComponent.class).getTransformMatrix().invert()
+        );
+        renderGameObject(scene.getRootGameObject());
+    }
+
+    public void render(Scene scene, GameObject camera, boolean isSingle) {
+        isSelectMode = true;
+        this.camera = camera;
+        scene.setSize(new Vector2i(0, 0));
+        CameraComponent cameraComponent = camera.getComponent(CameraComponent.class);
+//        var backgroundColor = cameraComponent.getBackground();
+        cameraTransform = camera.getComponent(TransformComponent.class).getTransformMatrix();
+//        glClearColor(backgroundColor.x, backgroundColor.y, backgroundColor.z, 0.0f);
+//        glClear(GL_COLOR_BUFFER_BIT);
+//        glEnable(GL_BLEND);
+//        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+//        glEnable(GL_LINE_SMOOTH);
+//        glLineWidth(2);
+//        gridRenderer.render(camera);
+//        AxisMesh.getInstance().render(camera);
+
+        QuadMesh.getInstance().use(
+                cameraComponent.getCameraProjection(),
+                camera.getComponent(TransformComponent.class).getTransformMatrix().invert(),
+                true
         );
         renderGameObject(scene.getRootGameObject());
     }
@@ -91,7 +117,6 @@ public class SceneRenderer {
             return;
         }
 
-
         // NOTE: Render only game object that has sprite component and which texture is set.
         SpriteComponent spriteComponent = gameObject.getComponent(SpriteComponent.class);
         if (spriteComponent != null && spriteComponent.getTexture() != null) {
@@ -99,43 +124,50 @@ public class SceneRenderer {
             var transform = gameObject.getComponent(TransformComponent.class)
                     .getWorldTransformMatrix()
                     .scale(texture.getWidth(), texture.getHeight(), 1);
-            QuadMesh.getInstance().use(
-                    camera.getComponent(CameraComponent.class).getCameraProjection(),
-                    camera.getComponent(TransformComponent.class).getTransformMatrix().invert()
-            );
-            QuadMesh.getInstance().render(texture, transform);
-        }
 
-        TextComponent textComponent = gameObject.getComponent(TextComponent.class);
-        if (textComponent != null && textComponent.getFont() != null) {
-            fontRenderer.renderText(gameObject, camera);
-        }
+            if (isSelectMode) {
+                QuadMesh.getInstance().use(
+                        camera.getComponent(CameraComponent.class).getCameraProjection(),
+                        camera.getComponent(TransformComponent.class).getTransformMatrix().invert(), true
+                );
+                QuadMesh.getInstance().render(texture, transform, gameObject.getSelectID());
+            }
+            else {
+                QuadMesh.getInstance().use(
+                        camera.getComponent(CameraComponent.class).getCameraProjection(),
+                        camera.getComponent(TransformComponent.class).getTransformMatrix().invert()
+                );
+            QuadMesh.getInstance().render(texture, transform );
+        }}
 
-        CameraComponent cameraComponent = gameObject.getComponent(CameraComponent.class);
-        if (cameraComponent != null) {
-            renderCameraObject(gameObject);
-        }
+//
+//        TextComponent textComponent = gameObject.getComponent(TextComponent.class);
+//        if (textComponent != null && textComponent.getFont() != null) {
+//            fontRenderer.renderText(gameObject, camera);
+//        }
+//
+//        CameraComponent cameraComponent = gameObject.getComponent(CameraComponent.class);
+//        if (cameraComponent != null) {
+//            renderCameraObject(gameObject);
+//        }
         for (GameObject child : gameObject.getChildren()) {
             renderGameObject(child);
         }
     }
+
+
     private void renderCameraObject(GameObject gameObject) {
         CameraComponent cameraComponent = gameObject.getComponent(CameraComponent.class);
         TransformComponent transformComponent = gameObject.getComponent(TransformComponent.class);
 
         Vector3f scale = new Vector3f(transformComponent.getScale());
-        System.out.println(scale);
-        transformComponent.setScale(new Vector3f(
-                cameraComponent.getViewport().x,
-                cameraComponent.getViewport().y, 1.0f
-        ));
+        transformComponent.setScale(new Vector3f(cameraComponent.getViewport(), 1.0f));
         Matrix4f worldTransform = transformComponent.getWorldTransformMatrix();
         QuadMesh.getInstance().use(
                 camera.getComponent(CameraComponent.class).getCameraProjection(),
                 camera.getComponent(TransformComponent.class).getTransformMatrix().invert()
         );
         LineRectangleMesh.getInstance().render(worldTransform, cameraComponent.getBackground());
-        transformComponent.setScale(new Vector3f(scale.x,scale.y, 1.0f
-        ));
+        transformComponent.setScale(new Vector3f(scale.x,scale.y, 1.0f));
     }
 }

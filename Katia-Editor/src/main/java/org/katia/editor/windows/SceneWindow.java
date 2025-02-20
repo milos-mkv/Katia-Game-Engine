@@ -8,11 +8,17 @@ import imgui.flag.ImGuiStyleVar;
 import imgui.flag.ImGuiWindowFlags;
 import imgui.internal.flag.ImGuiDockNodeFlags;
 import org.katia.Logger;
+import org.katia.editor.Editor;
 import org.katia.editor.popups.ErrorPopup;
 import org.katia.editor.renderer.EditorCameraController;
 import org.katia.editor.renderer.EditorSceneRenderer;
 import org.katia.editor.renderer.Settings;
 import org.katia.factory.TextureFactory;
+import org.lwjgl.glfw.GLFW;
+
+import static org.katia.Math.map;
+import static org.lwjgl.opengl.GL11.glReadPixels;
+import static org.lwjgl.opengl.GL30.*;
 
 public class SceneWindow implements UIComponent {
     ImGuiWindowClass windowClass;
@@ -38,9 +44,44 @@ public class SceneWindow implements UIComponent {
 
         ImGui.textDisabled("SCENE");
         ImGui.beginChild("##SceneChild", -1, -1, true, ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse);
+        var viewportOffset = ImGui.getCursorPos();
+
         ImGui.image(EditorSceneRenderer.getInstance().getFrameBuffer().getTexture(), ImGui.getWindowWidth() -6, ImGui.getWindowHeight() - 6, 0, 1, 1, 0);
 
+        var windowSize = ImGui.getWindowSize();
+        var minBound = ImGui.getWindowPos();
 
+        minBound.x += viewportOffset.x;
+        minBound.y += viewportOffset.y;
+
+        var maxBound = new ImVec2(minBound.x + windowSize.x, minBound.y + windowSize.y);
+        ImVec2[] vbounds = new ImVec2[2];
+        vbounds[0] = new ImVec2(minBound.x, minBound.y);
+        vbounds[1] = new ImVec2(maxBound.x, maxBound.y);
+
+        var m = ImGui.getMousePos();
+        m.x -= vbounds[0].x;
+        m.y -= vbounds[1].y;
+        m.y *= -1;
+
+        float finalX = map(m.x, 0, vbounds[1].x - vbounds[0].x, 0, 1920);
+        float finalY = map(m.y, 0, vbounds[1].y - vbounds[0].y, 0, 1080);
+
+
+//        if (GLFW.glfwGetMouseButton(Editor.getInstance().getHandle(), GLFW.GLFW_MOUSE_BUTTON_LEFT) == GLFW.GLFW_PRESS &&
+//                GLFW.glfwGetKey(Editor.getInstance().getHandle(), GLFW.GLFW_KEY_LEFT_CONTROL) == GLFW.GLFW_PRESS) {
+            glBindFramebuffer(GL_FRAMEBUFFER, EditorSceneRenderer.getInstance().getIdFrameBuffer().getId());
+            int[] i = new int[1];
+            glReadPixels((int) finalX, (int) finalY, 1, 1, GL_RED_INTEGER, GL_INT, i);
+//            for (Map.Entry<String, Model> mas : scene.getModels().entrySet()) {
+//                if (mas.getValue().getId() == i[0]) {
+//                    Scene.getInstance().setSelectedModel(mas.getKey());
+//                    break;
+//                }
+//            }
+            System.out.println(i[0]);
+            glBindFramebuffer(GL_FRAMEBUFFER, 0);
+//        }
         ImVec2 currentMouseCursor = ImGui.getMousePos();
 
 

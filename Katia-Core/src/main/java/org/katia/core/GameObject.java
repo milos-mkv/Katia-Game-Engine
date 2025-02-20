@@ -17,11 +17,17 @@ import java.util.*;
 @NoArgsConstructor
 @Data
 public class GameObject {
+    @JsonIgnore
+    public static int TotalID = 0;
 
     private UUID id;
     private String name;
     private List<GameObject> children;
     private Map<Class<?>, Component> components;
+
+    @JsonIgnore
+    int selectID;
+
     @Getter
     private boolean active;
 
@@ -41,6 +47,7 @@ public class GameObject {
         this.components = new LinkedHashMap<>();
         this.parent = null;
         this.active = true;
+        this.selectID = ++TotalID;
     }
 
     /**

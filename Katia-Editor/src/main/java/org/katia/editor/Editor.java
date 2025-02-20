@@ -1,9 +1,7 @@
 package org.katia.editor;
 
-import imgui.ImGuiIO;
 import imgui.ImGuiStyle;
 import imgui.ImVec2;
-import imgui.ImVec4;
 import imgui.flag.*;
 import imgui.gl3.ImGuiImplGl3;
 import imgui.glfw.ImGuiImplGlfw;
@@ -19,7 +17,6 @@ import org.katia.editor.menubar.MenuAction;
 import org.katia.editor.renderer.EditorSceneRenderer;
 import org.katia.editor.windows.UIRenderer;
 import org.katia.factory.GameObjectFactory;
-import org.katia.managers.SceneManager;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWDropCallback;
 import org.lwjgl.glfw.GLFWVidMode;
@@ -207,7 +204,8 @@ public class Editor {
         EditorSceneManager.getInstance().openScene("/home/mmilicevic/Desktop/test/scenes/MainScene.scene");
         while (!GLFW.glfwWindowShouldClose(handle)) {
             GLFW.glfwPollEvents();
-            EditorSceneRenderer.getInstance().render(800, 600);
+            EditorSceneRenderer.getInstance().render();
+            EditorSceneRenderer.getInstance().renderToFrameBuffer();
             glClearColor(0.14f, 0.16f, 0.18f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT);
             imGuiImplGlfw.newFrame();

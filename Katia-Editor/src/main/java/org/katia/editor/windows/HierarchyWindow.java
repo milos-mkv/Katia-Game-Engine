@@ -17,6 +17,7 @@ import org.katia.editor.Editor;
 import org.katia.editor.managers.EditorAssetManager;
 import org.katia.editor.managers.EditorSceneManager;
 import org.katia.editor.renderer.EditorCameraController;
+import org.katia.editor.renderer.EditorSceneRenderer;
 import org.katia.factory.GameObjectFactory;
 
 import java.util.UUID;
@@ -56,6 +57,8 @@ public class HierarchyWindow implements UIComponent {
 
         ImGui.pushStyleVar(ImGuiStyleVar.WindowPadding, 5, 5);
         ImGui.begin("Hierarchy");
+
+        ImGui.image(EditorSceneRenderer.getInstance().getIdFrameBuffer().getTexture(), 800, 600, 0, 1, 1, 0);
 
         ImGui.textDisabled("HIERARCHY");
         ImGui.beginChild("##HierarchyChild", -1, -1, true);

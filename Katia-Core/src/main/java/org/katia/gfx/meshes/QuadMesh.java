@@ -31,6 +31,7 @@ public class QuadMesh {
     private final int vao;
     private final int ebo;
 
+    boolean isSelect = false;
     /**
      * Quad mesh constructor.
      */
@@ -59,6 +60,10 @@ public class QuadMesh {
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         glBindVertexArray(0);
 
+        shaderProgram = ShaderProgramFactory.createShaderProgram("Select",
+                "./Katia-Core/src/main/resources/shaders/select/select.vert",
+                "./Katia-Core/src/main/resources/shaders/select/shader.frag");
+
         shaderProgram = ShaderProgramFactory.createShaderProgram("Default",
                 "./Katia-Core/src/main/resources/shaders/shader.vert",
                 "./Katia-Core/src/main/resources/shaders/shader.frag");
@@ -70,6 +75,16 @@ public class QuadMesh {
      * @param view Camera view matrix.
      */
     public void use(Matrix4f projection, Matrix4f view) {
+        shaderProgram = ShaderProgramFactory.getShaderProgram("Default");
+        isSelect = false;
+        shaderProgram.use();
+        shaderProgram.setUniformMatrix4("projection",projection);
+        shaderProgram.setUniformMatrix4("view", view);
+    }
+
+    public void use(Matrix4f projection, Matrix4f view, boolean s) {
+        shaderProgram = ShaderProgramFactory.getShaderProgram("Select");
+        isSelect = true;
         shaderProgram.use();
         shaderProgram.setUniformMatrix4("projection",projection);
         shaderProgram.setUniformMatrix4("view", view);
@@ -83,6 +98,20 @@ public class QuadMesh {
         glBindTexture(GL_TEXTURE_2D, texture.getId());
         shaderProgram.setUniformMatrix4("model", transform);
         shaderProgram.setUniformBoolean("isCamera", 0);
+
+        glBindVertexArray(vao);
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+        glBindVertexArray(0);
+    }
+
+    /**
+     * Render quad.
+     */
+    public void render(Texture texture, Matrix4f transform, int id) {
+//        glActiveTexture(GL_TEXTURE0);
+//        glBindTexture(GL_TEXTURE_2D, texture.getId());
+        shaderProgram.setUniformMatrix4("model", transform);
+        shaderProgram.setUniformInt("selectId", id);
 
         glBindVertexArray(vao);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);

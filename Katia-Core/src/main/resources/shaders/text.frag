@@ -8,6 +8,7 @@ out vec4 fragColor; // Output fragment color
 uniform sampler2D uTexture; // Font atlas texture
 uniform vec4 uFontColor;    // Font color (RGBA)
 
+
 void main() {
     // Sample the font texture at the given UV coordinates
     float alpha = texture(uTexture, vUV).r; // Use the red channel for alpha (font glyphs are grayscale)

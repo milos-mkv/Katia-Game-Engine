@@ -119,6 +119,7 @@ public class GameObjectFactory {
                 }
             }
         }
+        gameObject.setSelectID(++GameObject.TotalID);
 
         for (GameObject child : gameObject.getChildren()) {
             child.setParent(gameObject);

@@ -4,8 +4,12 @@ import lombok.Data;
 import lombok.Getter;
 import org.katia.FileSystem;
 import org.katia.Logger;
+import org.katia.core.GameObject;
 import org.katia.core.Scene;
 import org.katia.factory.SceneFactory;
+
+import java.util.List;
+
 @Data
 public class EditorSceneManager {
 

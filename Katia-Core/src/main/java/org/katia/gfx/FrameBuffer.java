@@ -35,7 +35,13 @@ public class FrameBuffer {
         texture = glGenTextures();
         glBindTexture(GL_TEXTURE_2D, texture);
 
-        glTexImage2D(GL_TEXTURE_2D, 0, oneColor ? GL_R32I : GL_RGB, width, height, 0, oneColor ? GL_RED_INTEGER : GL_RGB, GL_UNSIGNED_BYTE, NULL);
+        glTexImage2D(GL_TEXTURE_2D, 0,
+                oneColor ? GL_R32I : GL_RGB,
+                width,
+                height,
+                0,
+                oneColor ? GL_RED_INTEGER : GL_RGB,
+                GL_UNSIGNED_BYTE, NULL);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
