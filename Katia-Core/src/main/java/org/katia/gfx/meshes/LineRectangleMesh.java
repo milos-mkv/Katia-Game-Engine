@@ -1,6 +1,10 @@
 package org.katia.gfx.meshes;
 
 import lombok.Getter;
+import org.joml.Matrix4f;
+import org.joml.Vector3f;
+import org.katia.factory.ShaderProgramFactory;
+import org.katia.gfx.ShaderProgram;
 
 import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
@@ -14,6 +18,7 @@ public class LineRectangleMesh {
     static LineRectangleMesh instance = new LineRectangleMesh();
 
     public int vao, vbo, ebo;
+    ShaderProgram shaderProgram;
 
     public LineRectangleMesh() {
         var vertices = new float[] {
@@ -48,9 +53,17 @@ public class LineRectangleMesh {
         glBindBuffer(GL_ARRAY_BUFFER, 0);
 
         glBindVertexArray(0);
+
+        shaderProgram = ShaderProgramFactory.createShaderProgram("Default",
+                "./Katia-Core/src/main/resources/shaders/shader.vert",
+                "./Katia-Core/src/main/resources/shaders/shader.frag");
     }
 
-    public void render() {
+    public void render(Matrix4f transform, Vector3f bgColor) {
+        shaderProgram.setUniformMatrix4("model", transform);
+        shaderProgram.setUniformBoolean("isCamera", 1);
+        shaderProgram.setUniformVec3("bgColor", bgColor);
+
         glBindVertexArray(vao);
         glDrawElements(GL_LINES, 8, GL_UNSIGNED_INT, 0);
         glBindVertexArray(0);

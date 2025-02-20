@@ -78,10 +78,7 @@ public class SceneRenderer {
         gridRenderer.render(camera);
         AxisMesh.getInstance().render(camera);
 
-        QuadMesh.getInstance().use(
-                cameraComponent.getCameraProjection(),
-                camera.getComponent(TransformComponent.class).getTransformMatrix().invert()
-        );
+
         renderGameObject(scene.getRootGameObject());
     }
 
@@ -93,10 +90,7 @@ public class SceneRenderer {
         if (!gameObject.isActive()) {
             return;
         }
-        CameraComponent cameraComponent = gameObject.getComponent(CameraComponent.class);
-        if (cameraComponent != null) {
-            renderCameraObject(gameObject);
-        }
+
 
         // NOTE: Render only game object that has sprite component and which texture is set.
         SpriteComponent spriteComponent = gameObject.getComponent(SpriteComponent.class);
@@ -105,6 +99,10 @@ public class SceneRenderer {
             var transform = gameObject.getComponent(TransformComponent.class)
                     .getWorldTransformMatrix()
                     .scale(texture.getWidth(), texture.getHeight(), 1);
+            QuadMesh.getInstance().use(
+                    camera.getComponent(CameraComponent.class).getCameraProjection(),
+                    camera.getComponent(TransformComponent.class).getTransformMatrix().invert()
+            );
             QuadMesh.getInstance().render(texture, transform);
         }
 
@@ -112,36 +110,32 @@ public class SceneRenderer {
         if (textComponent != null && textComponent.getFont() != null) {
             fontRenderer.renderText(gameObject, camera);
         }
+
+        CameraComponent cameraComponent = gameObject.getComponent(CameraComponent.class);
+        if (cameraComponent != null) {
+            renderCameraObject(gameObject);
+        }
         for (GameObject child : gameObject.getChildren()) {
             renderGameObject(child);
         }
     }
     private void renderCameraObject(GameObject gameObject) {
-
-        ShaderProgram shaderProgram = ShaderProgramFactory.getShaderProgram("Default");
         CameraComponent cameraComponent = gameObject.getComponent(CameraComponent.class);
-
         TransformComponent transformComponent = gameObject.getComponent(TransformComponent.class);
-        shaderProgram.setUniformBoolean("isCamera", 1);
 
+        Vector3f scale = new Vector3f(transformComponent.getScale());
+        System.out.println(scale);
         transformComponent.setScale(new Vector3f(
                 cameraComponent.getViewport().x,
                 cameraComponent.getViewport().y, 1.0f
         ));
         Matrix4f worldTransform = transformComponent.getWorldTransformMatrix();
-
-        shaderProgram.setUniformMatrix4("model", worldTransform);
-        shaderProgram.setUniformVec3("bgColor", cameraComponent.getBackground());
-
-//        spriteRenderer.render();
-
-//        glEnable(GL_LINE_SMOOTH);
-//
-//        glEnable(GL_BLEND);
-//        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        LineRectangleMesh.getInstance().render();
-//        glDisable(GL_LINE_SMOOTH);
-
-//        transformComponent.setScale(new Vector3f(1.0f, 1.0f, 1.0f));
+        QuadMesh.getInstance().use(
+                camera.getComponent(CameraComponent.class).getCameraProjection(),
+                camera.getComponent(TransformComponent.class).getTransformMatrix().invert()
+        );
+        LineRectangleMesh.getInstance().render(worldTransform, cameraComponent.getBackground());
+        transformComponent.setScale(new Vector3f(scale.x,scale.y, 1.0f
+        ));
     }
 }
