@@ -34,6 +34,15 @@ public abstract class FontFactory {
     }
 
     /**
+     * Get font if it is already loaded.
+     * @param path Font path.
+     * @return Font
+     */
+    public static Font getFont(String path) {
+        return fonts.get(path);
+    }
+
+    /**
      * Loads a font file and creates a baked bitmap and glyph information.
      *
      * @param path Path to the font file (TTF/OTF).

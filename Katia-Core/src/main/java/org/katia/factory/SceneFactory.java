@@ -35,7 +35,7 @@ public abstract class SceneFactory {
      */
     public static Scene createScene(String name, int width, int height) {
         Scene scene = new Scene(name);
-        addCustomScriptPath(scene);
+        scene.setGlobals(JsePlatform.standardGlobals());
 
         GameObject mainCameraGameObject = GameObjectFactory.createGameObject("Main Camera");
         mainCameraGameObject.addComponent(new CameraComponent());
@@ -74,7 +74,8 @@ public abstract class SceneFactory {
         Logger.log(Logger.Type.INFO, "Generate scene from json:");
         try {
             final Scene scene = objectMapper.readValue(json, Scene.class);
-            addCustomScriptPath(scene);
+            scene.setGlobals(JsePlatform.standardGlobals());
+
             GameObjectFactory.reconstructGameObject(scene, scene.getRootGameObject());
             Logger.log(Logger.Type.SUCCESS, "Scene generated:", scene.getName());
             return scene;
@@ -84,11 +85,4 @@ public abstract class SceneFactory {
         return null;
     }
 
-    /**
-     * Setup lua context with custom libraries and lua binds.
-     * @param scene Scene.
-     */
-    private static void addCustomScriptPath(Scene scene) {
-        scene.setGlobals(JsePlatform.standardGlobals());
-    }
 }

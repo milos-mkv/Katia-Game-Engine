@@ -29,6 +29,9 @@ public class SpriteComponent extends Component {
         this.texture = TextureFactory.createTexture(path);
     }
 
+    /**
+     * Dispose of sprite component.
+     */
     @Override
     public void dispose() {
         Logger.log(Logger.Type.DISPOSE, "Disposing of sprite component ...");

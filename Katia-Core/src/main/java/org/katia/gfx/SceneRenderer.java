@@ -15,6 +15,7 @@ import org.katia.factory.ShaderProgramFactory;
 import org.katia.gfx.meshes.AxisMesh;
 import org.katia.gfx.meshes.LineRectangleMesh;
 import org.katia.gfx.meshes.QuadMesh;
+import org.katia.gfx.meshes.TextMesh;
 
 import static org.lwjgl.opengl.GL11.*;
 
@@ -23,7 +24,6 @@ public class SceneRenderer {
     @Getter
     static SceneRenderer instance = new SceneRenderer();
 
-    FontRenderer fontRenderer;
     Matrix4f cameraTransform;
     GameObject camera;
     GridRenderer gridRenderer;
@@ -33,7 +33,6 @@ public class SceneRenderer {
      */
     public SceneRenderer() {
         Logger.log(Logger.Type.INFO, "Creating scene renderer!");
-        fontRenderer = new FontRenderer();
         gridRenderer = new GridRenderer();
 
     }
@@ -140,16 +139,22 @@ public class SceneRenderer {
             QuadMesh.getInstance().render(texture, transform );
         }}
 
-//
-//        TextComponent textComponent = gameObject.getComponent(TextComponent.class);
-//        if (textComponent != null && textComponent.getFont() != null) {
-//            fontRenderer.renderText(gameObject, camera);
-//        }
-//
-//        CameraComponent cameraComponent = gameObject.getComponent(CameraComponent.class);
-//        if (cameraComponent != null) {
-//            renderCameraObject(gameObject);
-//        }
+
+        TextComponent textComponent = gameObject.getComponent(TextComponent.class);
+        if (textComponent != null && textComponent.getFont() != null) {
+            if (isSelectMode) {
+
+                TextMesh.getInstance().render(gameObject, camera, true);
+            } else {
+                TextMesh.getInstance().render(gameObject, camera);
+
+            }
+        }
+
+        CameraComponent cameraComponent = gameObject.getComponent(CameraComponent.class);
+        if (cameraComponent != null) {
+            renderCameraObject(gameObject);
+        }
         for (GameObject child : gameObject.getChildren()) {
             renderGameObject(child);
         }

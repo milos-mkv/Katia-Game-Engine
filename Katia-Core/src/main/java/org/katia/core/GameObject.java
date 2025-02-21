@@ -17,6 +17,7 @@ import java.util.*;
 @NoArgsConstructor
 @Data
 public class GameObject {
+
     @JsonIgnore
     public static int TotalID = 0;
 

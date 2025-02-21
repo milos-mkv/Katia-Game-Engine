@@ -10,9 +10,10 @@ import org.katia.gfx.Font;
 public class TextComponent extends Component {
 
     String text;
-    float scale;
-    Vector4f color;
     String fontPath;
+    Vector4f color;
+    float scale;
+
     @JsonIgnore
     Font font;
 
@@ -28,6 +29,10 @@ public class TextComponent extends Component {
         this.color = new Vector4f(1, 1, 1, 1);
     }
 
+    /**
+     * Set font.
+     * @param font Font.
+     */
     @JsonIgnore
     public void setFont(Font font) {
         this.font = font;

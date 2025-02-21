@@ -57,9 +57,6 @@ public class HierarchyWindow implements UIComponent {
 
         ImGui.pushStyleVar(ImGuiStyleVar.WindowPadding, 5, 5);
         ImGui.begin("Hierarchy");
-
-        ImGui.image(EditorSceneRenderer.getInstance().getIdFrameBuffer().getTexture(), 800, 600, 0, 1, 1, 0);
-
         ImGui.textDisabled("HIERARCHY");
         ImGui.beginChild("##HierarchyChild", -1, -1, true);
         displayWindowContextMenu();

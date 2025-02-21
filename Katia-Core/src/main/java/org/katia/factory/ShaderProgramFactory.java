@@ -3,7 +3,6 @@ package org.katia.factory;
 import lombok.Data;
 import org.katia.FileSystem;
 import org.katia.Logger;
-import org.katia.Utils;
 import org.katia.gfx.ShaderProgram;
 
 import java.util.HashMap;
