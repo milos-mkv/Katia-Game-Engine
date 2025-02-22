@@ -61,10 +61,13 @@ public class SceneManager {
         FileSystem.readDirectoryData(path).stream().filter((entry) -> {
             if (Files.isDirectory(entry)) {
                 return true;
-            } else if  (FileSystem.isJsonFile(entry.toString())) {
+            } else if  (FileSystem.isSceneFile(entry.toString())) {
                 var scene = SceneFactory.generateSceneFromJson(FileSystem.readFromFile(entry.toString()));
                 if (scene != null) {
                     scenes.put(scene.getName(), scene);
+                }
+                if (activeScene == null) {
+                    activeScene = scene;
                 }
             }
             return false;

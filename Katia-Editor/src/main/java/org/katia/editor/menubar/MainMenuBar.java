@@ -13,6 +13,7 @@ import org.katia.editor.Editor;
 import org.katia.editor.EditorUtils;
 import org.katia.editor.managers.EditorAssetManager;
 import org.katia.editor.managers.EditorSceneManager;
+import org.katia.editor.managers.GameManager;
 import org.katia.editor.managers.ProjectManager;
 import org.katia.editor.popups.CreateNewProjectPopup;
 import org.katia.editor.popups.CreateNewScenePopup;
@@ -20,6 +21,7 @@ import org.katia.editor.popups.ErrorPopup;
 import org.katia.editor.popups.OpenScenePopup;
 import org.katia.editor.windows.UIComponent;
 import org.katia.factory.SceneFactory;
+import org.katia.game.Game;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.HashMap;
@@ -28,7 +30,7 @@ import java.util.HashMap;
 public class MainMenuBar implements UIComponent {
 
     HashMap<MenuAction, Boolean> actions;
-
+    Game game;
     /**
      * Main menu bar constructor.
      */
@@ -74,7 +76,7 @@ public class MainMenuBar implements UIComponent {
             ImGui.pushStyleVar(ImGuiStyleVar.FrameBorderSize, 0);
             var cursor = ImGui.getCursorPos();
             if (ImGui.button("##PLAY", 40, 35)) {
-
+                actions.put(MenuAction.RUN_GAME, true);
             }
             ImGui.setCursorPos(cursor.x + 11, cursor.y + 7);
             ImGui.pushStyleColor(ImGuiCol.Text, 0.4f, 0.8f, 0.4f, 0.8f);
@@ -134,6 +136,9 @@ public class MainMenuBar implements UIComponent {
                     json);
 
         }
+        if (this.actions.get(MenuAction.RUN_GAME)) {
+            GameManager.getInstance().start();
+            }
         CreateNewProjectPopup.render();
         CreateNewScenePopup.getInstance().render();
         OpenScenePopup.getInstance().render();
@@ -197,6 +202,11 @@ public class MainMenuBar implements UIComponent {
 
     private void saveProjectAction() {
 
+    }
+
+    private void runGame() {
+        game = new Game(ProjectManager.getInstance().getPath());
+        GLFW.glfwMakeContextCurrent(Editor.getInstance().getHandle());
     }
 
     private void exitAction() {

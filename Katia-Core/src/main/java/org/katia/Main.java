@@ -12,7 +12,7 @@ public class Main {
             Logger.log(Logger.Type.ERROR, e.toString());
         }
 
-        Game game = new Game(".");
+        Game game = new Game("/home/mmilicevic/Desktop/test");
         game.run();
         game.dispose();
 

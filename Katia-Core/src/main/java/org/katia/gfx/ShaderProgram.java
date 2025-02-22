@@ -77,7 +77,6 @@ public class ShaderProgram {
      * @param value Integer value.
      */
     public void setUniformInt(String name, int value) {
-
         glUniform1i(glGetUniformLocation(id, name), value);
     }
 

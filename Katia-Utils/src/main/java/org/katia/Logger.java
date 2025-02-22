@@ -24,7 +24,7 @@ public abstract class Logger {
 
     static List<String> logs;
     static DateTimeFormatter formatter;
-
+    static boolean enabled = true;
     /**
      * Initialize logger class.
      */
@@ -34,11 +34,28 @@ public abstract class Logger {
     }
 
     /**
+     * Disable logger.
+     */
+    public static void disable() {
+        enabled = false;
+    }
+
+    /**
+     * Enable logger.
+     */
+    public static void enable() {
+        enabled = true;
+    }
+
+    /**
      * Log messages.
      * @param type Log type.
      * @param params Messages to log.
      */
     public static void log(Type type, String... params) {
+        if (!enabled) {
+            return;
+        }
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(getDateTime()).append(getLogTypeText(type));
         for (String param : params) {
@@ -53,6 +70,9 @@ public abstract class Logger {
      * @param params Log messages.
      */
     public static void log(String... params) {
+        if (!enabled) {
+            return;
+        }
         StringBuilder stringBuilder = new StringBuilder();
         for (String param : params) {
             stringBuilder.append(param).append(" ");

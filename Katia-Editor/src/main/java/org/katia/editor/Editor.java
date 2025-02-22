@@ -12,12 +12,14 @@ import lombok.Getter;
 import org.katia.Logger;
 import org.katia.editor.managers.EditorAssetManager;
 import org.katia.editor.managers.EditorSceneManager;
+import org.katia.editor.managers.GameManager;
 import org.katia.editor.managers.ProjectManager;
 import org.katia.editor.menubar.MainMenuBar;
 import org.katia.editor.menubar.MenuAction;
 import org.katia.editor.renderer.EditorSceneRenderer;
 import org.katia.editor.windows.UIRenderer;
 import org.katia.factory.GameObjectFactory;
+import org.katia.gfx.FrameBuffer;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWDropCallback;
 import org.lwjgl.glfw.GLFWVidMode;
@@ -207,6 +209,7 @@ public class Editor {
             GLFW.glfwPollEvents();
 
             EditorSceneRenderer.getInstance().render();
+            GameManager.getInstance().run();
 
             glClearColor(0.14f, 0.16f, 0.18f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT);

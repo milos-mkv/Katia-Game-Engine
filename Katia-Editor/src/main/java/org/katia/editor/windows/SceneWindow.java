@@ -6,11 +6,13 @@ import imgui.ImVec2;
 import imgui.extension.imguizmo.ImGuizmo;
 import imgui.extension.imguizmo.flag.Mode;
 import imgui.extension.imguizmo.flag.Operation;
+import imgui.flag.ImGuiCol;
 import imgui.flag.ImGuiMouseButton;
 import imgui.flag.ImGuiStyleVar;
 import imgui.flag.ImGuiWindowFlags;
 import imgui.internal.flag.ImGuiDockNodeFlags;
 import org.joml.Matrix4f;
+import org.katia.Icons;
 import org.katia.Logger;
 import org.katia.core.GameObject;
 import org.katia.core.components.TransformComponent;
@@ -31,13 +33,14 @@ import static org.lwjgl.opengl.GL30.*;
 public class SceneWindow implements UIComponent {
     ImGuiWindowClass windowClass;
     private ImVec2 mouseLastPosition;
-
+    int manipulationOperation;
     public SceneWindow() {
         mouseLastPosition = new ImVec2(0, 0);
         Logger.log(Logger.Type.INFO, "Creating scene window ...");
         windowClass= new ImGuiWindowClass();
         windowClass.setDockNodeFlagsOverrideSet(
                 ImGuiDockNodeFlags.NoDockingOverMe | ImGuiDockNodeFlags.NoDockingSplitMe | ImGuiDockNodeFlags.NoCloseButton | ImGuiDockNodeFlags.NoTabBar);
+        manipulationOperation = Operation.TRANSLATE;
     }
 
     @Override
@@ -46,6 +49,8 @@ public class SceneWindow implements UIComponent {
         ImGui.pushStyleVar(ImGuiStyleVar.WindowPadding, 5, 5);
 
         ImGui.begin("Scene");
+        var startCursorPosition = ImGui.getCursorPos();
+
         Settings.w = ImGui.getWindowWidth();
         Settings.h = ImGui.getWindowHeight();
         ImGui.pushStyleVar(ImGuiStyleVar.WindowPadding, 3, 3);
@@ -72,10 +77,10 @@ public class SceneWindow implements UIComponent {
         m.y -= vbounds[1].y;
         m.y *= -1;
 
-        float finalX = map(m.x, 0, vbounds[1].x - vbounds[0].x, 0, 1920);
-        float finalY = map(m.y, 0, vbounds[1].y - vbounds[0].y, 0, 1080);
+        float finalX = map(m.x, 0, vbounds[1].x - vbounds[0].x, 0, Settings.w);
+        float finalY = map(m.y, 0, vbounds[1].y - vbounds[0].y, 0, Settings.h);
 
-        if (EditorInputManager.getInstance().isMouseButtonJustPressed(GLFW.GLFW_MOUSE_BUTTON_1)) {
+        if (ImGui.isMouseDoubleClicked(ImGuiMouseButton.Left)) {
             glBindFramebuffer(GL_FRAMEBUFFER, EditorSceneRenderer.getInstance().getSelectFrameBuffer().getId());
             int[] i = new int[1];
             glReadPixels((int) finalX, (int) finalY, 1, 1, GL_RED_INTEGER, GL_INT, i);
@@ -110,7 +115,8 @@ public class SceneWindow implements UIComponent {
         mouseLastPosition = currentMouseCursor;
 
         manipulate();
-
+        ImGui.setCursorPos(startCursorPosition.x + 10, startCursorPosition.y + 10);
+        renderManipulationToolbar();
         ImGui.endChild();
         ImGui.popStyleVar();
 
@@ -139,18 +145,60 @@ public class SceneWindow implements UIComponent {
         var transform = matrixToFloatBuffer(t.getWorldTransformMatrix());
 
         float rot = gameObject.getComponent(TransformComponent.class).getRotation();
-        ImGuizmo.manipulate(view, proj, transform, Operation.TRANSLATE, Mode.WORLD);
+        ImGuizmo.manipulate(view, proj, transform, manipulationOperation, Mode.WORLD);
 
         if (ImGuizmo.isUsing()) {
             t.setTransformFromWorldMatrix(new Matrix4f().set(transform));
 
             // FIXME: For some reason when using scale it resets rotation. Find why is that.
-//            if (manipulationOperation == Operation.SCALE) {
-//                gameObject.getComponent(TransformComponent.class).setRotation(rot);
-//            }
+            if (manipulationOperation == Operation.SCALE) {
+                gameObject.getComponent(TransformComponent.class).setRotation(rot);
+            }
         }
     }
 
+
+    private void renderManipulationToolbar() {
+        ImGui.pushStyleColor(ImGuiCol.FrameBg, 0.1f, 0.1f, 0.1f, 0.5f);
+        ImGui.pushStyleColor(ImGuiCol.Button, 0.1f, 0.1f, 0.1f, 0.5f);
+
+        ImGui.beginChildFrame(2, 44, 110);
+        ImGui.setCursorPosY(ImGui.getCursorPosY() + 4);
+        ImGui.pushStyleVar(ImGuiStyleVar.FrameBorderSize, 0);
+        int mode = manipulationOperation;
+
+        if (mode == Operation.TRANSLATE) {
+            ImGui.pushStyleColor(ImGuiCol.Text, 0.5f, 1.0f, 0.5f, 1.0f);
+        }
+        if (ImGui.button(Icons.Translate)) {
+            manipulationOperation = Operation.TRANSLATE;
+        }
+        if (mode == Operation.TRANSLATE) {
+            ImGui.popStyleColor();
+        }
+        if (mode == Operation.ROTATE_Z) {
+            ImGui.pushStyleColor(ImGuiCol.Text, 0.5f, 1.0f, 0.5f, 1.0f);
+        }
+        if (ImGui.button(Icons.Rotate)) {
+            manipulationOperation = Operation.ROTATE_Z;
+        }
+        if (mode == Operation.ROTATE_Z) {
+            ImGui.popStyleColor();
+        }
+
+        if (mode == Operation.SCALE) {
+            ImGui.pushStyleColor(ImGuiCol.Text, 0.5f, 1.0f, 0.5f, 1.0f);
+        }
+        if (ImGui.button(Icons.Scale)) {
+            manipulationOperation = Operation.SCALE;
+        }
+        if (mode == Operation.SCALE) {
+            ImGui.popStyleColor();
+        }
+        ImGui.popStyleVar();
+        ImGui.endChildFrame();
+        ImGui.popStyleColor(2);
+    }
     public static float[] matrixToFloatBuffer(Matrix4f matrix) {
         var buffer = new float[16];
         matrix.get(buffer);

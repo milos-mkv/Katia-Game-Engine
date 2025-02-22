@@ -43,7 +43,7 @@ public class Game {
         GameObjectFactory.initialize();
         FontFactory.initialize();
 
-        assetManager = new AssetManager(this, directory + "/assets");
+        assetManager = new AssetManager(this, directory);
         sceneManager = new SceneManager(this, directory + "/scenes");
         scriptManager = new ScriptManager(this, directory + "/scripts");
         inputManager = new InputManager(this);
@@ -57,7 +57,7 @@ public class Game {
     public void run() {
         Logger.log(Logger.Type.INFO, "Run game instance ...");
 
-        Scene scene = sceneManager.getScene("Main Scene");
+        Scene scene = sceneManager.getActiveScene();
         scriptExecutioner.init(scene);
         int fps = 0;
         float tim = 0;
@@ -83,7 +83,7 @@ public class Game {
                 fps = 0;
             }
             GLFW.glfwPollEvents();
-            scriptExecutioner.update(deltaTime);
+//            scriptExecutioner.update(deltaTime);
             SceneRenderer.getInstance().render(scene);
 
             GLFW.glfwSwapBuffers(window.getHandle());

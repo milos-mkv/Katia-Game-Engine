@@ -12,5 +12,7 @@ public enum MenuAction {
 
     PROJECT_SETTINGS,
 
+    RUN_GAME,
+
     ABOUT,
 }

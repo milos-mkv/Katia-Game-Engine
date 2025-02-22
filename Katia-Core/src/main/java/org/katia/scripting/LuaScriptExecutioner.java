@@ -1,6 +1,7 @@
 package org.katia.scripting;
 
 import org.katia.Logger;
+import org.katia.Main;
 import org.katia.core.GameObject;
 import org.katia.core.Scene;
 import org.katia.core.components.ScriptComponent;
@@ -8,6 +9,8 @@ import org.katia.game.Game;
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.lib.jse.CoerceJavaToLua;
+
+import java.net.URL;
 
 public class LuaScriptExecutioner {
 
@@ -87,8 +90,9 @@ public class LuaScriptExecutioner {
      * @param scene Scene.
      */
     private void bindClasses(Scene scene) {
-        Logger.log(Logger.Type.INFO, "Bind java classes to lua globals for scene:", scene.getName());
+        URL resource = Main.class.getClassLoader().getResource("scripts/classes.lua");
 
+        Logger.log(Logger.Type.INFO, "Bind java classes to lua globals for scene:", scene.getName());
         scene.getGlobals().loadfile("./Katia-Core/src/main/resources/scripts/classes.lua").call();
         String existingPath = scene.getGlobals().get("package").get("path").tojstring();
         scene.getGlobals()

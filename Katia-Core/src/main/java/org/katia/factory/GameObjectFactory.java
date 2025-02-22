@@ -43,9 +43,15 @@ public class GameObjectFactory {
         return gameObject;
     }
 
+    /**
+     * Copy existing game object.
+     * @param gameObject GameObject to copy.
+     * @return GameObject
+     */
     public static GameObject copy(GameObject gameObject) {
         GameObject copy = generateGameObjectFromJson(generateJsonFromGameObject(gameObject));
         setUUID(copy);
+        reconstructGameObject(null, copy);
         return copy;
     }
 
