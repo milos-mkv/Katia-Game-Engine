@@ -38,6 +38,7 @@ public class SceneRenderer {
     public void render(Scene scene, GameObject camera, boolean select) {
         isSelectMode = select;
         this.camera = camera;
+        scene.setSize(new Vector2i(0, 0));
         CameraComponent cameraComponent = camera.getComponent(CameraComponent.class);
         var backgroundColor = cameraComponent.getBackground();
         cameraTransform = camera.getComponent(TransformComponent.class).getTransformMatrix();

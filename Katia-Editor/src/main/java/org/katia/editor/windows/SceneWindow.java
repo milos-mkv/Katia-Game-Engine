@@ -3,12 +3,17 @@ package org.katia.editor.windows;
 import imgui.ImGui;
 import imgui.ImGuiWindowClass;
 import imgui.ImVec2;
+import imgui.extension.imguizmo.ImGuizmo;
+import imgui.extension.imguizmo.flag.Mode;
+import imgui.extension.imguizmo.flag.Operation;
 import imgui.flag.ImGuiMouseButton;
 import imgui.flag.ImGuiStyleVar;
 import imgui.flag.ImGuiWindowFlags;
 import imgui.internal.flag.ImGuiDockNodeFlags;
+import org.joml.Matrix4f;
 import org.katia.Logger;
 import org.katia.core.GameObject;
+import org.katia.core.components.TransformComponent;
 import org.katia.editor.Editor;
 import org.katia.editor.managers.EditorInputManager;
 import org.katia.editor.managers.EditorSceneManager;
@@ -104,6 +109,8 @@ public class SceneWindow implements UIComponent {
 
         mouseLastPosition = currentMouseCursor;
 
+        manipulate();
+
         ImGui.endChild();
         ImGui.popStyleVar();
 
@@ -111,6 +118,44 @@ public class SceneWindow implements UIComponent {
         ImGui.popStyleVar();
     }
 
+    private void manipulate() {
+
+        GameObject gameObject = Editor.getInstance().getUiRenderer().get(InspectorWindow.class).getGameObject().get();
+        if (gameObject == null) {
+            return;
+        }
+
+        ImGuizmo.setOrthographic(true);
+        ImGuizmo.setEnabled(true);
+        ImGuizmo.setDrawList();
+        ImGuizmo.setRect(ImGui.getWindowPosX(), ImGui.getWindowPosY(), ImGui.getWindowWidth(), ImGui.getWindowHeight());
+
+        var engineCamera = EditorCameraController.getInstance();
+        var view = matrixToFloatBuffer(engineCamera.getViewMatrix().invert());
+        var proj = matrixToFloatBuffer(engineCamera.getProjectionMatrix());
+
+        var t = gameObject.getComponent(TransformComponent.class);
+
+        var transform = matrixToFloatBuffer(t.getWorldTransformMatrix());
+
+        float rot = gameObject.getComponent(TransformComponent.class).getRotation();
+        ImGuizmo.manipulate(view, proj, transform, Operation.TRANSLATE, Mode.WORLD);
+
+        if (ImGuizmo.isUsing()) {
+            t.setTransformFromWorldMatrix(new Matrix4f().set(transform));
+
+            // FIXME: For some reason when using scale it resets rotation. Find why is that.
+//            if (manipulationOperation == Operation.SCALE) {
+//                gameObject.getComponent(TransformComponent.class).setRotation(rot);
+//            }
+        }
+    }
+
+    public static float[] matrixToFloatBuffer(Matrix4f matrix) {
+        var buffer = new float[16];
+        matrix.get(buffer);
+        return buffer;
+    }
     @Override
     public void dispose() {
         Logger.log(Logger.Type.DISPOSE, "Disposing of scene window ...");

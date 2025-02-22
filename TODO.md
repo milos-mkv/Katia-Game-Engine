@@ -21,12 +21,12 @@ Katia Game Engine
   - [x] Add stripes
   - [x] Click on game object open in inspector
   - [x] Double click on game object move camera on it
-- [ ] Inspector Window
+- [x] Inspector Window
   - [x] General GO data section
   - [x] Transform component
   - [x] Camera component
   - [x] Script component
-  - [ ] Text component
+  - [x] Text component
   - [x] Sprite component
 - [ ] Scene Window
 - [ ] Project Window

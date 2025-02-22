@@ -2,6 +2,7 @@ package org.katia.editor;
 
 import imgui.ImGuiStyle;
 import imgui.ImVec2;
+import imgui.extension.imguizmo.ImGuizmo;
 import imgui.flag.*;
 import imgui.gl3.ImGuiImplGl3;
 import imgui.glfw.ImGuiImplGlfw;
@@ -211,6 +212,8 @@ public class Editor {
             glClear(GL_COLOR_BUFFER_BIT);
             imGuiImplGlfw.newFrame();
             ImGui.newFrame();
+            ImGuizmo.beginFrame();
+
             ImVec2 viewportPos = ImGui.getMainViewport().getPos();
             ImVec2 viewportSize = ImGui.getMainViewport().getSize();
 
@@ -225,6 +228,7 @@ public class Editor {
             ImGui.begin("DockSpace", ImGuiWindowFlags.NoTitleBar | ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoMove);
             ImGui.dockSpace(ImGui.getID("DockSpace"));//, 0, 0,  ImGuiDockNodeFlags.AutoHideTabBar);
             ImGui.end();
+
             ImGui.popStyleColor();
             ImGui.popStyleVar(2);
             uiRenderer.render();
