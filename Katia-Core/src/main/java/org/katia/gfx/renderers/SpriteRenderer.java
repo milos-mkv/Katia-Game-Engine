@@ -1,13 +1,13 @@
-package org.katia.gfx.meshes;
+package org.katia.gfx.renderers;
 
-import lombok.Data;
 import lombok.Getter;
-import org.joml.Matrix4f;
 import org.katia.Logger;
+import org.katia.core.GameObject;
+import org.katia.core.components.CameraComponent;
+import org.katia.core.components.SpriteComponent;
 import org.katia.core.components.TransformComponent;
 import org.katia.factory.ShaderProgramFactory;
 import org.katia.gfx.ShaderProgram;
-import org.katia.gfx.Texture;
 
 import static org.lwjgl.opengl.GL11.GL_FLOAT;
 import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
@@ -19,24 +19,32 @@ import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
 import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
 import static org.lwjgl.opengl.GL30.*;
 
-@Data
-public class QuadMesh {
+/**
+ * This class is responsible for rendering game objects with sprite component.
+ */
+public class SpriteRenderer extends Renderer {
 
     @Getter
-    private static final QuadMesh instance = new QuadMesh();
+    private static final SpriteRenderer instance = new SpriteRenderer();
 
-    ShaderProgram shaderProgram;
+    private int vbo;
+    private int vao;
+    private int ebo;
 
-    private final int vbo;
-    private final int vao;
-    private final int ebo;
-
-    boolean isSelect = false;
     /**
      * Quad mesh constructor.
      */
-    public QuadMesh() {
+    public SpriteRenderer() {
+        super("shader");
         Logger.log(Logger.Type.INFO, "Initialize quad mesh!");
+        createBuffers();
+    }
+
+    /**
+     * Create buffers for sprite renderer.
+     */
+    @Override
+    protected void createBuffers() {
         var vertices = new float[] {
                 0.5f,  0.5f, 0.0f, 1.0f, 1.0f,  0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
                 -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, -0.5f,  0.5f, 0.0f, 0.0f, 1.0f
@@ -59,59 +67,31 @@ public class QuadMesh {
 
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         glBindVertexArray(0);
-
-        shaderProgram = ShaderProgramFactory.createShaderProgram("Select",
-                "./Katia-Core/src/main/resources/shaders/select/select.vert",
-                "./Katia-Core/src/main/resources/shaders/select/shader.frag");
-
-        shaderProgram = ShaderProgramFactory.createShaderProgram("Default",
-                "./Katia-Core/src/main/resources/shaders/shader.vert",
-                "./Katia-Core/src/main/resources/shaders/shader.frag");
     }
 
     /**
-     * Set camera projection and view for quad mesh rendering.
-     * @param projection Camera projection matrix.
-     * @param view Camera view matrix.
+     * Render game object with provided camera.
+     * @param gameObject GameObject with sprite component to render.
+     * @param camera GameObject with camera component to use.
+     * @param select True if we want to render it to select FrameBuffer.
      */
-    public void use(Matrix4f projection, Matrix4f view) {
-        shaderProgram = ShaderProgramFactory.getShaderProgram("Default");
-        isSelect = false;
+    public void render(GameObject gameObject, GameObject camera, boolean select) {
+        ShaderProgram shaderProgram = ShaderProgramFactory.getShaderProgram(select ? selectShaderName : defaultShaderName);
         shaderProgram.use();
-        shaderProgram.setUniformMatrix4("projection",projection);
-        shaderProgram.setUniformMatrix4("view", view);
-    }
+        shaderProgram.setUniformMatrix4("projection", camera.getComponent(CameraComponent.class).getCameraProjection());
+        shaderProgram.setUniformMatrix4("view", camera.getComponent(TransformComponent.class).getWorldTransformMatrix().invert());
+        var texture = gameObject.getComponent(SpriteComponent.class).getTexture();
+        var transform = gameObject.getComponent(TransformComponent.class)
+                .getWorldTransformMatrix()
+                .scale(texture.getWidth(), texture.getHeight(), 1);
 
-    public void use(Matrix4f projection, Matrix4f view, boolean s) {
-        shaderProgram = ShaderProgramFactory.getShaderProgram("Select");
-        isSelect = true;
-        shaderProgram.use();
-        shaderProgram.setUniformMatrix4("projection",projection);
-        shaderProgram.setUniformMatrix4("view", view);
-    }
-
-    /**
-     * Render quad.
-     */
-    public void render(Texture texture, Matrix4f transform) {
         glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, texture.getId());
+        glBindTexture(GL_TEXTURE_2D, gameObject.getComponent(SpriteComponent.class).getTexture().getId());
         shaderProgram.setUniformMatrix4("model", transform);
         shaderProgram.setUniformBoolean("isCamera", 0);
-
-        glBindVertexArray(vao);
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-        glBindVertexArray(0);
-    }
-
-    /**
-     * Render quad.
-     */
-    public void render(Texture texture, Matrix4f transform, int id) {
-//        glActiveTexture(GL_TEXTURE0);
-//        glBindTexture(GL_TEXTURE_2D, texture.getId());
-        shaderProgram.setUniformMatrix4("model", transform);
-        shaderProgram.setUniformInt("selectId", id);
+        if (select) {
+            shaderProgram.setUniformInt("selectId", gameObject.getSelectID());
+        }
 
         glBindVertexArray(vao);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);

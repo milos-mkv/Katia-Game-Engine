@@ -1,38 +1,46 @@
-package org.katia.gfx;
+package org.katia.gfx.renderers;
 
-
-import org.joml.Matrix4f;
+import lombok.Getter;
 import org.joml.Vector3f;
+import org.katia.Logger;
 import org.katia.core.GameObject;
 import org.katia.core.components.CameraComponent;
 import org.katia.core.components.TransformComponent;
 import org.katia.factory.ShaderProgramFactory;
+import org.katia.gfx.ShaderProgram;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL30;
-import org.lwjgl.opengl.GL30.*;
 
 import java.nio.FloatBuffer;
 
-import static org.lwjgl.opengl.GL11.*;
+/**
+ * This class is responsible for rendering infinite 2d gird in debug purposes. Used in editor mostly.
+ */
+public class GridRenderer extends Renderer {
 
-public class GridRenderer {
-    private final ShaderProgram shaderProgram;
+    @Getter
+    static GridRenderer instance = new GridRenderer();
+
     private int vbo;
     private int vao;
-    private static final float GRID_SIZE = 100.0f; // Block size for grid
-    private static final int MAX_LINES = 200; // Maximum number of grid lines
 
+    private static final float GRID_SIZE = 100.0f;  // Block size for grid
+    private static final int MAX_LINES = 200;       // Maximum number of grid lines
+
+    /**
+     * Grid renderer default constructor.
+     */
     public GridRenderer() {
-        this.shaderProgram = ShaderProgramFactory.createShaderProgram(
-                "GridShader",
-                "./Katia-Core/src/main/resources/shaders/grid.vert",
-                "./Katia-Core/src/main/resources/shaders/grid.frag"
-        );
-        initializeGridBuffers();
+        super("grid");
+        createBuffers();
     }
 
-    private void initializeGridBuffers() {
+    /**
+     * Crete buffers for grid renderer.
+     */
+    @Override
+    protected void createBuffers() {
         vao = GL30.glGenVertexArrays();
         vbo = GL15.glGenBuffers();
         GL30.glBindVertexArray(vao);
@@ -47,6 +55,10 @@ public class GridRenderer {
         GL30.glBindVertexArray(0);
     }
 
+    /**
+     * Render 2D grid that fallows provided game objet with camera component.
+     * @param camera GameObject with camera component.
+     */
     public void render(GameObject camera) {
         CameraComponent cameraComponent = camera.getComponent(CameraComponent.class);
         TransformComponent cameraTransform = camera.getComponent(TransformComponent.class);
@@ -74,7 +86,7 @@ public class GridRenderer {
         }
 
         vertexBuffer.flip();
-
+        ShaderProgram shaderProgram = ShaderProgramFactory.getShaderProgram(defaultShaderName);
         shaderProgram.use();
         shaderProgram.setUniformMatrix4("projection", cameraComponent.getCameraProjection());
         shaderProgram.setUniformMatrix4("view", cameraTransform.getTransformMatrix().invert());
@@ -82,14 +94,16 @@ public class GridRenderer {
         GL30.glBindVertexArray(vao);
         GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vbo);
         GL15.glBufferSubData(GL15.GL_ARRAY_BUFFER, 0, vertexBuffer);
-
         GL30.glDrawArrays(GL15.GL_LINES, 0, vertexBuffer.limit() / 3);
-
         GL30.glBindVertexArray(0);
     }
 
+    /**
+     * Dispose of gird renderer.
+     */
+    @Override
     public void dispose() {
-        shaderProgram.dispose();
+        Logger.log(Logger.Type.DISPOSE, "Disposing of grid renderer ...");
         GL15.glDeleteBuffers(vbo);
         GL30.glDeleteVertexArrays(vao);
     }

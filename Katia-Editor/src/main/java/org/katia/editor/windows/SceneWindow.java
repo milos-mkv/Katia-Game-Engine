@@ -8,7 +8,10 @@ import imgui.flag.ImGuiStyleVar;
 import imgui.flag.ImGuiWindowFlags;
 import imgui.internal.flag.ImGuiDockNodeFlags;
 import org.katia.Logger;
+import org.katia.core.GameObject;
 import org.katia.editor.Editor;
+import org.katia.editor.managers.EditorInputManager;
+import org.katia.editor.managers.EditorSceneManager;
 import org.katia.editor.popups.ErrorPopup;
 import org.katia.editor.renderer.EditorCameraController;
 import org.katia.editor.renderer.EditorSceneRenderer;
@@ -46,7 +49,7 @@ public class SceneWindow implements UIComponent {
         ImGui.beginChild("##SceneChild", -1, -1, true, ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse);
         var viewportOffset = ImGui.getCursorPos();
 
-        ImGui.image(EditorSceneRenderer.getInstance().getFrameBuffer().getTexture(), ImGui.getWindowWidth() -6, ImGui.getWindowHeight() - 6, 0, 1, 1, 0);
+        ImGui.image(EditorSceneRenderer.getInstance().getDefaultframeBuffer().getTexture(), ImGui.getWindowWidth() -6, ImGui.getWindowHeight() - 6, 0, 1, 1, 0);
 
         var windowSize = ImGui.getWindowSize();
         var minBound = ImGui.getWindowPos();
@@ -67,20 +70,25 @@ public class SceneWindow implements UIComponent {
         float finalX = map(m.x, 0, vbounds[1].x - vbounds[0].x, 0, 1920);
         float finalY = map(m.y, 0, vbounds[1].y - vbounds[0].y, 0, 1080);
 
-
-//        if (GLFW.glfwGetMouseButton(Editor.getInstance().getHandle(), GLFW.GLFW_MOUSE_BUTTON_LEFT) == GLFW.GLFW_PRESS &&
-//                GLFW.glfwGetKey(Editor.getInstance().getHandle(), GLFW.GLFW_KEY_LEFT_CONTROL) == GLFW.GLFW_PRESS) {
-            glBindFramebuffer(GL_FRAMEBUFFER, EditorSceneRenderer.getInstance().getIdFrameBuffer().getId());
+        if (EditorInputManager.getInstance().isMouseButtonJustPressed(GLFW.GLFW_MOUSE_BUTTON_1)) {
+            glBindFramebuffer(GL_FRAMEBUFFER, EditorSceneRenderer.getInstance().getSelectFrameBuffer().getId());
             int[] i = new int[1];
             glReadPixels((int) finalX, (int) finalY, 1, 1, GL_RED_INTEGER, GL_INT, i);
+             GameObject gameObject = EditorSceneManager.getInstance().getScene().findBySelectID(i[0]);
+             if (gameObject != null) {
+                 Editor.getInstance().getUiRenderer().get(InspectorWindow.class).setGameObject(gameObject);
+             }
+            glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+        }
+//        if (GLFW.glfwGetMouseButton(Editor.getInstance().getHandle(), GLFW.GLFW_MOUSE_BUTTON_LEFT) == GLFW.GLFW_PRESS &&
+//                GLFW.glfwGetKey(Editor.getInstance().getHandle(), GLFW.GLFW_KEY_LEFT_CONTROL) == GLFW.GLFW_PRESS) {
 //            for (Map.Entry<String, Model> mas : scene.getModels().entrySet()) {
 //                if (mas.getValue().getId() == i[0]) {
 //                    Scene.getInstance().setSelectedModel(mas.getKey());
 //                    break;
 //                }
 //            }
-            System.out.println(i[0]);
-            glBindFramebuffer(GL_FRAMEBUFFER, 0);
 //        }
         ImVec2 currentMouseCursor = ImGui.getMousePos();
 

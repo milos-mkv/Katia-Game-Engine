@@ -204,8 +204,9 @@ public class Editor {
         EditorSceneManager.getInstance().openScene("/home/mmilicevic/Desktop/test/scenes/MainScene.scene");
         while (!GLFW.glfwWindowShouldClose(handle)) {
             GLFW.glfwPollEvents();
+
             EditorSceneRenderer.getInstance().render();
-            EditorSceneRenderer.getInstance().renderToFrameBuffer();
+
             glClearColor(0.14f, 0.16f, 0.18f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT);
             imGuiImplGlfw.newFrame();

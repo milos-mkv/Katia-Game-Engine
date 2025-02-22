@@ -65,4 +65,9 @@ public class Scene {
         return rootGameObject.find(name);
     }
 
+
+    public GameObject findBySelectID(int id) {
+        return rootGameObject.findBySelectID(id);
+
+    }
 }

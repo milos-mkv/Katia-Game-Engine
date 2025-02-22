@@ -1,10 +1,7 @@
 #version 330 core
+out int FragColor;
+uniform int selectId;
 
-out int outColor;
-
-uniform int id;
-
-void main()
-{
-    outColor = id;
+void main() {
+    FragColor = selectId;
 }

@@ -20,14 +20,13 @@ public class EditorSceneRenderer {
     static EditorSceneRenderer instance = new EditorSceneRenderer();
 
     EditorCameraController cameraController;
-    FrameBuffer frameBuffer;
-    FrameBuffer idFrameBuffer;
+    FrameBuffer defaultframeBuffer;
+    FrameBuffer selectFrameBuffer;
 
     public EditorSceneRenderer() {
         cameraController = EditorCameraController.getInstance();
-        frameBuffer = new FrameBuffer(1920, 1080, false);
-        idFrameBuffer = new FrameBuffer(1920, 1080, true);
-
+        defaultframeBuffer = new FrameBuffer(1920, 1080, false);
+        selectFrameBuffer = new FrameBuffer(1920, 1080, true);
     }
 
     public void render() {
@@ -35,34 +34,19 @@ public class EditorSceneRenderer {
         if (scene == null) {
             return;
         }
-
-        glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer.getId());
+        glBindFramebuffer(GL_FRAMEBUFFER, defaultframeBuffer.getId());
         glViewport(0, 0, 1920, 1080);
-
-
         cameraController.setViewport(Settings.w, Settings.h);
-
-        SceneRenderer.getInstance().render(scene, cameraController.getCamera());
-
+        SceneRenderer.getInstance()
+                .render(scene, cameraController.getCamera(), false);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    }
 
-    public void renderToFrameBuffer() {
-        Scene scene = EditorSceneManager.getInstance().getScene();
-        if (scene == null) {
-            return;
-        }
-
-        glBindFramebuffer(GL_FRAMEBUFFER, idFrameBuffer.getId());
+        // Second iteration render to select frame buffer.
+        glBindFramebuffer(GL_FRAMEBUFFER, selectFrameBuffer.getId());
         glViewport(0, 0, 1920, 1080);
-
-        glClearColor(0, 0, 0, 1);
-        glClear(GL_COLOR_BUFFER_BIT);
-
-        SceneRenderer.getInstance().render(scene, cameraController.getCamera(), true);
-
+        SceneRenderer.getInstance()
+                .render(scene, cameraController.getCamera(), true);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
-
 
 }

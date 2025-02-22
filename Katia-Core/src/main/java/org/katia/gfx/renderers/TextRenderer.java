@@ -1,9 +1,9 @@
-package org.katia.gfx.meshes;
+package org.katia.gfx.renderers;
 
-import lombok.Data;
 import lombok.Getter;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
+import org.katia.Logger;
 import org.katia.Math;
 import org.katia.core.GameObject;
 import org.katia.core.components.CameraComponent;
@@ -22,23 +22,36 @@ import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER;
 import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
 import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
-import static org.lwjgl.opengl.GL30.glBindVertexArray;
-import static org.lwjgl.opengl.GL30.glGenVertexArrays;
+import static org.lwjgl.opengl.GL30.*;
 import static org.lwjgl.opengl.GL31C.glDrawArraysInstanced;
 import static org.lwjgl.opengl.GL33.glVertexAttribDivisor;
 
-@Data
-public class TextMesh {
+/**
+ * This class is responsible for rendering game object with text components which represent text in game.
+ */
+public class TextRenderer extends Renderer {
 
     @Getter
-    static TextMesh instance = new TextMesh();
+    static TextRenderer instance = new TextRenderer();
 
-    private ShaderProgram shaderProgram;
     private int vao;
     private int staticVbo;
     private int instanceVbo;
 
-    public TextMesh() {
+    /**
+     * Text mesh default constructor.
+     */
+    public TextRenderer() {
+        super("text");
+        Logger.log(Logger.Type.INFO, "Initialize text mesh!");
+        createBuffers();
+    }
+
+    /**
+     * Create text buffers.
+     */
+    @Override
+    protected void createBuffers() {
         vao = glGenVertexArrays();
         glBindVertexArray(vao);
 
@@ -81,30 +94,30 @@ public class TextMesh {
 
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         glBindVertexArray(0);
-
-        this.shaderProgram = ShaderProgramFactory.createShaderProgram("TextSelect",
-                "./Katia-Core/src/main/resources/shaders/text.vert",
-                "./Katia-Core/src/main/resources/shaders/select/text.frag"
-        );
-
-        this.shaderProgram = ShaderProgramFactory.createShaderProgram("Text",
-                "./Katia-Core/src/main/resources/shaders/text.vert",
-                "./Katia-Core/src/main/resources/shaders/text.frag"
-        );
-
-
     }
 
-    public void render(GameObject gameObject, GameObject camera) {
+    /**
+     * Render game object with text component with provided camera.
+     * @param gameObject GameObject with text component.
+     * @param camera GameObject with camera component.
+     * @param select True if we want to render it to select FrameBuffer.
+     */
+    public void render(GameObject gameObject, GameObject camera, boolean select) {
         TextComponent textComponent = gameObject.getComponent(TextComponent.class);
         TransformComponent transformComponent = gameObject.getComponent(TransformComponent.class);
-        shaderProgram = ShaderProgramFactory.getShaderProgram("Text");
+
+        ShaderProgram shaderProgram = ShaderProgramFactory.getShaderProgram(
+                select ? selectShaderName : defaultShaderName
+        );
         shaderProgram.use();
 
         shaderProgram.setUniformMatrix4("proj", camera.getComponent(CameraComponent.class).getCameraProjection());
         shaderProgram.setUniformMatrix4("view", camera.getComponent(TransformComponent.class).getTransformMatrix().invert());
         shaderProgram.setUniformInt("uTexture", 0);
         shaderProgram.setUniformVec4("uFontColor", textComponent.getColor());
+        if (select) {
+            shaderProgram.setUniformInt("selectId", gameObject.getSelectID());
+        }
 
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, textComponent.getFont().getTexture().getId());
@@ -165,75 +178,14 @@ public class TextMesh {
         glBindTexture(GL_TEXTURE_2D, 0);
     }
 
-    public void render(GameObject gameObject, GameObject camera, boolean t) {
-        TextComponent textComponent = gameObject.getComponent(TextComponent.class);
-        TransformComponent transformComponent = gameObject.getComponent(TransformComponent.class);
-        shaderProgram = ShaderProgramFactory.getShaderProgram("TextSelect");
-
-        shaderProgram.use();
-
-        shaderProgram.setUniformMatrix4("proj", camera.getComponent(CameraComponent.class).getCameraProjection());
-        shaderProgram.setUniformMatrix4("view", camera.getComponent(TransformComponent.class).getTransformMatrix().invert());
-        shaderProgram.setUniformInt("uTexture", 0);
-        shaderProgram.setUniformVec4("uFontColor", textComponent.getColor());
-        shaderProgram.setUniformInt("selectId", gameObject.getSelectID());
-
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, textComponent.getFont().getTexture().getId());
-
-        glBindVertexArray(vao);
-        glBindBuffer(GL_ARRAY_BUFFER, instanceVbo);
-
-        float x = transformComponent.getPosition().x;
-        float y = transformComponent.getPosition().y;
-        try (MemoryStack stack = MemoryStack.stackPush()) {
-            FloatBuffer instanceBuffer = BufferUtils.createFloatBuffer(textComponent.getText().length() * (16 + 4));
-
-            float cursorX = transformComponent.getPosition().x;
-            float cursorY = transformComponent.getPosition().y;
-
-            for (int i = 0; i < textComponent.getText().length(); i++) {
-                char c = textComponent.getText().charAt(i);
-
-                if (c == '\n') {
-                    cursorX = x;
-                    cursorY -= textComponent.getFont().getSize() * textComponent.getScale();
-                    continue;
-                }
-
-                STBTTBakedChar glyph = textComponent.getFont().getGlyphInfo(c);
-
-                float xoff = glyph.xoff() * textComponent.getScale();
-                float yoff = glyph.yoff() * textComponent.getScale();
-                float width = (glyph.x1() - glyph.x0()) * textComponent.getScale();
-                float height = (glyph.y1() - glyph.y0()) * textComponent.getScale();
-                float yy = cursorY + (textComponent.getFont().getTexture().getHeight() - glyph.yoff() * textComponent.getScale()) - height - textComponent.getFont().getTexture().getHeight() ;
-
-                Matrix4f model = new Matrix4f()
-                        .translate(new Vector3f(cursorX + xoff, yy, 0))
-                        .scale(width, height, 1.0f);
-
-                float[] matrixArray = new float[16];
-                model.get(matrixArray);
-                for (float value : matrixArray) {
-                    instanceBuffer.put(value);
-                }
-
-                instanceBuffer.put(org.katia.Math.map(glyph.x0(), 0, 512, 0, 1))
-                        .put(org.katia.Math.map(glyph.y0(), 0, 512, 0, 1))
-                        .put(org.katia.Math.map(glyph.x1(), 0, 512, 0, 1))
-                        .put(Math.map( glyph.y1(), 0, 512, 0, 1));
-
-                cursorX += textComponent.getScale() + (glyph.xadvance() * textComponent.getScale()) ;
-            }
-
-            instanceBuffer.flip();
-            glBufferSubData(GL_ARRAY_BUFFER, 0, instanceBuffer);
-        }
-
-        glDrawArraysInstanced(GL_TRIANGLE_FAN, 0, 4, textComponent.getText().length());
-
-        glBindVertexArray(0);
-        glBindTexture(GL_TEXTURE_2D, 0);
+    /**
+     * Dispose of text renderer.
+     */
+    @Override
+    public void dispose() {
+        Logger.log(Logger.Type.DISPOSE, "Disposing of text renderer ...");
+        glDeleteBuffers(instanceVbo);
+        glDeleteBuffers(staticVbo);
+        glDeleteVertexArrays(vao);
     }
 }

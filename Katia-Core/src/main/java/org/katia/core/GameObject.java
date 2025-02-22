@@ -9,6 +9,7 @@ import lombok.ToString;
 import org.katia.Logger;
 import org.katia.core.components.Component;
 import org.katia.core.components.TransformComponent;
+import org.katia.game.Game;
 
 import java.lang.ref.WeakReference;
 import java.util.*;
@@ -188,6 +189,19 @@ public class GameObject {
                 return child;
             }
             GameObject inChild = child.find(name);
+            if (inChild != null) {
+                return inChild;
+            }
+        }
+        return null;
+    }
+
+    public GameObject findBySelectID(int id) {
+        for (GameObject child : children) {
+            if (child.getSelectID() == id) {
+                return child;
+            }
+            GameObject inChild = child.findBySelectID(id);
             if (inChild != null) {
                 return inChild;
             }

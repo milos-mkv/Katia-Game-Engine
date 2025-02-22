@@ -1,13 +1,12 @@
-package org.katia.gfx.meshes;
+package org.katia.gfx.renderers;
 
 import lombok.Getter;
+import org.katia.Logger;
 import org.katia.core.GameObject;
 import org.katia.core.components.CameraComponent;
 import org.katia.core.components.TransformComponent;
 import org.katia.factory.ShaderProgramFactory;
 import org.katia.gfx.ShaderProgram;
-
-import java.nio.file.Paths;
 
 import static org.lwjgl.opengl.GL11.GL_FLOAT;
 import static org.lwjgl.opengl.GL11.GL_LINES;
@@ -19,19 +18,32 @@ import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
 import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
 import static org.lwjgl.opengl.GL30.*;
 
-public class AxisMesh {
-
+/**
+ * This class is responsible for rendering x and y line axis.
+ */
+public class AxisRenderer extends Renderer {
 
     @Getter
-    private static final AxisMesh instance = new AxisMesh();
+    private static final AxisRenderer instance = new AxisRenderer();
 
-    ShaderProgram shaderProgram;
+    public int vao;
+    public int vbo;
+    public int ebo;
 
-    public final int vao;
-    public final int vbo;
-    public final int ebo;
+    /**
+     * Axis Mesh default constructor.
+     */
+    public AxisRenderer() {
+        super("axis");
+        Logger.log(Logger.Type.INFO, "Creating Axis Mesh ...");
+        createBuffers();
+    }
 
-    public AxisMesh() {
+    /**
+     * Create buffers for axis mesh.
+     */
+    @Override
+    protected void createBuffers() {
         var vertices = new float[] {-500f,  0f, 0.0f, 500f, 0f, 0.0f, 0f, -500f, 0.0f, 0f, 500f, 0.0f };
         int[] indices = { 0, 1, 2, 3 };
 
@@ -50,14 +62,14 @@ public class AxisMesh {
 
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         glBindVertexArray(0);
-
-        shaderProgram = ShaderProgramFactory.createShaderProgram("Axis",
-                "./Katia-Core/src/main/resources/shaders/axis.vert",
-                "./Katia-Core/src/main/resources/shaders/axis.frag"
-        );
     }
 
+    /**
+     * Render x and y axis lines.
+     * @param camera GameObject which camera component to use.
+     */
     public void render(GameObject camera) {
+        ShaderProgram shaderProgram = ShaderProgramFactory.getShaderProgram(defaultShaderName);
         shaderProgram.use();
         shaderProgram.setUniformMatrix4("projection", camera.getComponent(CameraComponent.class).getCameraProjection());
         shaderProgram.setUniformMatrix4("view", camera.getComponent(TransformComponent.class).getTransformMatrix().invert());
@@ -66,7 +78,12 @@ public class AxisMesh {
         glBindVertexArray(0);
     }
 
+    /**
+     * Dispose of line axis renderer.
+     */
+    @Override
     public void dispose() {
+        Logger.log(Logger.Type.DISPOSE, "Disposing of line axis renderer ...");
         glDeleteVertexArrays(vao);
         glDeleteBuffers(vbo);
         glDeleteBuffers(ebo);
