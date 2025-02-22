@@ -16,12 +16,11 @@ public class ScriptManager {
     /**
      * Script manager constructor.
      * @param game Game instance.
-     * @param path Path to scripts root directory.
      */
-    public ScriptManager(Game game, String path) {
+    public ScriptManager(Game game) {
         Logger.log(Logger.Type.INFO, "Creating script manager ...");
         this.game = game;
-        this.path = path;
+        this.path = game.getDirectory();
         this.scripts = new HashMap<>();
 
         loadScripts(path);

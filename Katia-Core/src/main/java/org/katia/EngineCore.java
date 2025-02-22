@@ -1,5 +1,8 @@
 package org.katia;
 
+import org.katia.factory.FontFactory;
+import org.katia.factory.GameObjectFactory;
+import org.katia.factory.SceneFactory;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWErrorCallback;
 
@@ -23,6 +26,10 @@ public abstract class EngineCore {
         if (System.getProperty("os.name").toLowerCase().contains("mac")) {
             GLFW.glfwWindowHint(GLFW.GLFW_OPENGL_FORWARD_COMPAT, GLFW.GLFW_TRUE);
         }
+
+        SceneFactory.initialize();
+        GameObjectFactory.initialize();
+        FontFactory.initialize();
     }
 
     /**

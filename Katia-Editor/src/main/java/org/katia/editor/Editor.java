@@ -201,7 +201,6 @@ public class Editor {
     public void run() {
         Logger.log(Logger.Type.INFO, "Run editor ...");
         GLFW.glfwSwapInterval(0);
-        GameObjectFactory.initialize();
 
         ProjectManager.getInstance().openProject("/home/mmilicevic/Desktop/test");
         EditorSceneManager.getInstance().openScene("/home/mmilicevic/Desktop/test/scenes/MainScene.scene");

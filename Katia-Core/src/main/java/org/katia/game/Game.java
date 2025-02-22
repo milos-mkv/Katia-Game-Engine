@@ -39,13 +39,10 @@ public class Game {
         configuration = Configuration.load(directory + "/katia-conf.json");
         window = new Window(this, configuration.title, configuration.width, configuration.height);
 
-        SceneFactory.initialize();
-        GameObjectFactory.initialize();
-        FontFactory.initialize();
 
-        assetManager = new AssetManager(this, directory);
-        sceneManager = new SceneManager(this, directory + "/scenes");
-        scriptManager = new ScriptManager(this, directory + "/scripts");
+        assetManager = new AssetManager(this);
+        sceneManager = new SceneManager(this);
+        scriptManager = new ScriptManager(this);
         inputManager = new InputManager(this);
         scriptExecutioner = new LuaScriptExecutioner(this);
     }

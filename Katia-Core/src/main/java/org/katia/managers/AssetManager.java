@@ -28,12 +28,11 @@ public class AssetManager {
     /**
      * Load all assets from game directory.
      * @param game Game instance.
-     * @param assetsDirectory Assets directory.
      */
-    public AssetManager(Game game, String assetsDirectory) {
-        Logger.log(Logger.Type.INFO, "Creating asset manager:", assetsDirectory);
+    public AssetManager(Game game) {
+        Logger.log(Logger.Type.INFO, "Creating asset manager");
         this.game = game;
-        this.assetPath = assetsDirectory;
+        this.assetPath = game.getDirectory();
         this.textures = new HashMap<>();
         this.fonts = new HashMap<>();
 

@@ -53,10 +53,6 @@ public class EditorAssetManager {
         fonts.put("Text15", io.getFonts().addFontFromFileTTF("./Katia-Editor/src/main/resources/fonts/Roboto-Regular.ttf", 15));
 
         fonts.put("Default40", io.getFonts().addFontFromFileTTF("./Katia-Editor/src/main/resources/fonts/Roboto-ExtraBold.ttf", 40.0f));
-
-
-        FontFactory.initialize();
-        SceneFactory.initialize();
     }
 
     private void loadImages() {

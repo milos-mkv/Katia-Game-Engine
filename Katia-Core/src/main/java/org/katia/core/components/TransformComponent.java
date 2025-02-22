@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import org.joml.AxisAngle4f;
 import org.joml.Matrix4f;
+import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.katia.Logger;
 
@@ -86,6 +87,13 @@ public class TransformComponent extends Component {
         AxisAngle4f axisAngle4f = new AxisAngle4f();
         localTransformMatrix.getRotation(axisAngle4f);
         rotation = axisAngle4f.angle * axisAngle4f.z;
+    }
+
+    public Vector2f getWorldPosition() {
+        // Extract position (translation part)
+        Vector3f position = new Vector3f();
+        getWorldTransformMatrix().getTranslation(position);
+        return new Vector2f(position.x, position.y);
     }
 
     /**

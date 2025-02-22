@@ -125,13 +125,13 @@ public class TextRenderer extends Renderer {
         glBindVertexArray(vao);
         glBindBuffer(GL_ARRAY_BUFFER, instanceVbo);
 
-        float x = transformComponent.getPosition().x;
-        float y = transformComponent.getPosition().y;
+        float x = transformComponent.getWorldPosition().x;
+        float y = transformComponent.getWorldPosition().y;
         try (MemoryStack stack = MemoryStack.stackPush()) {
             FloatBuffer instanceBuffer = BufferUtils.createFloatBuffer(textComponent.getText().length() * (16 + 4));
 
-            float cursorX = transformComponent.getPosition().x;
-            float cursorY = transformComponent.getPosition().y;
+            float cursorX = transformComponent.getWorldPosition().x;
+            float cursorY = transformComponent.getWorldPosition().y;
 
             for (int i = 0; i < textComponent.getText().length(); i++) {
                 char c = textComponent.getText().charAt(i);
@@ -149,6 +149,8 @@ public class TextRenderer extends Renderer {
                 float width = (glyph.x1() - glyph.x0()) * textComponent.getScale();
                 float height = (glyph.y1() - glyph.y0()) * textComponent.getScale();
                 float yy = cursorY + (textComponent.getFont().getTexture().getHeight() - glyph.yoff() * textComponent.getScale()) - height - textComponent.getFont().getTexture().getHeight() ;
+
+
 
                 Matrix4f model = new Matrix4f()
                         .translate(new Vector3f(cursorX + xoff, yy, 0))

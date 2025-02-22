@@ -22,10 +22,10 @@ public class SceneManager {
     /**
      * Scene manager constructor.
      */
-    public SceneManager(Game game, String path) {
+    public SceneManager(Game game) {
         Logger.log(Logger.Type.INFO, "Creating scene manager ...");
 
-        this.path = path;
+        this.path = game.getDirectory();
         this.game = game;
         scenes = new HashMap<>();
         activeScene = null;

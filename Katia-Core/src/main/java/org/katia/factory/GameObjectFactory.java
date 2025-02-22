@@ -51,7 +51,6 @@ public class GameObjectFactory {
     public static GameObject copy(GameObject gameObject) {
         GameObject copy = generateGameObjectFromJson(generateJsonFromGameObject(gameObject));
         setUUID(copy);
-        reconstructGameObject(null, copy);
         return copy;
     }
 
@@ -97,6 +96,7 @@ public class GameObjectFactory {
         GameObject gameObject = null;
         try {
             gameObject = objectMapper.readValue(json, GameObject.class);
+            reconstructGameObject(null, gameObject);
         } catch (JsonProcessingException e) {
             Logger.log(Logger.Type.ERROR, e.toString());
         }
