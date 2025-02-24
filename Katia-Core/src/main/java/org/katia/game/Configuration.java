@@ -11,6 +11,9 @@ import lombok.NoArgsConstructor;
 import org.katia.FileSystem;
 import org.katia.Logger;
 
+/**
+ * This class represents basic start game configuration.
+ */
 @JsonDeserialize
 @AllArgsConstructor
 @NoArgsConstructor
@@ -69,5 +72,4 @@ public class Configuration {
     public boolean isValid() {
         return (title != null && width > 100 && height > 100);
     }
-
 }

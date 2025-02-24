@@ -4,11 +4,14 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.joml.Vector2i;
+import org.katia.Logger;
 import org.katia.factory.GameObjectFactory;
-import org.katia.gfx.FrameBuffer;
 import org.luaj.vm2.Globals;
+import org.luaj.vm2.lib.jse.JsePlatform;
 
+/**
+ * Game scene representation class.
+ */
 @Data
 @JsonDeserialize
 @NoArgsConstructor
@@ -16,7 +19,6 @@ public class Scene {
 
     private String name;
     private GameObject rootGameObject;
-    private Vector2i size;
 
     @JsonIgnore
     private Globals globals;
@@ -27,8 +29,8 @@ public class Scene {
      */
     public Scene(String name) {
         this.name = name;
-        this.size = new Vector2i(0, 0);
         this.rootGameObject = GameObjectFactory.createGameObject("Root");
+        this.globals = JsePlatform.standardGlobals();
     }
 
     /**
@@ -65,9 +67,20 @@ public class Scene {
         return rootGameObject.find(name);
     }
 
-
+    /**
+     * Find game object with provided select ID.
+     * @param id Select ID.
+     * @return GameObject
+     */
     public GameObject findBySelectID(int id) {
         return rootGameObject.findBySelectID(id);
+    }
 
+    /**
+     * Dispose of game scene.
+     */
+    public void dispose() {
+        Logger.log(Logger.Type.DISPOSE, "Disposing og scene:", name);
+        rootGameObject.dispose();
     }
 }

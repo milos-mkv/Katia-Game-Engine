@@ -4,8 +4,16 @@ Katia Game Engine
 ### Katia Core
 
 ---
-- [ ] Render text into frame buffer
-- [ ] Add sounds
+- [ ] Components - Remove resources from components.
+  - [x] Component
+  - [x] Camera component
+  - [x] Script component
+  - [x] Sprite component
+  - [x] Text component
+  - [x] Transform component
+- [ ] Factory
+  - [x] Component factory
+  - [x] Game Object factory
 ---
 ### Katia Editor
 

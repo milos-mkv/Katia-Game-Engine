@@ -9,19 +9,17 @@ import org.joml.Vector3f;
 import org.katia.Logger;
 import org.katia.core.GameObject;
 import org.katia.core.Scene;
-import org.katia.core.components.CameraComponent;
-import org.katia.core.components.TransformComponent;
+import org.katia.core.components.*;
 import org.luaj.vm2.lib.jse.JsePlatform;
 
+/**
+ * This class is responsible for creating game scenes.
+ */
 public abstract class SceneFactory {
 
-    private static ObjectMapper objectMapper;
+    private static final ObjectMapper objectMapper;
 
-    /**
-     * Initialize scene factory.
-     */
-    public static void initialize() {
-        Logger.log(Logger.Type.INFO, "Initialize scene factory!");
+    static {
         objectMapper = new ObjectMapper();
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
@@ -31,17 +29,19 @@ public abstract class SceneFactory {
     /**
      * Create scene.
      * @param name Scene name.
+     * @param width Main camera viewport width.
+     * @param height Main camera viewport height.
      * @return Scene
      */
     public static Scene createScene(String name, int width, int height) {
         Scene scene = new Scene(name);
-        scene.setGlobals(JsePlatform.standardGlobals());
 
         GameObject mainCameraGameObject = GameObjectFactory.createGameObject("Main Camera");
         mainCameraGameObject.addComponent(new CameraComponent());
         mainCameraGameObject.getComponent(TransformComponent.class).setPosition(new Vector3f(0, 0, 0));
         mainCameraGameObject.getComponent(TransformComponent.class).setScale(new Vector3f(1, 1, 0));
         mainCameraGameObject.getComponent(CameraComponent.class).setViewport(new Vector2f(width, height));
+
         scene.addGameObject(mainCameraGameObject);
 
         Logger.log(Logger.Type.SUCCESS, "Scene created:", name);
@@ -75,8 +75,8 @@ public abstract class SceneFactory {
         try {
             final Scene scene = objectMapper.readValue(json, Scene.class);
             scene.setGlobals(JsePlatform.standardGlobals());
+            GameObjectFactory.reconstructGameObject(scene.getRootGameObject());
 
-            GameObjectFactory.reconstructGameObject(scene, scene.getRootGameObject());
             Logger.log(Logger.Type.SUCCESS, "Scene generated:", scene.getName());
             return scene;
         } catch (JsonProcessingException e) {
@@ -84,5 +84,4 @@ public abstract class SceneFactory {
         }
         return null;
     }
-
 }

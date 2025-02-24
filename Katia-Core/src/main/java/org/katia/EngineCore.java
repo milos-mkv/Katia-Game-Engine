@@ -26,10 +26,6 @@ public abstract class EngineCore {
         if (System.getProperty("os.name").toLowerCase().contains("mac")) {
             GLFW.glfwWindowHint(GLFW.GLFW_OPENGL_FORWARD_COMPAT, GLFW.GLFW_TRUE);
         }
-
-        SceneFactory.initialize();
-        GameObjectFactory.initialize();
-        FontFactory.initialize();
     }
 
     /**

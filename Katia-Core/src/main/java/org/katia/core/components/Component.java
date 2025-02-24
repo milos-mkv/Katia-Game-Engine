@@ -1,13 +1,12 @@
 package org.katia.core.components;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.katia.Logger;
 
-import java.util.HashMap;
 
 /**
  * Base class for all game object components.
@@ -24,21 +23,13 @@ import java.util.HashMap;
 @NoArgsConstructor
 @AllArgsConstructor
 public abstract class Component {
-    @JsonIgnore
-    public static HashMap<String, Class<?>> components = new HashMap<>() {
-        {
-            put("Transform", TransformComponent.class);
-            put("Sprite", SpriteComponent.class);
-            put("Camera", CameraComponent.class);
-            put("Script", ScriptComponent.class);
-            put("Text", TextComponent.class);
-        }
-    };
 
     String componentType;
 
     /**
      * Dispose of component.
      */
-    public abstract void dispose();
+    public void dispose() {
+        Logger.log(Logger.Type.DISPOSE, "\tDisposing of component:", componentType);
+    }
 }

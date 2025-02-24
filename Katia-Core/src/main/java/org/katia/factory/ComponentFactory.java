@@ -2,7 +2,26 @@ package org.katia.factory;
 
 import org.katia.core.components.*;
 
+/**
+ * Class responsible for component generation and stuff.
+ */
 public abstract class ComponentFactory {
+
+    /**
+     * Get component class based on string representation of it.
+     * @param type Type as string.
+     * @return Class
+     */
+    public static Class<?> getComponentClass(String type) {
+        return switch (type) {
+            case "Transform" -> TransformComponent.class;
+            case "Sprite" -> SpriteComponent.class;
+            case "Camera" -> CameraComponent.class;
+            case "Script" -> ScriptComponent.class;
+            case "Text" -> TextComponent.class;
+            default -> null;
+        };
+    }
 
     /**
      * Create component.
@@ -19,5 +38,4 @@ public abstract class ComponentFactory {
             default -> null;
         };
     }
-
 }

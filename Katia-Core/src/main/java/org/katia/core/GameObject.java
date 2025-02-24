@@ -9,11 +9,14 @@ import lombok.ToString;
 import org.katia.Logger;
 import org.katia.core.components.Component;
 import org.katia.core.components.TransformComponent;
-import org.katia.game.Game;
+import org.katia.factory.ComponentFactory;
 
 import java.lang.ref.WeakReference;
 import java.util.*;
 
+/**
+ * GameObject representation class.
+ */
 @JsonDeserialize
 @NoArgsConstructor
 @Data
@@ -45,7 +48,7 @@ public class GameObject {
     public GameObject(UUID id, String name) {
         this.id = id;
         this.name = name;
-        this.children = new ArrayList<GameObject>();
+        this.children = new ArrayList<>();
         this.components = new LinkedHashMap<>();
         this.parent = null;
         this.active = true;
@@ -64,9 +67,13 @@ public class GameObject {
     /**
      * Destroy game object.
      */
-    public void destroy() {
+    public void dispose() {
+        Logger.log(Logger.Type.DISPOSE, "Disposing of Game Object:", name);
         this.removeFromParent();
         components.forEach((_, component) -> component.dispose());
+        for (int i = children.size() - 1; i >= 0; i--) {
+            children.get(i).dispose();
+        }
     }
 
     /**
@@ -153,7 +160,7 @@ public class GameObject {
      * @param componentType Component type as string.
      */
     public void removeComponent(String componentType) {
-        this.components.remove(Component.components.get(componentType));
+        this.components.remove(ComponentFactory.getComponentClass(componentType));
     }
 
     /**
@@ -175,7 +182,7 @@ public class GameObject {
      */
     @SuppressWarnings("unchecked")
     public <T> T getComponent(String componentType) {
-        return (T) this.components.get(Component.components.get(componentType));
+        return (T) this.components.get(ComponentFactory.getComponentClass(componentType));
     }
 
     /**
@@ -196,6 +203,11 @@ public class GameObject {
         return null;
     }
 
+    /**
+     * Find child game object with provided select ID.
+     * @param id Select ID.
+     * @return GameObject
+     */
     public GameObject findBySelectID(int id) {
         for (GameObject child : children) {
             if (child.getSelectID() == id) {
@@ -222,14 +234,4 @@ public class GameObject {
         }
         return false;
     }
-
-//    @Override
-//    protected void finalize() throws Throwable {
-//        try {
-//            System.out.println("Removing: " + this.name + " : " + this.id);
-//            super.finalize();
-//        } catch (Throwable e) {
-//            throw new RuntimeException(e);
-//        }
-//    }
 }

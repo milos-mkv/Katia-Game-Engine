@@ -1,7 +1,6 @@
 package org.katia.gfx;
 
 import lombok.Getter;
-import org.joml.Matrix4f;
 import org.joml.Vector2i;
 import org.katia.Logger;
 import org.katia.core.GameObject;
@@ -9,7 +8,6 @@ import org.katia.core.Scene;
 import org.katia.core.components.CameraComponent;
 import org.katia.core.components.SpriteComponent;
 import org.katia.core.components.TextComponent;
-import org.katia.core.components.TransformComponent;
 import org.katia.gfx.renderers.*;
 
 import static org.lwjgl.opengl.GL11.*;
@@ -19,9 +17,9 @@ public class SceneRenderer {
     @Getter
     static SceneRenderer instance = new SceneRenderer();
 
-    Matrix4f cameraTransform;
     GameObject camera;
     boolean isSelectMode = false;
+
     /**
      * Scene renderer constructor.
      */
@@ -38,10 +36,8 @@ public class SceneRenderer {
     public void render(Scene scene, GameObject camera, boolean select) {
         isSelectMode = select;
         this.camera = camera;
-        scene.setSize(new Vector2i(0, 0));
         CameraComponent cameraComponent = camera.getComponent(CameraComponent.class);
         var backgroundColor = cameraComponent.getBackground();
-        cameraTransform = camera.getComponent(TransformComponent.class).getTransformMatrix();
         if (!select) {
             glClearColor(backgroundColor.x, backgroundColor.y, backgroundColor.z, 0.0f);
             glClear(GL_COLOR_BUFFER_BIT);
@@ -57,28 +53,6 @@ public class SceneRenderer {
     }
 
     /**
-     * Render provided scene.
-     * @param scene Scene.
-     */
-    public void render(Scene scene) {
-        camera = scene.find("Main Camera");
-        scene.setSize(new Vector2i(0, 0));
-        CameraComponent cameraComponent = camera.getComponent(CameraComponent.class);
-        var backgroundColor = cameraComponent.getBackground();
-        cameraTransform = camera.getComponent(TransformComponent.class).getTransformMatrix();
-        glClearColor(backgroundColor.x, backgroundColor.y, backgroundColor.z, 0.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        glEnable(GL_LINE_SMOOTH);
-        glLineWidth(2);
-        GridRenderer.getInstance().render(camera);
-        AxisRenderer.getInstance().render(camera);
-
-        renderGameObject(scene.getRootGameObject());
-    }
-
-    /**
      * Render game object.
      * @param gameObject Game Object.
      */
@@ -88,18 +62,18 @@ public class SceneRenderer {
         }
 
         SpriteComponent spriteComponent = gameObject.getComponent(SpriteComponent.class);
-        if (spriteComponent != null && spriteComponent.getTexture() != null) {
+        if (spriteComponent != null && spriteComponent.getPath() != null) {
             SpriteRenderer.getInstance().render(gameObject, camera, isSelectMode);
-        }
-
-        TextComponent textComponent = gameObject.getComponent(TextComponent.class);
-        if (textComponent != null && textComponent.getFont() != null) {
-            TextRenderer.getInstance().render(gameObject, camera, isSelectMode);
         }
 
         CameraComponent cameraComponent = gameObject.getComponent(CameraComponent.class);
         if (cameraComponent != null) {
             CameraRenderer.getInstance().render(gameObject, camera, isSelectMode);
+        }
+
+        TextComponent textComponent = gameObject.getComponent(TextComponent.class);
+        if (textComponent != null && textComponent.getPath()!= null) {
+            TextRenderer.getInstance().render(gameObject, camera, isSelectMode);
         }
 
         for (GameObject child : gameObject.getChildren()) {

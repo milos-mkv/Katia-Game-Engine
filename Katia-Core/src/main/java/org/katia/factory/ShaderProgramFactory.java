@@ -11,6 +11,9 @@ import java.util.Map;
 import static org.lwjgl.opengl.GL11.GL_FALSE;
 import static org.lwjgl.opengl.GL20.*;
 
+/**
+ * This class is responsible for creating shader programs.
+ */
 public abstract class ShaderProgramFactory {
 
     static final Map<String, ShaderProgram> shaders = new HashMap<>();

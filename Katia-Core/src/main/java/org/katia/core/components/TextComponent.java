@@ -1,49 +1,29 @@
 package org.katia.core.components;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.joml.Vector4f;
-import org.katia.Logger;
-import org.katia.gfx.Font;
 
+/**
+ * GameObject text component.
+ */
+@EqualsAndHashCode(callSuper = true)
 @Data
 public class TextComponent extends Component {
 
-    String text;
-    String fontPath;
-    Vector4f color;
-    float scale;
-
-    @JsonIgnore
-    Font font;
+    private String text;
+    private String path;
+    private Vector4f color;
+    private float scale;
 
     /**
      * Text component default constructor.
      */
     public TextComponent() {
         super("Text");
-        this.fontPath = null;
+        this.path = null;
         this.text = "";
         this.scale = 1.0f;
-        this.font = null;
         this.color = new Vector4f(1, 1, 1, 1);
-    }
-
-    /**
-     * Set font.
-     * @param font Font.
-     */
-    @JsonIgnore
-    public void setFont(Font font) {
-        this.font = font;
-        this.fontPath = font.getPath();
-    }
-
-    /**
-     * Dispose of text component.
-     */
-    @Override
-    public void dispose() {
-        Logger.log(Logger.Type.DISPOSE, "Disposing of text component ...");
     }
 }

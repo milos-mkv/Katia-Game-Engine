@@ -24,15 +24,16 @@ import java.util.Map;
 
 public abstract class FontFactory {
 
-    static Map<String, Font> fonts;
+    static final Map<String, Font> fonts;
+    static final ObjectMapper objectMapper;
 
-    /**
-     * Initialize font factory.
-     */
-    public static void initialize() {
+    static {
         fonts = new HashMap<>();
+        objectMapper = new ObjectMapper();
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+        objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
     }
-
     /**
      * Get font if it is already loaded.
      * @param path Font path.
@@ -46,15 +47,15 @@ public abstract class FontFactory {
      * Loads a font file and creates a baked bitmap and glyph information.
      *
      * @param path Path to the font file (TTF/OTF).
-     * @param fontSize Font size.
-     * @param bitmapWidth Bitmap width.
-     * @param bitmapHeight Bitmap height.
      */
-    public static Font createFont(String path, float fontSize, int bitmapWidth, int bitmapHeight) {
+    public static Font createFont(String path) {
         if (fonts.get(path) != null) {
             Logger.log(Logger.Type.INFO, "Font already loaded:", path);
             return fonts.get(path);
         }
+        float fontSize = 72;
+        int bitmapWidth = 512;
+        int bitmapHeight = 512;
         try {
             ByteBuffer fontBuffer = FileSystem.ioResourceToByteBuffer(path, 1024);
             ByteBuffer bitmap = BufferUtils.createByteBuffer(bitmapWidth * bitmapHeight);
@@ -74,10 +75,7 @@ public abstract class FontFactory {
             font.setTexture(TextureFactory.createTexture(imagePath));
             fonts.put(path, font);
 
-            ObjectMapper objectMapper = new ObjectMapper();
-            objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-            objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-            objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
+
             try {
                String json = objectMapper.writeValueAsString(font);
                 Logger.log(Logger.Type.SUCCESS, json);

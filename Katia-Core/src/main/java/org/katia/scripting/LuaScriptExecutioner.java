@@ -57,7 +57,8 @@ public class LuaScriptExecutioner {
         var component = gameObject.getComponent(ScriptComponent.class);
 
         if (component != null && component.getPath() != null) {
-            component.setBehaviourTable(scene.getGlobals().loadfile(component.getPath()).call());
+            String p = game.getDirectory() + "/" + component.getPath();
+            component.setBehaviourTable(scene.getGlobals().loadfile(p).call());
             LuaTable params = new LuaTable();
             params.set("gameObject", CoerceJavaToLua.coerce(gameObject));
             params.set("scene", CoerceJavaToLua.coerce(scene));

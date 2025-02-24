@@ -14,6 +14,9 @@ import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL11.GL_LINEAR;
 import static org.lwjgl.opengl.GL30.glGenerateMipmap;
 
+/**
+ * This class is responsible for creating texutres.
+ */
 public abstract class TextureFactory {
 
     static final Map<String, Texture> loadedTextures = new HashMap<>();

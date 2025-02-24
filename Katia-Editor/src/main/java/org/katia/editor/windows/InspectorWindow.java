@@ -19,6 +19,7 @@ import org.katia.core.GameObject;
 import org.katia.core.components.*;
 import org.katia.editor.EditorUtils;
 import org.katia.editor.managers.EditorAssetManager;
+import org.katia.editor.managers.ProjectManager;
 import org.katia.editor.popups.SelectImagePopup;
 import org.katia.factory.ComponentFactory;
 import org.katia.factory.FontFactory;
@@ -61,7 +62,7 @@ public class InspectorWindow implements UIComponent {
     private void renderAddComponentContextMenu(GameObject gameObject) {
         if (ImGui.beginPopup("Add Component Menu")) {
             for (String componentType : components.keySet()) {
-                boolean hasComponent = gameObject.getComponent(Component.components.get(componentType)) != null;
+                boolean hasComponent = gameObject.getComponent(ComponentFactory.getComponentClass(componentType)) != null;
 
                 if (componentType.equals("Transform")) {
                     ImGui.beginDisabled();
@@ -262,8 +263,9 @@ public class InspectorWindow implements UIComponent {
             if (ImGui.beginDragDropTarget()) {
                 Path payload = ImGui.acceptDragDropPayload("ImageFile");
                 if (payload != null ) {
-                    System.out.println(payload.toString());
-                    spriteComponent.setTexture(payload.toString());
+                    Texture texture = TextureFactory.createTexture(payload.toString());
+                    spriteComponent.setTexture(texture);
+                    spriteComponent.setPath(FileSystem.relativize(ProjectManager.getInstance().getPath(), payload.toString()));
                 }
                 ImGui.endDragDropTarget();
             }

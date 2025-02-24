@@ -10,6 +10,8 @@ import org.katia.core.components.CameraComponent;
 import org.katia.core.components.TextComponent;
 import org.katia.core.components.TransformComponent;
 import org.katia.factory.ShaderProgramFactory;
+import org.katia.game.Global;
+import org.katia.gfx.Font;
 import org.katia.gfx.ShaderProgram;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.stb.STBTTBakedChar;
@@ -118,9 +120,9 @@ public class TextRenderer extends Renderer {
         if (select) {
             shaderProgram.setUniformInt("selectId", gameObject.getSelectID());
         }
-
+        Font font = Global.resourceManager.getFonts().get(textComponent.getPath());
         glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, textComponent.getFont().getTexture().getId());
+        glBindTexture(GL_TEXTURE_2D, font.getTexture().getId());
 
         glBindVertexArray(vao);
         glBindBuffer(GL_ARRAY_BUFFER, instanceVbo);
@@ -138,17 +140,17 @@ public class TextRenderer extends Renderer {
 
                 if (c == '\n') {
                     cursorX = x;
-                    cursorY -= textComponent.getFont().getSize() * textComponent.getScale();
+                    cursorY -= font.getSize() * textComponent.getScale();
                     continue;
                 }
 
-                STBTTBakedChar glyph = textComponent.getFont().getGlyphInfo(c);
+                STBTTBakedChar glyph = font.getGlyphInfo(c);
 
                 float xoff = glyph.xoff() * textComponent.getScale();
                 float yoff = glyph.yoff() * textComponent.getScale();
                 float width = (glyph.x1() - glyph.x0()) * textComponent.getScale();
                 float height = (glyph.y1() - glyph.y0()) * textComponent.getScale();
-                float yy = cursorY + (textComponent.getFont().getTexture().getHeight() - glyph.yoff() * textComponent.getScale()) - height - textComponent.getFont().getTexture().getHeight() ;
+                float yy = cursorY + (font.getTexture().getHeight() - glyph.yoff() * textComponent.getScale()) - height - font.getTexture().getHeight() ;
 
 
 

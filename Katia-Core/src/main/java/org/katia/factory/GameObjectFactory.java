@@ -5,21 +5,19 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.katia.Logger;
 import org.katia.core.GameObject;
-import org.katia.core.Scene;
-import org.katia.core.components.ScriptComponent;
-import org.katia.core.components.SpriteComponent;
-import org.katia.core.components.TextComponent;
 import org.katia.core.components.TransformComponent;
 
-import java.nio.file.Paths;
 import java.util.Objects;
 import java.util.UUID;
 
+/**
+ * This class is responsible for creation and abstract manipulation of Game Objects.
+ */
 public class GameObjectFactory {
 
-    private static ObjectMapper objectMapper;
+    private static final ObjectMapper objectMapper;
 
-    public static void initialize() {
+    static {
         objectMapper = new ObjectMapper();
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
@@ -51,14 +49,7 @@ public class GameObjectFactory {
     public static GameObject copy(GameObject gameObject) {
         GameObject copy = generateGameObjectFromJson(generateJsonFromGameObject(gameObject));
         setUUID(copy);
-        return copy;
-    }
-
-    private static void setUUID(GameObject gameObject) {
-        gameObject.setId(UUID.randomUUID());
-        for (var child : gameObject.getChildren()) {
-            setUUID(child);
-        }
+        return null;
     }
 
     /**
@@ -69,6 +60,7 @@ public class GameObjectFactory {
     public static GameObject createGameObjectWithComponent(String component) {
         GameObject gameObject = GameObjectFactory.createGameObject();
         gameObject.addComponent(Objects.requireNonNull(ComponentFactory.createComponent(component)));
+        gameObject.setName(component);
         return gameObject;
     }
 
@@ -96,40 +88,33 @@ public class GameObjectFactory {
         GameObject gameObject = null;
         try {
             gameObject = objectMapper.readValue(json, GameObject.class);
-            reconstructGameObject(null, gameObject);
+            reconstructGameObject(gameObject);
         } catch (JsonProcessingException e) {
             Logger.log(Logger.Type.ERROR, e.toString());
         }
         return gameObject;
     }
 
-    public static void reconstructGameObject(Scene scene, GameObject gameObject) {
-        for (Class<?> component : gameObject.getComponents().keySet()) {
-            if (component == ScriptComponent.class) {
-//                ScriptComponent scriptComponent = gameObject.getComponent(ScriptComponent.class);
-//                if (scriptComponent.getPath() != null) {
-//                    scriptComponent.addScriptFile(scene, scriptComponent.getPath());
-//                }
-            }
-
-            if (component == TextComponent.class) {
-                TextComponent textComponent = gameObject.getComponent(TextComponent.class);
-                if (textComponent.getFontPath() != null && !textComponent.getFontPath().isEmpty())
-                textComponent.setFont(Objects.requireNonNull(FontFactory.createFont(textComponent.getFontPath(), 72, 512, 512)));
-            }
-
-            if (component == SpriteComponent.class) {
-                SpriteComponent spriteComponent = gameObject.getComponent(SpriteComponent.class);
-                if (spriteComponent.getPath() != null) {
-                    spriteComponent.setTexture(spriteComponent.getPath());
-                }
-            }
-        }
+    /**
+     * Re parent child game object to this game object. Used when reconstructing game object from json.
+     * @param gameObject GameObject.
+     */
+    public static void reconstructGameObject(GameObject gameObject) {
         gameObject.setSelectID(++GameObject.TotalID);
-
         for (GameObject child : gameObject.getChildren()) {
             child.setParent(gameObject);
-            reconstructGameObject(scene, child);
+            reconstructGameObject(child);
+        }
+    }
+
+    /**
+     * Set new UUID to game object and his children. Used when copying game object.
+     * @param gameObject GameObject.
+     */
+    private static void setUUID(GameObject gameObject) {
+        gameObject.setId(UUID.randomUUID());
+        for (var child : gameObject.getChildren()) {
+            setUUID(child);
         }
     }
 }

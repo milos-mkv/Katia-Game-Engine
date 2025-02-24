@@ -17,14 +17,10 @@ import org.katia.Logger;
 import org.katia.core.GameObject;
 import org.katia.core.components.TransformComponent;
 import org.katia.editor.Editor;
-import org.katia.editor.managers.EditorInputManager;
 import org.katia.editor.managers.EditorSceneManager;
-import org.katia.editor.popups.ErrorPopup;
 import org.katia.editor.renderer.EditorCameraController;
 import org.katia.editor.renderer.EditorSceneRenderer;
 import org.katia.editor.renderer.Settings;
-import org.katia.factory.TextureFactory;
-import org.lwjgl.glfw.GLFW;
 
 import static org.katia.Math.map;
 import static org.lwjgl.opengl.GL11.glReadPixels;
@@ -148,7 +144,7 @@ public class SceneWindow implements UIComponent {
         ImGuizmo.manipulate(view, proj, transform, manipulationOperation, Mode.WORLD);
 
         if (ImGuizmo.isUsing()) {
-            t.setTransformFromWorldMatrix(new Matrix4f().set(transform));
+            t.setWorldTransformMatrix(new Matrix4f().set(transform));
 
             // FIXME: For some reason when using scale it resets rotation. Find why is that.
             if (manipulationOperation == Operation.SCALE) {

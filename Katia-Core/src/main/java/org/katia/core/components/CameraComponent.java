@@ -2,11 +2,15 @@ package org.katia.core.components;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
-import org.katia.Logger;
 
+/**
+ * GameObject camera component.
+ */
+@EqualsAndHashCode(callSuper = true)
 @Data
 public class CameraComponent extends Component {
 
@@ -29,13 +33,5 @@ public class CameraComponent extends Component {
     @JsonIgnore
     public Matrix4f getCameraProjection() {
         return new Matrix4f().ortho(-viewport.x / 2, viewport.x / 2, -viewport.y / 2, viewport.y /2, -1.0f, 1.0f);
-    }
-
-    /**
-     * Dispose of camera component.
-     */
-    @Override
-    public void dispose() {
-        Logger.log(Logger.Type.DISPOSE, "Disposing of camera component ...");
     }
 }

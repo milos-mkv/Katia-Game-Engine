@@ -2,15 +2,19 @@ package org.katia.core.components;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.joml.AxisAngle4f;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
-import org.katia.Logger;
 
 import java.lang.ref.WeakReference;
 import java.util.Objects;
 
+/**
+ * GameObject transform component
+ */
+@EqualsAndHashCode(callSuper = true)
 @Data
 public class TransformComponent extends Component {
 
@@ -33,7 +37,7 @@ public class TransformComponent extends Component {
     }
 
     /**
-     * Get transform matrix.
+     * Get local transform matrix.
      * @return Matrix4f
      */
     @JsonIgnore
@@ -71,7 +75,7 @@ public class TransformComponent extends Component {
      * @param transform World transform.
      */
     @JsonIgnore
-    public void setTransformFromWorldMatrix(Matrix4f transform) {
+    public void setWorldTransformMatrix(Matrix4f transform) {
         Matrix4f parentWorldTransform = new Matrix4f().identity().invert();
         if (this.parent != null) {
             parentWorldTransform = Objects.requireNonNull(this.parent.get())
@@ -89,8 +93,11 @@ public class TransformComponent extends Component {
         rotation = axisAngle4f.angle * axisAngle4f.z;
     }
 
+    /**
+     * Get world position.
+     * @return Vector2
+     */
     public Vector2f getWorldPosition() {
-        // Extract position (translation part)
         Vector3f position = new Vector3f();
         getWorldTransformMatrix().getTranslation(position);
         return new Vector2f(position.x, position.y);
@@ -101,7 +108,7 @@ public class TransformComponent extends Component {
      */
     @Override
     public void dispose() {
-        Logger.log(Logger.Type.DISPOSE, "Disposing of transform component ...");
+        super.dispose();
         this.parent = null;
     }
 }

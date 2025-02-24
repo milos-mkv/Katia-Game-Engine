@@ -4,16 +4,13 @@ import lombok.Data;
 import org.katia.Logger;
 import org.katia.core.GameObject;
 import org.katia.core.Scene;
-import org.katia.core.components.TextComponent;
-import org.katia.factory.FontFactory;
-import org.katia.scripting.LuaScriptExecutioner;
 import org.katia.factory.GameObjectFactory;
+import org.katia.managers.ResourceManager;
+import org.katia.scripting.LuaScriptExecutioner;
 import org.katia.factory.SceneFactory;
 import org.katia.gfx.SceneRenderer;
-import org.katia.managers.AssetManager;
 import org.katia.managers.InputManager;
 import org.katia.managers.SceneManager;
-import org.katia.managers.ScriptManager;
 import org.lwjgl.glfw.GLFW;
 
 @Data
@@ -21,9 +18,8 @@ public class Game {
 
     Configuration configuration;
     Window window;
-    AssetManager assetManager;
     SceneManager sceneManager;
-    ScriptManager scriptManager;
+    ResourceManager resourceManager;
     InputManager inputManager;
     LuaScriptExecutioner scriptExecutioner;
     String directory;
@@ -39,12 +35,13 @@ public class Game {
         configuration = Configuration.load(directory + "/katia-conf.json");
         window = new Window(this, configuration.title, configuration.width, configuration.height);
 
-
-        assetManager = new AssetManager(this);
+        resourceManager = new ResourceManager(directory);
         sceneManager = new SceneManager(this);
-        scriptManager = new ScriptManager(this);
         inputManager = new InputManager(this);
         scriptExecutioner = new LuaScriptExecutioner(this);
+        Global.resourceManager = resourceManager;
+
+        sceneManager.setActiveScene("MainScene");
     }
 
     /**
@@ -56,35 +53,30 @@ public class Game {
 
         Scene scene = sceneManager.getActiveScene();
         scriptExecutioner.init(scene);
-        int fps = 0;
-        float tim = 0;
+
+//        scene.dispose();
+//        scene.setRootGameObject(null);
+//        System.gc();
+
         float previousTime = (float) GLFW.glfwGetTime();
         GLFW.glfwSwapInterval(0);
 
-//        GameObject g = scene.find("Test");
-//        TextComponent textComponent = new TextComponent();
-//        textComponent.setText("HELLO WORLD!");
-//        textComponent.setFont(FontFactory.createFont("./assets/RandyGGBold.ttf", 72, 512, 512));
-//        g.addComponent(textComponent);
-
-        System.out.println(SceneFactory.generateJsonFromScene(scene));
-
         while (!GLFW.glfwWindowShouldClose(window.getHandle())) {
             previousTime = calculateDeltaTime(previousTime);
-            tim += deltaTime;
-            fps++;
-            if (tim >= 1) {
-                System.out.println(fps);
 
-                tim = 0;
-                fps = 0;
-            }
             GLFW.glfwPollEvents();
-//            scriptExecutioner.update(deltaTime);
-            SceneRenderer.getInstance().render(scene);
+            scriptExecutioner.update(deltaTime);
+
+            GameObject camera = scene.find("Main Camera");
+
+            SceneRenderer.getInstance().render(scene, camera, false);
 
             GLFW.glfwSwapBuffers(window.getHandle());
         }
+    }
+
+    public void execute() {
+
     }
 
     /**

@@ -37,6 +37,16 @@ public abstract class FileSystem {
     }
 
     /**
+     * Get relative path from root to child directory.
+     * @param root Root directory path.
+     * @param child Child directory path.
+     * @return String
+     */
+    public static String relativize(String root, String child) {
+        return Paths.get(root).relativize(Paths.get(child)).toString();
+    }
+
+    /**
      * Check if provided file is json file.
      * @param path Path to file.
      * @return boolean

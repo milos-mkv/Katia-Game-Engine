@@ -7,7 +7,9 @@ import org.katia.core.components.CameraComponent;
 import org.katia.core.components.SpriteComponent;
 import org.katia.core.components.TransformComponent;
 import org.katia.factory.ShaderProgramFactory;
+import org.katia.game.Global;
 import org.katia.gfx.ShaderProgram;
+import org.katia.gfx.Texture;
 
 import static org.lwjgl.opengl.GL11.GL_FLOAT;
 import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
@@ -80,13 +82,13 @@ public class SpriteRenderer extends Renderer {
         shaderProgram.use();
         shaderProgram.setUniformMatrix4("projection", camera.getComponent(CameraComponent.class).getCameraProjection());
         shaderProgram.setUniformMatrix4("view", camera.getComponent(TransformComponent.class).getWorldTransformMatrix().invert());
-        var texture = gameObject.getComponent(SpriteComponent.class).getTexture();
+        Texture texture = Global.resourceManager .getTexture(gameObject.getComponent(SpriteComponent.class).getPath()) ;
         var transform = gameObject.getComponent(TransformComponent.class)
                 .getWorldTransformMatrix()
                 .scale(texture.getWidth(), texture.getHeight(), 1);
 
         glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, gameObject.getComponent(SpriteComponent.class).getTexture().getId());
+        glBindTexture(GL_TEXTURE_2D, texture.getId());
         shaderProgram.setUniformMatrix4("model", transform);
         shaderProgram.setUniformBoolean("isCamera", 0);
         if (select) {

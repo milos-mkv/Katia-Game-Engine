@@ -13,9 +13,6 @@ import java.util.HashMap;
 public class SceneManager {
 
     Game game;
-    HashMap<String, Scene> scenes;
-    String path;
-
     @Getter
     Scene activeScene;
 
@@ -24,22 +21,8 @@ public class SceneManager {
      */
     public SceneManager(Game game) {
         Logger.log(Logger.Type.INFO, "Creating scene manager ...");
-
-        this.path = game.getDirectory();
         this.game = game;
-        scenes = new HashMap<>();
-        activeScene = null;
-
-        loadScenes(path);
-    }
-
-    /**
-     * Get scene by name.
-     * @param name Scene name.
-     * @return Scene
-     */
-    public Scene getScene(String name) {
-        return scenes.get(name);
+        this.activeScene = null;
     }
 
     /**
@@ -48,29 +31,7 @@ public class SceneManager {
      */
     public void setActiveScene(String name) {
         Logger.log(Logger.Type.INFO, "Setting current active scene:", name);
-        activeScene = scenes.get(name);
-    }
-
-    /**
-     * Load all scenes from scenes directory.
-     * @param path Path to scenes directory.
-     */
-    private void loadScenes(String path) {
-        Logger.log(Logger.Type.INFO, "Scene manager loading scenes from scenes directory:", path);
-
-        FileSystem.readDirectoryData(path).stream().filter((entry) -> {
-            if (Files.isDirectory(entry)) {
-                return true;
-            } else if  (FileSystem.isSceneFile(entry.toString())) {
-                var scene = SceneFactory.generateSceneFromJson(FileSystem.readFromFile(entry.toString()));
-                if (scene != null) {
-                    scenes.put(scene.getName(), scene);
-                }
-                if (activeScene == null) {
-                    activeScene = scene;
-                }
-            }
-            return false;
-        }).toList().forEach((dir) -> loadScenes(dir.toString()));
+        ResourceManager resourceManager = game.getResourceManager();
+        activeScene = SceneFactory.generateSceneFromJson(resourceManager.getScenes().get(name));
     }
 }
