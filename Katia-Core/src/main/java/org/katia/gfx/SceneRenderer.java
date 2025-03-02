@@ -1,55 +1,85 @@
 package org.katia.gfx;
 
-import lombok.Getter;
-import org.joml.Vector2i;
+import lombok.Setter;
 import org.katia.Logger;
 import org.katia.core.GameObject;
 import org.katia.core.Scene;
 import org.katia.core.components.CameraComponent;
 import org.katia.core.components.SpriteComponent;
 import org.katia.core.components.TextComponent;
+import org.katia.game.Game;
 import org.katia.gfx.renderers.*;
+import org.katia.gfx.resources.FrameBuffer;
 
 import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL11C.glViewport;
+import static org.lwjgl.opengl.GL30.GL_FRAMEBUFFER;
+import static org.lwjgl.opengl.GL30.glBindFramebuffer;
 
+/**
+ * This class is responsible for rendering current active scene.
+ */
 public class SceneRenderer {
 
-    @Getter
-    static SceneRenderer instance = new SceneRenderer();
+    private final Game game;
 
-    GameObject camera;
+    private final AxisRenderer axisRenderer;
+    private final GridRenderer gridRenderer;
+    private final SpriteRenderer spriteRenderer;
+    private final CameraRenderer cameraRenderer;
+    private final TextRenderer textRenderer;
+
     boolean isSelectMode = false;
 
-    /**
-     * Scene renderer constructor.
-     */
-    public SceneRenderer() {
-        Logger.log(Logger.Type.INFO, "Creating scene renderer!");
+    public SceneRenderer(Game game) {
+        Logger.log(Logger.Type.INFO, "Creating Scene Renderer ...");
+        this.game = game;
+
+        axisRenderer = new AxisRenderer(game);
+        gridRenderer = new GridRenderer(game);
+        spriteRenderer = new SpriteRenderer(game);
+        cameraRenderer = new CameraRenderer(game);
+        textRenderer = new TextRenderer(game);
     }
 
     /**
-     *
-     * @param scene Scene to render.
-     * @param camera GameObject with camera component to use.
-     * @param select True if we want to render it to select FrameBuffer.
+     * Render game scene into provided frame buffer. If frame buffer is <code>null</code> it will render to default
+     * frame buffer.
+     * @param frameBuffer Frame Buffer.
      */
-    public void render(Scene scene, GameObject camera, boolean select) {
-        isSelectMode = select;
-        this.camera = camera;
-        CameraComponent cameraComponent = camera.getComponent(CameraComponent.class);
-        var backgroundColor = cameraComponent.getBackground();
-        if (!select) {
-            glClearColor(backgroundColor.x, backgroundColor.y, backgroundColor.z, 0.0f);
+    public void render(FrameBuffer frameBuffer) {
+        Scene scene = game.getSceneManager().getActiveScene();
+
+        if (frameBuffer != null) {
+            glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer.getId());
+            isSelectMode = frameBuffer.isSelect();
+
+        } else {
+            glBindFramebuffer(GL_FRAMEBUFFER, 0);
+            isSelectMode = false;
+        }
+        if (isSelectMode) {
+            glClearColor(0, 0, 0, 1);
+            glClear(GL_COLOR_BUFFER_BIT);
+        } else {
+            var color = game.getSceneManager().getCamera().getComponent(CameraComponent.class).getBackground();
+            glClearColor(color.x, color.y, color.z, 1.0f);
+            glClear(GL_COLOR_BUFFER_BIT);
+
             glClear(GL_COLOR_BUFFER_BIT);
             glEnable(GL_BLEND);
             glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-            GridRenderer.getInstance().render(camera);
-            AxisRenderer.getInstance().render(camera);
-        } else {
-            glClearColor(0, 0, 0, 1);
-            glClear(GL_COLOR_BUFFER_BIT);
+
+            if (game.isDebug()) {
+                gridRenderer.render();
+                axisRenderer.render();
+            }
         }
+
+
         renderGameObject(scene.getRootGameObject());
+
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
 
     /**
@@ -63,17 +93,17 @@ public class SceneRenderer {
 
         SpriteComponent spriteComponent = gameObject.getComponent(SpriteComponent.class);
         if (spriteComponent != null && spriteComponent.getPath() != null) {
-            SpriteRenderer.getInstance().render(gameObject, camera, isSelectMode);
+            spriteRenderer.render(gameObject, isSelectMode);
         }
 
         CameraComponent cameraComponent = gameObject.getComponent(CameraComponent.class);
         if (cameraComponent != null) {
-            CameraRenderer.getInstance().render(gameObject, camera, isSelectMode);
+            cameraRenderer.render(gameObject, isSelectMode);
         }
 
         TextComponent textComponent = gameObject.getComponent(TextComponent.class);
         if (textComponent != null && textComponent.getPath()!= null) {
-            TextRenderer.getInstance().render(gameObject, camera, isSelectMode);
+            textRenderer.render(gameObject, isSelectMode);
         }
 
         for (GameObject child : gameObject.getChildren()) {

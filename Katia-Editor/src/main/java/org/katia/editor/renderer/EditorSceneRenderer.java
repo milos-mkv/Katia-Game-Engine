@@ -2,64 +2,59 @@ package org.katia.editor.renderer;
 
 import lombok.Data;
 import lombok.Getter;
+import org.joml.Vector2f;
+import org.joml.Vector2i;
 import org.katia.Logger;
 import org.katia.core.Scene;
-import org.katia.editor.managers.EditorSceneManager;
-import org.katia.factory.ShaderProgramFactory;
-import org.katia.gfx.FrameBuffer;
-import org.katia.gfx.SceneRenderer;
+import org.katia.editor.managers.ProjectManager;
+import org.katia.factory.FrameBufferFactory;
+import org.katia.game.Game;
+import org.katia.gfx.resources.FrameBuffer;
 
-import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL30.GL_FRAMEBUFFER;
-import static org.lwjgl.opengl.GL30.glBindFramebuffer;
-import static org.lwjgl.opengl.GL30C.glClearBufferiv;
+import static org.lwjgl.opengl.GL11C.glViewport;
 
+/**
+ * This class is responsible for rendering current active scene in two separate frame buffers.
+ */
 @Data
 public class EditorSceneRenderer {
 
     @Getter
     static EditorSceneRenderer instance = new EditorSceneRenderer();
-    int lastW, lastH;
+
     EditorCameraController cameraController;
     FrameBuffer defaultframeBuffer;
     FrameBuffer selectFrameBuffer;
 
     public EditorSceneRenderer() {
+        Logger.log(Logger.Type.INFO, "Editor Scene Renderer Constructor");
         cameraController = EditorCameraController.getInstance();
-        defaultframeBuffer = new FrameBuffer(1920, 1080, false);
-        selectFrameBuffer = new FrameBuffer(1920, 1080, true);
+        defaultframeBuffer = FrameBufferFactory.createDefaultFrameBuffer(1920, 1080);
+        selectFrameBuffer = FrameBufferFactory.createSelectFrameBuffer(1920, 1080);
     }
 
     public void render() {
-        Scene scene = EditorSceneManager.getInstance().getScene();
-        if (scene == null) {
+        Game game = ProjectManager.getGame();
+        if (game == null || game.getSceneManager().getActiveScene() == null) {
             return;
         }
-        if (Settings.w != lastW || Settings.h != lastH) {
+        Vector2f viewport = cameraController.getViewport();
+        if (Settings.w != viewport.x || Settings.h != viewport.y) {
             Logger.disable();
-            defaultframeBuffer.dispose();
-            selectFrameBuffer.dispose();
-            setDefaultframeBuffer(new FrameBuffer((int)Settings.w , (int) Settings.h, false));
-            setSelectFrameBuffer(new FrameBuffer((int)Settings.w , (int) Settings.h, true));
+            FrameBufferFactory.dispose(defaultframeBuffer);
+            FrameBufferFactory.dispose(selectFrameBuffer);
+            setDefaultframeBuffer(FrameBufferFactory.createDefaultFrameBuffer((int)Settings.w, (int) Settings.h));
+            setSelectFrameBuffer(FrameBufferFactory.createSelectFrameBuffer((int)Settings.w, (int) Settings.h));
             Logger.enable();
         }
-        glBindFramebuffer(GL_FRAMEBUFFER, defaultframeBuffer.getId());
+        EditorCameraController.getInstance().setViewport(Settings.w, Settings.h);
+
+        game.setDebug(true);
+        game.getSceneManager().setCamera(EditorCameraController.getInstance().getCamera());
         glViewport(0, 0, (int)Settings.w, (int) Settings.h);
+        game.getSceneRenderer().render(defaultframeBuffer);
+        game.getSceneRenderer().render(selectFrameBuffer);
 
-        cameraController.setViewport(Settings.w, Settings.h);
-        SceneRenderer.getInstance()
-                .render(scene, cameraController.getCamera(), false);
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-        // Second iteration render to select frame buffer.
-        glBindFramebuffer(GL_FRAMEBUFFER, selectFrameBuffer.getId());
-        glViewport(0, 0, (int)Settings.w, (int) Settings.h);
-        SceneRenderer.getInstance()
-                .render(scene, cameraController.getCamera(), true);
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-        lastW = (int) Settings.w;
-        lastH = (int) Settings.h;
     }
 
 }

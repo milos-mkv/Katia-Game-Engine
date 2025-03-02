@@ -1,12 +1,12 @@
 package org.katia.gfx.renderers;
 
-import lombok.Getter;
 import org.katia.Logger;
 import org.katia.core.GameObject;
 import org.katia.core.components.CameraComponent;
 import org.katia.core.components.TransformComponent;
 import org.katia.factory.ShaderProgramFactory;
-import org.katia.gfx.ShaderProgram;
+import org.katia.game.Game;
+import org.katia.gfx.resources.ShaderProgram;
 
 import static org.lwjgl.opengl.GL11.GL_FLOAT;
 import static org.lwjgl.opengl.GL11.GL_LINES;
@@ -23,8 +23,7 @@ import static org.lwjgl.opengl.GL30.*;
  */
 public class AxisRenderer extends Renderer {
 
-    @Getter
-    private static final AxisRenderer instance = new AxisRenderer();
+    private final Game game;
 
     public int vao;
     public int vbo;
@@ -33,9 +32,10 @@ public class AxisRenderer extends Renderer {
     /**
      * Axis Mesh default constructor.
      */
-    public AxisRenderer() {
+    public AxisRenderer(Game game) {
         super("axis");
         Logger.log(Logger.Type.INFO, "Creating Axis Mesh ...");
+        this.game = game;
         createBuffers();
     }
 
@@ -66,10 +66,10 @@ public class AxisRenderer extends Renderer {
 
     /**
      * Render x and y axis lines.
-     * @param camera GameObject which camera component to use.
      */
-    public void render(GameObject camera) {
-        ShaderProgram shaderProgram = ShaderProgramFactory.getShaderProgram(defaultShaderName);
+    public void render() {
+        GameObject camera = game.getSceneManager().getCamera();
+        ShaderProgram shaderProgram = defaultShader;
         shaderProgram.use();
         shaderProgram.setUniformMatrix4("projection", camera.getComponent(CameraComponent.class).getCameraProjection());
         shaderProgram.setUniformMatrix4("view", camera.getComponent(TransformComponent.class).getTransformMatrix().invert());

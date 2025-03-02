@@ -12,14 +12,12 @@ import org.katia.core.Scene;
 import org.katia.editor.Editor;
 import org.katia.editor.EditorUtils;
 import org.katia.editor.managers.EditorAssetManager;
-import org.katia.editor.managers.EditorSceneManager;
-import org.katia.editor.managers.GameManager;
 import org.katia.editor.managers.ProjectManager;
 import org.katia.editor.popups.CreateNewProjectPopup;
 import org.katia.editor.popups.CreateNewScenePopup;
-import org.katia.editor.popups.ErrorPopup;
 import org.katia.editor.popups.OpenScenePopup;
-import org.katia.editor.windows.UIComponent;
+import org.katia.editor.ui.UIComponent;
+import org.katia.factory.GameFactory;
 import org.katia.factory.SceneFactory;
 import org.katia.game.Game;
 import org.lwjgl.glfw.GLFW;
@@ -129,16 +127,21 @@ public class MainMenuBar implements UIComponent {
         }
         if (this.actions.get(MenuAction.SAVE_SCENE)) {
             Logger.log(Logger.Type.INFO, "SAVE SCENE!");
-            Scene scene = EditorSceneManager.getInstance().getScene();
+            Scene scene = ProjectManager.getGame().getSceneManager().getActiveScene();// .getInstance().getScene();
             String json = SceneFactory.generateJsonFromScene(scene);
 
-            FileSystem.saveToFile(EditorSceneManager.getInstance().getPath(),
-                    json);
+//            FileSystem.saveToFile(EditorSceneManager.getInstance().getPath(),
+//                    json);
 
         }
         if (this.actions.get(MenuAction.RUN_GAME)) {
-            GameManager.getInstance().start();
-            }
+            Editor.getInstance().runGame = GameFactory.createGame("/home/mmilicevic/Desktop/test");
+            Editor.getInstance().runGame.setDebug(true);
+            Editor.getInstance().runGame.getSceneManager().setActiveScene("MainScene");
+            Editor.getInstance().runGame.getScriptExecutioner().init();
+            GLFW.glfwMakeContextCurrent(Editor.getInstance().getHandle());
+            GLFW.glfwSwapInterval(0);
+        }
         CreateNewProjectPopup.render();
         CreateNewScenePopup.getInstance().render();
         OpenScenePopup.getInstance().render();
@@ -193,7 +196,7 @@ public class MainMenuBar implements UIComponent {
         String directory = EditorUtils.openFolderDialog();
         if (directory != null && !directory.isEmpty()) {
             try {
-                ProjectManager.getInstance().openProject(directory);
+                ProjectManager.openProject(directory);
             } catch (RuntimeException e) {
                 Logger.log(Logger.Type.ERROR, e.getMessage());
             }
@@ -205,16 +208,12 @@ public class MainMenuBar implements UIComponent {
     }
 
     private void runGame() {
-        game = new Game(ProjectManager.getInstance().getPath());
-        GLFW.glfwMakeContextCurrent(Editor.getInstance().getHandle());
+//        game = new Game(ProjectManager.getInstance().getPath());
+//        GLFW.glfwMakeContextCurrent(Editor.getInstance().getHandle());
     }
 
     private void exitAction() {
         GLFW.glfwSetWindowShouldClose(Editor.getInstance().getHandle(), true);
     }
 
-    @Override
-    public void dispose() {
-        Logger.log(Logger.Type.DISPOSE, "Disposing of main menu bar ...");
-    }
 }

@@ -95,7 +95,6 @@ public abstract class FileSystem {
         );
     }
 
-
     /**
      * Check if provided file is sound file.
      * @param path Path to file.

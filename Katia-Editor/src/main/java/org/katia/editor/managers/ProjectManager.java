@@ -1,69 +1,45 @@
 package org.katia.editor.managers;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import lombok.Data;
 import lombok.Getter;
 import org.katia.FileSystem;
 import org.katia.Logger;
 import org.katia.editor.Editor;
-import org.katia.editor.project.ProjectAssetManager;
-import org.katia.editor.windows.ProjectWindow;
+import org.katia.editor.ui.ProjectWindow;
+import org.katia.factory.GameFactory;
 import org.katia.game.Configuration;
+import org.katia.game.Game;
 
 import java.util.Objects;
 
-@Data
+import static org.katia.editor.EditorUtils.Assert;
+
 /**
- * Project directory structure:
- *  - [folder] assets  - Keep all asset files in this folder (images, sounds, textures, prefabs)
- *  - [folder] scripts - Keep all lua scripts in this folder.
- *  - [folder] scenes  - Keep all scene files in this folder.
- *  - [ file ] katia-conf.json
+ * This class is responsible for managing current active game project.
+ * It should create windowless game that will be used by editor.
+ * @see org.katia.game.Game
  */
-public class ProjectManager {
+public abstract class ProjectManager {
 
     @Getter
-    static ProjectManager instance = new ProjectManager();
-
-    String name;
-    String path;
-    Configuration configuration;
-    boolean active;
-
-    /**
-     * Project manager constructor.
-     */
-    public ProjectManager() {
-        Logger.log(Logger.Type.INFO, "Creating project manager ...");
-        name = null;
-        path = null;
-        configuration = null;
-        active = false;
-    }
+    static Game game;
 
     /**
      * Open project from provided path to project directory.
      * @param path Path to project directory.
      * @throws RuntimeException Throws when project directory is not valid.
      */
-    public void openProject(String path) throws RuntimeException {
+    public static void openProject(String path) throws RuntimeException {
         Logger.log(Logger.Type.INFO, "Open project:", path);
 
-        if (!FileSystem.doesDirectoryExists(path)) {
-            throw new RuntimeException("Directory does not exist! " + path);
-        }
-        if (!validateProjectStructure(path)) {
-            throw new RuntimeException("Project structure is corrupted!");
-        }
-        this.path = path;
-        this.active = true;
-        this.configuration = Configuration.load(path + "/katia-conf.json");
-        System.out.println(configuration);
-        Editor.getInstance().getUiRenderer().get(ProjectWindow.class).getDirectoryExplorerWidget().setRootDirectory(path);
-        ProjectAssetManager.getInstance().loadProject(path);
+        Assert(!FileSystem.doesDirectoryExists(path), "Directory does not exist! " + path);
+        Assert(!validateProjectStructure(path), "Project structure is corrupted!");
+
+        game = GameFactory.createWindowLessGame(path);
+        Editor.getInstance()
+                .getUi()
+                .get(ProjectWindow.class)
+                .getDirectoryExplorerWidget()
+                .setRootDirectory(path);
     }
 
     /**
@@ -73,52 +49,34 @@ public class ProjectManager {
      * @param configuration Game configuration.
      * @throws RuntimeException Throws when failed to create project.
      */
-    public void createProject(String path, String name, Configuration configuration) throws RuntimeException {
+    public static void createProject(String path, String name, Configuration configuration) throws RuntimeException {
         Logger.log(Logger.Type.INFO, "Creating new project:", name, "Path:", path);
-        validateInput("Name is not valid!", name.isEmpty());
-        validateInput("Path is not valid!", path.isEmpty());
-        validateInput("Provided path is not valid!", !FileSystem.doesDirectoryExists(path));
-        validateInput("Directory already exists: " + name, FileSystem.doesDirectoryExists(path + "/" + name));
-        validateInput("Configuration is not valid!", !configuration.isValid());
+        Assert(name.isEmpty(), "Name is not valid!");
+        Assert(path.isEmpty(), "Path is not valid!");
+        Assert(!FileSystem.doesDirectoryExists(path), "Provided path is not valid!");
+        Assert(FileSystem.doesDirectoryExists(path + "/" + name), "Directory already exists: " + name);
+        Assert(!configuration.isValid(), "Configuration is not valid!");
 
         String projectPath = path + "/" + name;
-        if (!FileSystem.createDirectory(projectPath)) {
-            throw new RuntimeException("Failed to create project!");
-        }
+        Assert(!FileSystem.createDirectory(projectPath), "Failed to create project!");
 
         String[] dirs = { "images", "sounds", "fonts", "prefabs" , "scripts", "scenes" };
         for (String dir : dirs) {
-            if (!FileSystem.createDirectory(projectPath + "/" + dir)) {
-                throw new RuntimeException("Failed to create directory : " + dir);
-            }
+            Assert(!FileSystem.createDirectory(projectPath + "/" + dir), "Failed to create directory : " + dir);
         }
-        if (!FileSystem.saveToFile(projectPath + "/katia-conf.json", Objects.requireNonNull(Configuration.toJson(configuration)))) {
-            throw new RuntimeException("Failed to create katia-conf.json file!");
-        }
+        String confJson = Objects.requireNonNull(Configuration.toJson(configuration));
+        Assert(!FileSystem.saveToFile(projectPath + "/katia-conf.json", confJson), "Failed to create katia-conf.json file!");
         Logger.log(Logger.Type.SUCCESS, "Project:", name, "created at:", path);
     }
 
     /**
-     * Helper method to validate input and throw an exception with a specific message.
+     * Validate project structure.
+     * @param path Project path.
+     * @return boolean
      */
-    private void validateInput(String errorMessage, boolean condition) {
-        if (condition) {
-            throw new RuntimeException(errorMessage);
-        }
-    }
-
-    private boolean validateProjectStructure(String path) {
+    private static boolean validateProjectStructure(String path) {
         Logger.log(Logger.Type.INFO, "Validating project structure:", path);
         Configuration configuration = Configuration.load(path + "/katia-conf.json");
-        if (configuration == null) {
-            return false;
-        }
-        String[] dirs = { "images", "sounds", "fonts", "prefabs" , "scripts", "scenes" };
-        for (String dir : dirs) {
-            if (!FileSystem.doesDirectoryExists(path + "/" + dir)) {
-                return false;
-            }
-        }
-        return true;
+        return configuration != null;
     }
 }

@@ -1,16 +1,21 @@
-package org.katia.editor.windows;
+package org.katia.editor.ui;
 
 import lombok.Data;
+import org.katia.Logger;
 import org.katia.editor.menubar.MainMenuBar;
 
 import java.util.HashMap;
 
 @Data
-public class UIRenderer {
+public class UI {
 
     HashMap<Class<?>, UIComponent> components;
 
-    public UIRenderer() {
+    /**
+     * Editor UI Constructor.
+     */
+    public UI() {
+        Logger.log(Logger.Type.INFO, "Editor UI Constructor");
         components = new HashMap<>();
         components.put(HierarchyWindow.class, new HierarchyWindow());
         components.put(InspectorWindow.class, new InspectorWindow());
@@ -25,8 +30,10 @@ public class UIRenderer {
         return (T) components.get(component);
     }
 
+    /**
+     * Render editor UI.
+     */
     public void render() {
         components.forEach((key, value) -> value.render());
     }
-
 }

@@ -1,7 +1,16 @@
 local Behaviour = classes.class()
 require("Constants")
+
+Behaviour.AutoWire = {
+    ["GameObjec1"] = 1
+}
+
+
 function Behaviour:init(params)
     print("Behaviour:init")
+    for key,val in pairs(Behaviour.AutoWire ) do
+    print(key)
+    end
     self.gameObject = params.gameObject
     self.scene = params.scene
     for k, v in pairs(params) do

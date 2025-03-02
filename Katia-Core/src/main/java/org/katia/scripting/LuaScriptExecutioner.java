@@ -12,32 +12,33 @@ import org.luaj.vm2.lib.jse.CoerceJavaToLua;
 
 import java.net.URL;
 
+/**
+ * This class is responsible for executing lua vm for current running game scene in game instance.
+ */
 public class LuaScriptExecutioner {
 
-    Game game;
-    Scene scene;
+    private final Game game;
+
     LuaConsole console;
 
     /**
-     * Script executioner constructor.
+     * Lua Script Executioner constructor.
      * @param game Game instance.
      */
     public LuaScriptExecutioner(Game game) {
-        Logger.log(Logger.Type.INFO, "Creating script executioner ...");
+        Logger.log(Logger.Type.INFO, "Creating lua script executioner for game:", game.getDirectory());
         this.game = game;
-        this.scene = null;
         this.console = new LuaConsole();
     }
 
     /**
-     * Call all init methods for all game objects in provided scene.
-     * @param scene Scene.
+     * Call all init methods for all game objects in current active scene.
      */
-    public void init(Scene scene) {
+    public void init() {
         Logger.log(Logger.Type.INFO, "Run script executioner init method!");
-        this.scene = scene;
-        bindClasses(scene);
-        executeInit(this.scene.getRootGameObject());
+        Scene scene = game.getSceneManager().getActiveScene();
+        bindClasses();
+        executeInit(scene.getRootGameObject());
     }
 
     /**
@@ -45,6 +46,7 @@ public class LuaScriptExecutioner {
      * @param dt Delta time.
      */
     public void update(float dt) {
+        Scene scene = game.getSceneManager().getActiveScene();
         executeUpdate(scene.getRootGameObject(), dt);
     }
 
@@ -54,11 +56,12 @@ public class LuaScriptExecutioner {
      */
     private void executeInit(GameObject gameObject) {
         Logger.log(Logger.Type.INFO, "Script executioner calling init method for:", gameObject.getName());
+        var scene = game.getSceneManager().getActiveScene();
         var component = gameObject.getComponent(ScriptComponent.class);
 
         if (component != null && component.getPath() != null) {
-            String p = game.getDirectory() + "/" + component.getPath();
-            component.setBehaviourTable(scene.getGlobals().loadfile(p).call());
+            String scriptFile = game.getResourceManager().getScript(component.getPath());
+            component.setBehaviourTable(scene.getGlobals().loadfile(scriptFile).call());
             LuaTable params = new LuaTable();
             params.set("gameObject", CoerceJavaToLua.coerce(gameObject));
             params.set("scene", CoerceJavaToLua.coerce(scene));
@@ -87,21 +90,23 @@ public class LuaScriptExecutioner {
     }
 
     /**
-     * Bind java classes to current scene context.
-     * @param scene Scene.
+     * Bind java classes to current active scene.
      */
-    private void bindClasses(Scene scene) {
-        URL resource = Main.class.getClassLoader().getResource("scripts/classes.lua");
+    private void bindClasses() {
+        Scene scene = game.getSceneManager().getActiveScene();
+        URL classesLua = Main.class.getClassLoader().getResource("scripts/classes.lua");
+        URL scriptsPath = Main.class.getClassLoader().getResource("scripts/");
 
         Logger.log(Logger.Type.INFO, "Bind java classes to lua globals for scene:", scene.getName());
-        scene.getGlobals().loadfile("./Katia-Core/src/main/resources/scripts/classes.lua").call();
+        scene.getGlobals().loadfile(classesLua.getPath()).call();
         String existingPath = scene.getGlobals().get("package").get("path").tojstring();
         scene.getGlobals()
                 .get("package")
-                .set("path", LuaValue.valueOf("./Katia-Core/src/main/resources/scripts/" + existingPath));
+                .set("path", LuaValue.valueOf(scriptsPath.getPath() + existingPath));
 
         scene.getGlobals().set("InputManager", CoerceJavaToLua.coerce(game.getInputManager()));
         scene.getGlobals().set("SceneManager", CoerceJavaToLua.coerce(game.getSceneManager()));
+        scene.getGlobals().set("Window", CoerceJavaToLua.coerce(game.getWindow()));
         scene.getGlobals().set("print", this.console);
     }
 }

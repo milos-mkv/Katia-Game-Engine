@@ -1,4 +1,4 @@
-package org.katia.gfx;
+package org.katia.gfx.resources;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -6,12 +6,12 @@ import lombok.NoArgsConstructor;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
+import org.katia.Logger;
 
 import static org.lwjgl.opengl.GL20.*;
 import static org.lwjgl.opengl.GL20.glDeleteProgram;
 
 @AllArgsConstructor
-@NoArgsConstructor
 @Data
 public class ShaderProgram {
 
@@ -78,12 +78,5 @@ public class ShaderProgram {
      */
     public void setUniformInt(String name, int value) {
         glUniform1i(glGetUniformLocation(id, name), value);
-    }
-
-    /**
-     * Dispose of shader program.
-     */
-    public void dispose() {
-        glDeleteProgram(id);
     }
 }

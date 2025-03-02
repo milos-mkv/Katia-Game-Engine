@@ -1,7 +1,6 @@
-package org.katia.editor.widgets;
+package org.katia.editor.ui.widgets;
 
 import imgui.ImGui;
-import imgui.ImGuiWindowClass;
 import imgui.ImVec2;
 import imgui.flag.ImGuiCol;
 import imgui.flag.ImGuiHoveredFlags;
@@ -11,13 +10,12 @@ import imgui.type.ImString;
 import org.katia.FileSystem;
 import org.katia.Icons;
 import org.katia.Logger;
-import org.katia.editor.Editor;
 import org.katia.editor.managers.EditorAssetManager;
 import org.katia.editor.popups.ErrorPopup;
 import org.katia.editor.popups.FontCreatorPopup;
 import org.katia.editor.popups.ImagePreviewPopup;
 import org.katia.factory.TextureFactory;
-import org.katia.gfx.Texture;
+import org.katia.gfx.resources.Texture;
 
 import java.awt.*;
 import java.nio.file.Files;
@@ -152,7 +150,8 @@ public class ProjectDirectoryExplorerWidget {
 
                 String ext = FileSystem.getFileExtension(entry.getFileName().toString());
                 if (FileSystem.isImageFile(entry.getFileName().toString())) {
-                    Texture t = TextureFactory.createTexture(entry.toAbsolutePath().toString());
+                    Texture t = EditorAssetManager.getInstance()
+                            .getImage(entry.toAbsolutePath().toString());
 
                     double widthRatio = (double) 90 / t.getWidth();
                     double heightRatio = (double) 90 / t.getHeight();

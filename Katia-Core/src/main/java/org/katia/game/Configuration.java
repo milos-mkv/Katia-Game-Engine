@@ -20,11 +20,11 @@ import org.katia.Logger;
 @Data
 public class Configuration {
 
-    String title;
-    int width;
-    int height;
-    boolean vSync;
-    boolean resizable;
+    public String title;
+    public int width;
+    public int height;
+    public boolean vSync;
+    public boolean resizable;
 
     /**
      * Load configuration from file.

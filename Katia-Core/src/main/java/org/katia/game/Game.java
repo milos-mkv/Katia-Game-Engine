@@ -1,19 +1,18 @@
 package org.katia.game;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.katia.Logger;
-import org.katia.core.GameObject;
-import org.katia.core.Scene;
-import org.katia.factory.GameObjectFactory;
+import org.katia.gfx.resources.FrameBuffer;
 import org.katia.managers.ResourceManager;
 import org.katia.scripting.LuaScriptExecutioner;
-import org.katia.factory.SceneFactory;
 import org.katia.gfx.SceneRenderer;
 import org.katia.managers.InputManager;
 import org.katia.managers.SceneManager;
 import org.lwjgl.glfw.GLFW;
 
 @Data
+@NoArgsConstructor
 public class Game {
 
     Configuration configuration;
@@ -23,60 +22,40 @@ public class Game {
     InputManager inputManager;
     LuaScriptExecutioner scriptExecutioner;
     String directory;
+    SceneRenderer sceneRenderer;
+    boolean debug;
     float deltaTime = 0;
+    float previousTime = 0;
 
     /**
      * Crete new game instance.
-     * @param directory Game root directory.
      */
     public Game(String directory) {
         Logger.log(Logger.Type.INFO, "Creating new game instance:", directory);
-        this.directory = directory;
-        configuration = Configuration.load(directory + "/katia-conf.json");
-        window = new Window(this, configuration.title, configuration.width, configuration.height);
-
-        resourceManager = new ResourceManager(directory);
-        sceneManager = new SceneManager(this);
-        inputManager = new InputManager(this);
-        scriptExecutioner = new LuaScriptExecutioner(this);
-        Global.resourceManager = resourceManager;
-
-        sceneManager.setActiveScene("MainScene");
     }
 
     /**
-     * Run game.
-     * @return Game
+     * Update every game frame.
      */
-    public void run() {
-        Logger.log(Logger.Type.INFO, "Run game instance ...");
-
-        Scene scene = sceneManager.getActiveScene();
-        scriptExecutioner.init(scene);
-
-//        scene.dispose();
-//        scene.setRootGameObject(null);
-//        System.gc();
-
-        float previousTime = (float) GLFW.glfwGetTime();
+    public void update(FrameBuffer frameBuffer) {
+        // NOTE: I window exists game is run as standalone game. If not we already have context from game editor.
+        if (window != null) {
+            GLFW.glfwMakeContextCurrent(window.getHandle());
+        }
         GLFW.glfwSwapInterval(0);
+        previousTime = calculateDeltaTime(previousTime);
+        GLFW.glfwPollEvents();
 
-        while (!GLFW.glfwWindowShouldClose(window.getHandle())) {
-            previousTime = calculateDeltaTime(previousTime);
-
-            GLFW.glfwPollEvents();
+        // NOTE: Run scripts only is we run game in separate window.
+        if (window != null) {
             scriptExecutioner.update(deltaTime);
+        }
 
-            GameObject camera = scene.find("Main Camera");
+        sceneRenderer.render(frameBuffer);
 
-            SceneRenderer.getInstance().render(scene, camera, false);
-
+        if (window != null) {
             GLFW.glfwSwapBuffers(window.getHandle());
         }
-    }
-
-    public void execute() {
-
     }
 
     /**

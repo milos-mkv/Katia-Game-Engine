@@ -11,8 +11,27 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.ByteBuffer;
 
+/**
+ * This class holds utilities tied to game editor.
+ */
 public abstract class EditorUtils {
 
+    /**
+     * Throw error if provided condition is true.
+     * @param condition Condition.
+     * @param message Error message.
+     * @throws RuntimeException When condition is true.
+     */
+    public static void Assert(boolean condition, String message) {
+        if (condition) {
+            throw new RuntimeException(message);
+        }
+    }
+
+    /**
+     * Open file dialog.
+     * @return String
+     */
     public static String openFileDialog() {
         if (System.getProperty("os.name").toLowerCase().contains("linux")) {
             try {
@@ -41,6 +60,10 @@ public abstract class EditorUtils {
         }
     }
 
+    /**
+     * Open folder dialog.
+     * @return String
+     */
     public static String openFolderDialog() {
         if (System.getProperty("os.name").toLowerCase().contains("linux")) {
             try {

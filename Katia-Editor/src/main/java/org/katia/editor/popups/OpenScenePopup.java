@@ -6,7 +6,6 @@ import lombok.Getter;
 import org.katia.FileSystem;
 import org.katia.Icons;
 import org.katia.Logger;
-import org.katia.editor.managers.EditorSceneManager;
 import org.katia.editor.managers.ProjectManager;
 
 import java.nio.file.Path;
@@ -24,15 +23,14 @@ public class OpenScenePopup extends Popup {
     @Override
     public void body() {
         ImGui.beginChild("##Child", -1, -1);
-        var pm = ProjectManager.getInstance();
-        if (!pm.isActive()) {
+        if (ProjectManager.getGame() == null) {
             String text = "There is no opened project!";
             ImVec2 size = ImGui.calcTextSize(text);
             ImGui.setCursorPos(500 / 2 - size.x /2, 400 / 2 - size.y - 20);
             ImGui.textDisabled(text);
         } else {
             ImGui.separator();
-            List<Path> items = FileSystem.readDirectoryData(pm.getPath() + "/scenes");
+            List<Path> items = FileSystem.readDirectoryData(ProjectManager.getGame().getDirectory() + "/scenes");
             for (Path path : items) {
                 ImGui.columns(2);
                 ImGui.setColumnWidth(-1, 390);
@@ -40,7 +38,7 @@ public class OpenScenePopup extends Popup {
                 ImGui.nextColumn();
                 if (ImGui.button(" OPEN ##"+path.toString())  ) {
                     try {
-                        EditorSceneManager.getInstance().openScene(path.toAbsolutePath().toString());
+//                        EditorSceneManager.getInstance().openScene(path.toAbsolutePath().toString());
                         ImGui.closeCurrentPopup();
                     } catch (RuntimeException e) {
                         Logger.log(Logger.Type.ERROR, e.toString());

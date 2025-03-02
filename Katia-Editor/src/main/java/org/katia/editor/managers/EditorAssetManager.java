@@ -6,10 +6,8 @@ import imgui.ImGuiIO;
 import imgui.internal.ImGui;
 import lombok.Data;
 import lombok.Getter;
-import org.katia.factory.FontFactory;
-import org.katia.factory.SceneFactory;
 import org.katia.factory.TextureFactory;
-import org.katia.gfx.Texture;
+import org.katia.gfx.resources.Texture;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -68,6 +66,15 @@ public class EditorAssetManager {
         images.put("SoundFileIcon", TextureFactory.createTexture("./Katia-Editor/src/main/resources/images/sound.png"));
         images.put("PrefabFileIcon", TextureFactory.createTexture("./Katia-Editor/src/main/resources/images/prefab.png"));
         images.put("FontFileIcon", TextureFactory.createTexture("./Katia-Editor/src/main/resources/images/font.png"));
+    }
 
+
+    public Texture getImage(String path) {
+        Texture texture = images.get(path);
+        if (texture == null) {
+            texture = TextureFactory.createTexture(path);
+            images.put(path, texture);
+        }
+        return texture;
     }
 }

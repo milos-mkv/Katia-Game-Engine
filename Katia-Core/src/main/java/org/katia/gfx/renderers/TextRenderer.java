@@ -1,6 +1,5 @@
 package org.katia.gfx.renderers;
 
-import lombok.Getter;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.katia.Logger;
@@ -10,9 +9,9 @@ import org.katia.core.components.CameraComponent;
 import org.katia.core.components.TextComponent;
 import org.katia.core.components.TransformComponent;
 import org.katia.factory.ShaderProgramFactory;
-import org.katia.game.Global;
-import org.katia.gfx.Font;
-import org.katia.gfx.ShaderProgram;
+import org.katia.game.Game;
+import org.katia.gfx.resources.Font;
+import org.katia.gfx.resources.ShaderProgram;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.stb.STBTTBakedChar;
 import org.lwjgl.system.MemoryStack;
@@ -33,9 +32,7 @@ import static org.lwjgl.opengl.GL33.glVertexAttribDivisor;
  */
 public class TextRenderer extends Renderer {
 
-    @Getter
-    static TextRenderer instance = new TextRenderer();
-
+    private final Game game;
     private int vao;
     private int staticVbo;
     private int instanceVbo;
@@ -43,9 +40,10 @@ public class TextRenderer extends Renderer {
     /**
      * Text mesh default constructor.
      */
-    public TextRenderer() {
+    public TextRenderer(Game game) {
         super("text");
         Logger.log(Logger.Type.INFO, "Initialize text mesh!");
+        this.game = game;
         createBuffers();
     }
 
@@ -101,16 +99,16 @@ public class TextRenderer extends Renderer {
     /**
      * Render game object with text component with provided camera.
      * @param gameObject GameObject with text component.
-     * @param camera GameObject with camera component.
      * @param select True if we want to render it to select FrameBuffer.
      */
-    public void render(GameObject gameObject, GameObject camera, boolean select) {
+    public void render(GameObject gameObject, boolean select) {
+        GameObject camera = game.getSceneManager().getCamera();
         TextComponent textComponent = gameObject.getComponent(TextComponent.class);
         TransformComponent transformComponent = gameObject.getComponent(TransformComponent.class);
 
-        ShaderProgram shaderProgram = ShaderProgramFactory.getShaderProgram(
-                select ? selectShaderName : defaultShaderName
-        );
+        ShaderProgram shaderProgram =
+                select ? selectShader : defaultShader
+        ;
         shaderProgram.use();
 
         shaderProgram.setUniformMatrix4("proj", camera.getComponent(CameraComponent.class).getCameraProjection());
@@ -120,7 +118,7 @@ public class TextRenderer extends Renderer {
         if (select) {
             shaderProgram.setUniformInt("selectId", gameObject.getSelectID());
         }
-        Font font = Global.resourceManager.getFonts().get(textComponent.getPath());
+        Font font = game.getResourceManager().getFont(textComponent.getPath());
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, font.getTexture().getId());
 

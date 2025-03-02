@@ -1,39 +1,47 @@
 package org.katia.gfx.renderers;
 
+import org.katia.Main;
 import org.katia.factory.ShaderProgramFactory;
+import org.katia.gfx.resources.ShaderProgram;
+
+import java.net.URISyntaxException;
+import java.nio.file.Paths;
 
 public abstract class Renderer {
 
-    public static final String ShadersDir = "./Katia-Core/src/main/resources/shaders/";
-
-    protected final String defaultShaderName;
-    protected final String selectShaderName;
+    public static final String ShadersDir;
+    static {
+        try {
+            ShadersDir = Paths.get(Main.class.getClassLoader().getResource("shaders/").toURI()).toString();
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    protected ShaderProgram defaultShader;
+    protected ShaderProgram selectShader;
 
     /**
      * Mesh constructor.
      * @param shaderName Shader name.
      */
     public Renderer(String shaderName) {
-        this.defaultShaderName = shaderName;
-        this.selectShaderName = "select/" + shaderName;
-
-        createShaders();
+        createShaders(shaderName);
     }
 
     /**
      * Create shaders with provided shader name.
      */
-    private void createShaders() {
+    private void createShaders(String shaderName) {
         // NOTE: Creating select shader only requires to use different fragment shader.
-        ShaderProgramFactory.createShaderProgram(
-                selectShaderName,
-                ShadersDir + defaultShaderName + ".vert",
-                ShadersDir + "select.frag");
+       selectShader = ShaderProgramFactory.createShaderProgram(
+               "select/" + shaderName,
+                ShadersDir +"/"+ shaderName + ".vert",
+                ShadersDir +"/"+ "select.frag");
 
-        ShaderProgramFactory.createShaderProgram(
-                defaultShaderName,
-                ShadersDir + defaultShaderName + ".vert",
-                ShadersDir + defaultShaderName + ".frag");
+       defaultShader = ShaderProgramFactory.createShaderProgram(
+                shaderName,
+                ShadersDir +"/"+ shaderName + ".vert",
+                ShadersDir+"/"+ shaderName + ".frag");
     }
 
     /**

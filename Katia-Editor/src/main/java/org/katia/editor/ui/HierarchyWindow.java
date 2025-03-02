@@ -1,12 +1,9 @@
-package org.katia.editor.windows;
+package org.katia.editor.ui;
 
 import imgui.ImGui;
-import imgui.ImGuiWindowClass;
 import imgui.ImVec2;
 import imgui.flag.ImGuiHoveredFlags;
-import imgui.flag.ImGuiStyleVar;
 import imgui.flag.ImGuiTreeNodeFlags;
-import imgui.internal.flag.ImGuiDockNodeFlags;
 import org.joml.Vector3f;
 import org.katia.Icons;
 import org.katia.Logger;
@@ -15,16 +12,16 @@ import org.katia.core.Scene;
 import org.katia.core.components.TransformComponent;
 import org.katia.editor.Editor;
 import org.katia.editor.managers.EditorAssetManager;
-import org.katia.editor.managers.EditorSceneManager;
+import org.katia.editor.managers.ProjectManager;
 import org.katia.editor.renderer.EditorCameraController;
-import org.katia.editor.renderer.EditorSceneRenderer;
 import org.katia.factory.GameObjectFactory;
 
-import java.util.UUID;
+/**
+ * Hierarchy window displays current active scene structure with all its game objects.
+ * @see Scene
+ */
+public class HierarchyWindow extends UICoreDockWindow {
 
-public class HierarchyWindow implements UIComponent {
-
-    ImGuiWindowClass windowClass;
     GameObject gameObjectToMove;
     GameObject gameObjectToMoveTo;
     GameObject copyGameObject;
@@ -36,50 +33,41 @@ public class HierarchyWindow implements UIComponent {
      * Hierarchy window constructor.
      */
     public HierarchyWindow() {
-        Logger.log(Logger.Type.INFO, "Creating hierarchy window ...");
-        windowClass= new ImGuiWindowClass();
-        windowClass.setDockNodeFlagsOverrideSet(
-                ImGuiDockNodeFlags.NoDockingOverMe | ImGuiDockNodeFlags.NoDockingSplitMe | ImGuiDockNodeFlags.NoCloseButton | ImGuiDockNodeFlags.NoTabBar);
-        gameObjectToMove = null;
-        gameObjectToMoveTo = null;
-        gameObjectToDelete = null;
+        super("Hierarchy");
+        Logger.log(Logger.Type.INFO, "Hierarchy Window Constructor");
         gameObjectToMoveNewIndex = 0;
         treeIndex = 0;
-        copyGameObject = null;
     }
 
     /**
      * Render hierarchy window.
      */
     @Override
-    public void render() {
-        ImGui.setNextWindowClass(windowClass);
-
-        ImGui.pushStyleVar(ImGuiStyleVar.WindowPadding, 5, 5);
-        ImGui.begin("Hierarchy");
-        ImGui.textDisabled("HIERARCHY");
-        ImGui.beginChild("##HierarchyChild", -1, -1, true);
+    public void body() {
         displayWindowContextMenu();
 
-        Scene scene = EditorSceneManager.getInstance().getScene();
-        if (scene != null) {
-            treeIndex = 0;
-            ImGui.textDisabled(" " + scene.getName());
-            ImGui.pushFont(EditorAssetManager.getInstance().getFonts().get("Default25"));
-            int index = 0;
-            for (GameObject gameObject : scene.getRootGameObject().getChildren()) {
-                ImGui.separator();
-                setDragTargetForGameObjectReorder(index, scene.getRootGameObject());
-                displayGameObject(gameObject);
-                index++;
-            }
-            ImGui.popFont();
+        if (ProjectManager.getGame() == null) {
+            return;
         }
 
-        ImGui.endChild();
+        Scene scene = ProjectManager.getGame().getSceneManager().getActiveScene();
+        if (scene == null) {
+            return;
+        }
+
+        treeIndex = 0;
+        ImGui.textDisabled(" " + scene.getName());
+        ImGui.pushFont(EditorAssetManager.getInstance().getFonts().get("Default25"));
+        int index = 0;
+        for (GameObject gameObject : scene.getRootGameObject().getChildren()) {
+            ImGui.separator();
+            setDragTargetForGameObjectReorder(index, scene.getRootGameObject());
+            displayGameObject(gameObject);
+            index++;
+        }
+        ImGui.popFont();
+
         process();
-        ImGui.end();
-        ImGui.popStyleVar();
     }
 
     /**
@@ -109,7 +97,7 @@ public class HierarchyWindow implements UIComponent {
 
         // If item was clicked display it in inspector window.
         if (ImGui.isItemClicked()) {
-            Editor.getInstance().getUiRenderer().get(InspectorWindow.class).setGameObject(gameObject);
+            Editor.getInstance().getUi().get(InspectorWindow.class).setGameObject(gameObject);
         }
 
         if (ImGui.beginDragDropSource()) {
@@ -133,8 +121,6 @@ public class HierarchyWindow implements UIComponent {
         } else {
             displayGameObjectContextMenu(gameObject);
         }
-
-
         ImGui.popID();
     }
 
@@ -169,7 +155,7 @@ public class HierarchyWindow implements UIComponent {
 
         if (gameObjectToDelete != null) {
             gameObjectToDelete.removeFromParent();
-            Editor.getInstance().getUiRenderer().get(InspectorWindow.class).removeSelectedGameObjectEventCallback(gameObjectToDelete);
+            Editor.getInstance().getUi().get(InspectorWindow.class).removeSelectedGameObject(gameObjectToDelete);
             gameObjectToDelete = null;
         }
 
@@ -203,7 +189,9 @@ public class HierarchyWindow implements UIComponent {
      * Display context menu for hierarchy window.
      */
     private void displayWindowContextMenu() {
-        Scene scene = EditorSceneManager.getInstance().getScene();
+        if (ProjectManager.getGame() == null) return;
+
+        Scene scene = ProjectManager.getGame().getSceneManager().getActiveScene();//.getInstance().getScene();
         if (ImGui.beginPopupContextWindow()) {
             ImGui.pushFont(EditorAssetManager.getInstance().getFonts().get("Default25"));
             String component = null;
@@ -270,10 +258,5 @@ public class HierarchyWindow implements UIComponent {
             ImGui.popFont();
             ImGui.endPopup();
         }
-    }
-
-    @Override
-    public void dispose() {
-        Logger.log(Logger.Type.DISPOSE, "Disposing of hierarchy window ...");
     }
 }

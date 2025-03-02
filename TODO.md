@@ -4,6 +4,10 @@ Katia Game Engine
 ### Katia Core
 
 ---
+- [ ] Game
+  - [x] Scene Manager
+  - [x] Input Manager
+
 - [ ] Components - Remove resources from components.
   - [x] Component
   - [x] Camera component

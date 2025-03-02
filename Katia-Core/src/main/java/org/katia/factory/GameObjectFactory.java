@@ -12,6 +12,7 @@ import java.util.UUID;
 
 /**
  * This class is responsible for creation and abstract manipulation of Game Objects.
+ * @see GameObject
  */
 public class GameObjectFactory {
 

@@ -1,4 +1,4 @@
-package org.katia.editor.windows;
+package org.katia.editor.ui;
 
 import imgui.ImGui;
 import org.katia.Logger;
@@ -15,10 +15,5 @@ public class ConsoleWindow implements UIComponent {
         ImGui.begin("Console");
 
         ImGui.end();
-    }
-
-    @Override
-    public void dispose() {
-        Logger.log(Logger.Type.DISPOSE, "Disposing of console window ...");
     }
 }

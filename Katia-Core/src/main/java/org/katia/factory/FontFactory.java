@@ -1,12 +1,8 @@
 package org.katia.factory;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import org.katia.FileSystem;
 import org.katia.Logger;
-import org.katia.gfx.Font;
+import org.katia.gfx.resources.Font;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.stb.STBTTBakedChar;
 import org.lwjgl.stb.STBTruetype;
@@ -19,40 +15,17 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.Map;
 
+/**
+ * This class is responsible for generating font resources.
+ */
 public abstract class FontFactory {
-
-    static final Map<String, Font> fonts;
-    static final ObjectMapper objectMapper;
-
-    static {
-        fonts = new HashMap<>();
-        objectMapper = new ObjectMapper();
-        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-        objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
-    }
-    /**
-     * Get font if it is already loaded.
-     * @param path Font path.
-     * @return Font
-     */
-    public static Font getFont(String path) {
-        return fonts.get(path);
-    }
 
     /**
      * Loads a font file and creates a baked bitmap and glyph information.
-     *
      * @param path Path to the font file (TTF/OTF).
      */
     public static Font createFont(String path) {
-        if (fonts.get(path) != null) {
-            Logger.log(Logger.Type.INFO, "Font already loaded:", path);
-            return fonts.get(path);
-        }
         float fontSize = 72;
         int bitmapWidth = 512;
         int bitmapHeight = 512;
@@ -73,15 +46,7 @@ public abstract class FontFactory {
             String imagePath = path1.getParent().toString() + "/" + FileSystem.getFilenameWithoutExtension(path1.getFileName().toString()) + ".png";
             saveBitmap(font, imagePath);
             font.setTexture(TextureFactory.createTexture(imagePath));
-            fonts.put(path, font);
 
-
-            try {
-               String json = objectMapper.writeValueAsString(font);
-                Logger.log(Logger.Type.SUCCESS, json);
-            } catch (JsonProcessingException e) {
-                Logger.log(Logger.Type.ERROR, e.toString());
-            }
             return font;
         } catch (IOException e) {
             Logger.log(Logger.Type.ERROR, "Failed to load font file:", path, e.toString());

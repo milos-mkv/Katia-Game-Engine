@@ -3,10 +3,8 @@ package org.katia.factory;
 import lombok.Data;
 import org.katia.FileSystem;
 import org.katia.Logger;
-import org.katia.gfx.ShaderProgram;
+import org.katia.gfx.resources.ShaderProgram;
 
-import java.util.HashMap;
-import java.util.Map;
 
 import static org.lwjgl.opengl.GL11.GL_FALSE;
 import static org.lwjgl.opengl.GL20.*;
@@ -15,17 +13,6 @@ import static org.lwjgl.opengl.GL20.*;
  * This class is responsible for creating shader programs.
  */
 public abstract class ShaderProgramFactory {
-
-    static final Map<String, ShaderProgram> shaders = new HashMap<>();
-
-    /**
-     * Get shader program by its name.
-     * @param programName Shader program name.
-     * @return ShaderProgram
-     */
-    public static ShaderProgram getShaderProgram(String programName) {
-        return shaders.get(programName);
-    }
 
     @Data
     static class Shader {
@@ -84,17 +71,16 @@ public abstract class ShaderProgramFactory {
         frag.dispose();
 
         ShaderProgram shaderProgram = new ShaderProgram(id);
-        shaders.put(name, shaderProgram);
 
         Logger.log(Logger.Type.SUCCESS, "Shader program created:", name);
         return shaderProgram;
     }
 
     /**
-     * Dispose of all loaded shader programs.
+     * Dispose of shader program.
      */
-    public static void dispose() {
-        Logger.log(Logger.Type.INFO, "Disposing of all shader programs!");
-        shaders.forEach((_, shaderProgram) -> shaderProgram.dispose());
+    public void dispose(ShaderProgram shaderProgram) {
+        Logger.log(Logger.Type.DISPOSE, "Disposing of shader program:", String.valueOf(shaderProgram.getId()));
+        glDeleteProgram(shaderProgram.getId());
     }
 }

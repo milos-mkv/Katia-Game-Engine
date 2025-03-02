@@ -1,25 +1,21 @@
 package org.katia.factory;
 
 import org.katia.Logger;
-import org.katia.gfx.Texture;
+import org.katia.gfx.resources.Texture;
 import org.lwjgl.stb.STBImage;
 import org.lwjgl.system.MemoryStack;
 
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
-import java.util.HashMap;
-import java.util.Map;
 
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL11.GL_LINEAR;
 import static org.lwjgl.opengl.GL30.glGenerateMipmap;
 
 /**
- * This class is responsible for creating texutres.
+ * This class is responsible for creating textures.
  */
 public abstract class TextureFactory {
-
-    static final Map<String, Texture> loadedTextures = new HashMap<>();
 
     /**
      * Create texture.
@@ -27,10 +23,6 @@ public abstract class TextureFactory {
      * @return Texture
      */
     public static Texture createTexture(String path) {
-        if (loadedTextures.containsKey(path)) {
-            return loadedTextures.get(path);
-        }
-
         try (var stack = MemoryStack.stackPush()) {
             IntBuffer w = stack.mallocInt(1);
             IntBuffer h = stack.mallocInt(1);
@@ -61,17 +53,16 @@ public abstract class TextureFactory {
             STBImage.stbi_image_free(data);
 
             Texture texture = new Texture(path, id, w.get(), h.get());
-            loadedTextures.put(path, texture);
             Logger.log(Logger.Type.SUCCESS, "Texture created:", path);
             return texture;
         }
     }
 
     /**
-     * Dispose of all loaded textures.
+     * Dispose of texture;
      */
-    public static void dispose() {
-        Logger.log(Logger.Type.INFO, "Disposing of all textures!");
-        loadedTextures.forEach((_, texture) -> glDeleteTextures(texture.getId()));
+    public static void dispose(Texture texture) {
+        Logger.log(Logger.Type.DISPOSE, "Disposing of texture:", texture.getPath(), ":", String.valueOf(texture.getId()));
+        glDeleteTextures(texture.getId());
     }
 }

@@ -230,7 +230,7 @@ public class CreateNewProjectPopup {
                 configuration.setTitle(gameTitle.get());
                 configuration.setResizable(windowResizable.get());
                 configuration.setVSync(gameVSync.get());
-                ProjectManager.getInstance().createProject(path.get(), name.get(), configuration);
+                ProjectManager.createProject(path.get(), name.get(), configuration);
                 errorMessage.set("", true);
 
             } catch (RuntimeException e) {

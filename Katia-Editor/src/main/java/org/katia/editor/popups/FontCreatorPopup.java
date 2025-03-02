@@ -13,9 +13,8 @@ import org.katia.Icons;
 import org.katia.Logger;
 import org.katia.editor.managers.EditorInputManager;
 import org.katia.factory.FontFactory;
-import org.katia.factory.TextureFactory;
-import org.katia.gfx.Font;
-import org.katia.gfx.Texture;
+import org.katia.gfx.resources.Font;
+import org.katia.gfx.resources.Texture;
 import org.lwjgl.glfw.GLFW;
 
 public class FontCreatorPopup {
@@ -28,7 +27,7 @@ public class FontCreatorPopup {
     public static void setFont(String path) {
         FontCreatorPopup.path = path;
         isSet = true;
-        font = FontFactory.createFont(path, 70, 512, 512);
+        font = FontFactory.createFont(path);
         Logger.log("WTF");
     }
 

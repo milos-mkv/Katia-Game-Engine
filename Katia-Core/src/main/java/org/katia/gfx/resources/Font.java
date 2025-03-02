@@ -1,7 +1,6 @@
-package org.katia.gfx;
+package org.katia.gfx.resources;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,7 +12,6 @@ import java.nio.ByteBuffer;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@JsonSerialize
 public class Font {
 
     String path;
@@ -31,7 +29,6 @@ public class Font {
      * @param character Character.
      * @return STBTTBakedChar
      */
-    @JsonIgnore
     public STBTTBakedChar getGlyphInfo(char character) {
         if (character < 32 || character > 127) {
             Logger.log(Logger.Type.ERROR, "Character out of range (must be ASCII 32-127). Found:", String.valueOf(character));

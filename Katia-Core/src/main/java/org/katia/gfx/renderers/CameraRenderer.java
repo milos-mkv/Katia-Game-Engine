@@ -1,6 +1,5 @@
 package org.katia.gfx.renderers;
 
-import lombok.Getter;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.katia.Logger;
@@ -8,7 +7,8 @@ import org.katia.core.GameObject;
 import org.katia.core.components.CameraComponent;
 import org.katia.core.components.TransformComponent;
 import org.katia.factory.ShaderProgramFactory;
-import org.katia.gfx.ShaderProgram;
+import org.katia.game.Game;
+import org.katia.gfx.resources.ShaderProgram;
 
 import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
@@ -20,8 +20,7 @@ import static org.lwjgl.opengl.GL30.*;
  */
 public class CameraRenderer extends Renderer {
 
-    @Getter
-    static CameraRenderer instance = new CameraRenderer();
+    private final Game game;
 
     public int vao;
     public int vbo;
@@ -30,9 +29,10 @@ public class CameraRenderer extends Renderer {
     /**
      * Line Rectangle Mesh constructor.
      */
-    public CameraRenderer() {
+    public CameraRenderer(Game game) {
         super("shader");
         Logger.log(Logger.Type.INFO, "Create Line Rectangle Mesh ...");
+        this.game = game;
         createBuffers();
     }
 
@@ -78,9 +78,9 @@ public class CameraRenderer extends Renderer {
     /**
      * Render rectangle of provided transform and color.
      * @param gameObject Transform matrix.
-     * @param camera GameObject with camera component.
      */
-    public void render(GameObject gameObject, GameObject camera, boolean select) {
+    public void render(GameObject gameObject,  boolean select) {
+        GameObject camera = game.getSceneManager().getCamera();
         CameraComponent cameraComponent = gameObject.getComponent(CameraComponent.class);
         TransformComponent transformComponent = gameObject.getComponent(TransformComponent.class);
 
@@ -88,10 +88,10 @@ public class CameraRenderer extends Renderer {
         transformComponent.setScale(new Vector3f(cameraComponent.getViewport(), 1.0f));
         Matrix4f worldTransform = transformComponent.getWorldTransformMatrix();
 
-        ShaderProgram shaderProgram = ShaderProgramFactory.getShaderProgram(select ? selectShaderName : defaultShaderName);
+        ShaderProgram shaderProgram = select ? selectShader : defaultShader;
         shaderProgram.use();
         shaderProgram.setUniformMatrix4("projection", camera.getComponent(CameraComponent.class).getCameraProjection());
-        shaderProgram.setUniformMatrix4("view",    camera.getComponent(TransformComponent.class).getWorldTransformMatrix().invert());
+        shaderProgram.setUniformMatrix4("view", camera.getComponent(TransformComponent.class).getWorldTransformMatrix().invert());
         shaderProgram.setUniformMatrix4("model", worldTransform);
         shaderProgram.setUniformBoolean("isCamera", 1);
         shaderProgram.setUniformVec3("bgColor", gameObject.getComponent(CameraComponent.class).getBackground());

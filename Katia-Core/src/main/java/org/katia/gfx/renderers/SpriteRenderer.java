@@ -1,15 +1,14 @@
 package org.katia.gfx.renderers;
 
-import lombok.Getter;
 import org.katia.Logger;
 import org.katia.core.GameObject;
 import org.katia.core.components.CameraComponent;
 import org.katia.core.components.SpriteComponent;
 import org.katia.core.components.TransformComponent;
 import org.katia.factory.ShaderProgramFactory;
-import org.katia.game.Global;
-import org.katia.gfx.ShaderProgram;
-import org.katia.gfx.Texture;
+import org.katia.game.Game;
+import org.katia.gfx.resources.ShaderProgram;
+import org.katia.gfx.resources.Texture;
 
 import static org.lwjgl.opengl.GL11.GL_FLOAT;
 import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
@@ -26,8 +25,7 @@ import static org.lwjgl.opengl.GL30.*;
  */
 public class SpriteRenderer extends Renderer {
 
-    @Getter
-    private static final SpriteRenderer instance = new SpriteRenderer();
+    private final Game game;
 
     private int vbo;
     private int vao;
@@ -36,9 +34,10 @@ public class SpriteRenderer extends Renderer {
     /**
      * Quad mesh constructor.
      */
-    public SpriteRenderer() {
+    public SpriteRenderer(Game game) {
         super("shader");
         Logger.log(Logger.Type.INFO, "Initialize quad mesh!");
+        this.game = game;
         createBuffers();
     }
 
@@ -74,15 +73,15 @@ public class SpriteRenderer extends Renderer {
     /**
      * Render game object with provided camera.
      * @param gameObject GameObject with sprite component to render.
-     * @param camera GameObject with camera component to use.
      * @param select True if we want to render it to select FrameBuffer.
      */
-    public void render(GameObject gameObject, GameObject camera, boolean select) {
-        ShaderProgram shaderProgram = ShaderProgramFactory.getShaderProgram(select ? selectShaderName : defaultShaderName);
+    public void render(GameObject gameObject, boolean select) {
+        GameObject camera = game.getSceneManager().getCamera();
+        ShaderProgram shaderProgram = select ? selectShader : defaultShader;
         shaderProgram.use();
         shaderProgram.setUniformMatrix4("projection", camera.getComponent(CameraComponent.class).getCameraProjection());
         shaderProgram.setUniformMatrix4("view", camera.getComponent(TransformComponent.class).getWorldTransformMatrix().invert());
-        Texture texture = Global.resourceManager .getTexture(gameObject.getComponent(SpriteComponent.class).getPath()) ;
+        Texture texture = game.getResourceManager().getTexture(gameObject.getComponent(SpriteComponent.class).getPath()) ;
         var transform = gameObject.getComponent(TransformComponent.class)
                 .getWorldTransformMatrix()
                 .scale(texture.getWidth(), texture.getHeight(), 1);

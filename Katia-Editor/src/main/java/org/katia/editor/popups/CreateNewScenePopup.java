@@ -56,16 +56,16 @@ public class CreateNewScenePopup extends Popup {
      * Create scene button click callback.
      */
     private void createButtonCallback() {
-        var pm = ProjectManager.getInstance();
-        if (!pm.isActive()) {
+        if (ProjectManager.getGame() == null) {
             ErrorPopup.open("There is no active project!");
         } else if (sceneName.toString().isEmpty()) {
             ErrorPopup.open("Scene name must not be empty!");
         } else {
-            var conf = pm.getConfiguration();
+            var conf = ProjectManager.getGame().getConfiguration();
             Scene scene = SceneFactory.createScene(sceneName.toString(), conf.getWidth(), conf.getHeight());
             String json = SceneFactory.generateJsonFromScene(scene);
-            FileSystem.saveToFile(Paths.get(pm.getPath(), "scenes", sceneName + ".scene").toString(), json);
+            FileSystem.saveToFile(Paths.get(
+                    ProjectManager.getGame().getDirectory(), "scenes", sceneName + ".scene").toString(), json);
         }
     }
 }

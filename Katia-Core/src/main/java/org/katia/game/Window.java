@@ -1,7 +1,6 @@
 package org.katia.game;
 
-import lombok.Data;
-import org.joml.Vector2f;
+import lombok.Getter;
 import org.joml.Vector2i;
 import org.katia.Logger;
 import org.lwjgl.glfw.GLFW;
@@ -14,33 +13,35 @@ import java.util.Objects;
 import static org.lwjgl.opengl.GL11.glViewport;
 
 /**
- * Handles creation of GLFW type window. Used for creating Engine window same for Game window.
+ * Handles creation of game window. This class also has to be exposed to lua vm so that user can access game
+ * window size.
+ * @see org.katia.scripting.LuaScriptExecutioner
  */
-@Data
 public class Window {
 
-    Game game;
-    long handle;
-    Vector2i size;
+    private final Game game;
+    @Getter
+    private final long handle;
+    @Getter
+    private Vector2i size;
 
     /**
      * Create window.
      * @param game Game instance.
-     * @param title Window title.
-     * @param width Window width.
-     * @param height Window height.
      * @throws RuntimeException When failing to create window.
      */
-    public Window(Game game, String title, int width, int height) throws RuntimeException {
+    public Window(Game game) throws RuntimeException {
         this.game = game;
-        this.size = new Vector2i(width, height);
-        handle = GLFW.glfwCreateWindow(width, height, title, MemoryUtil.NULL, MemoryUtil.NULL);
+
+        Configuration configuration = game.getConfiguration();
+        size = new Vector2i(configuration.width, configuration.height);
+        handle = GLFW.glfwCreateWindow(configuration.width, configuration.height, configuration.title, MemoryUtil.NULL, MemoryUtil.NULL);
         if (handle == MemoryUtil.NULL) {
             throw new RuntimeException("Failed to create GLFW window!");
         }
 
         GLFWVidMode videoMode = Objects.requireNonNull(GLFW.glfwGetVideoMode(GLFW.glfwGetPrimaryMonitor()));
-        GLFW.glfwSetWindowPos(handle, (videoMode.width() - width) / 2, (videoMode.height() - height) / 2);
+        GLFW.glfwSetWindowPos(handle, (videoMode.width() - configuration.width) / 2, (videoMode.height() - configuration.height) / 2);
 
         GLFW.glfwMakeContextCurrent(handle);
         GLFW.glfwShowWindow(handle);
@@ -55,7 +56,7 @@ public class Window {
      * Dispose of GLFW window handle.
      */
     public void dispose() {
-        Logger.log(Logger.Type.DISPOSE, "Disposing of game window ...");
+        Logger.log(Logger.Type.DISPOSE, "Disposing of game window:", String.valueOf(handle));
         GLFW.glfwDestroyWindow(handle);
     }
 }

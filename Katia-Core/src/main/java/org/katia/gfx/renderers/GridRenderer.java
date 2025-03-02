@@ -1,13 +1,13 @@
 package org.katia.gfx.renderers;
 
-import lombok.Getter;
 import org.joml.Vector3f;
 import org.katia.Logger;
 import org.katia.core.GameObject;
 import org.katia.core.components.CameraComponent;
 import org.katia.core.components.TransformComponent;
 import org.katia.factory.ShaderProgramFactory;
-import org.katia.gfx.ShaderProgram;
+import org.katia.game.Game;
+import org.katia.gfx.resources.ShaderProgram;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL30;
@@ -19,8 +19,7 @@ import java.nio.FloatBuffer;
  */
 public class GridRenderer extends Renderer {
 
-    @Getter
-    static GridRenderer instance = new GridRenderer();
+    private final Game game;
 
     private int vbo;
     private int vao;
@@ -31,8 +30,9 @@ public class GridRenderer extends Renderer {
     /**
      * Grid renderer default constructor.
      */
-    public GridRenderer() {
+    public GridRenderer(Game game) {
         super("grid");
+        this.game = game;
         createBuffers();
     }
 
@@ -57,9 +57,9 @@ public class GridRenderer extends Renderer {
 
     /**
      * Render 2D grid that fallows provided game objet with camera component.
-     * @param camera GameObject with camera component.
      */
-    public void render(GameObject camera) {
+    public void render() {
+        GameObject camera = game.getSceneManager().getCamera();
         CameraComponent cameraComponent = camera.getComponent(CameraComponent.class);
         TransformComponent cameraTransform = camera.getComponent(TransformComponent.class);
 
@@ -86,7 +86,7 @@ public class GridRenderer extends Renderer {
         }
 
         vertexBuffer.flip();
-        ShaderProgram shaderProgram = ShaderProgramFactory.getShaderProgram(defaultShaderName);
+        ShaderProgram shaderProgram = defaultShader;
         shaderProgram.use();
         shaderProgram.setUniformMatrix4("projection", cameraComponent.getCameraProjection());
         shaderProgram.setUniformMatrix4("view", cameraTransform.getTransformMatrix().invert());

@@ -1,39 +1,42 @@
 package org.katia.managers;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.katia.FileSystem;
 import org.katia.Logger;
-import org.katia.core.Scene;
 import org.katia.factory.FontFactory;
-import org.katia.factory.SceneFactory;
 import org.katia.factory.TextureFactory;
 import org.katia.game.Game;
-import org.katia.gfx.Font;
-import org.katia.gfx.Texture;
+import org.katia.gfx.resources.Font;
+import org.katia.gfx.resources.Texture;
 
+import java.io.File;
 import java.nio.file.Files;
 import java.util.HashMap;
 
-@Data
-@NoArgsConstructor
+/**
+ * This class is responsible for loading all game resources.
+ */
 public class ResourceManager {
 
-    String directory;
+    private final Game game;
     HashMap<String, Texture> textures;
     HashMap<String, Font> fonts;
     HashMap<String, String> scripts;
     HashMap<String, String> scenes;
 
-    public ResourceManager(String directory) {
-        this.directory = directory;
+    /**
+     * Resource manager constructor.
+     * @param game Game instance.
+     */
+    public ResourceManager(Game game) {
+        Logger.log(Logger.Type.INFO, "Creating resource manager for game:", game.getDirectory());
+        this.game = game;
 
         textures = new HashMap<>();
         fonts = new HashMap<>();
         scripts = new HashMap<>();
         scenes = new HashMap<>();
 
-        loadResources(directory);
+        loadResources(game.getDirectory());
     }
 
     /**
@@ -44,11 +47,53 @@ public class ResourceManager {
     public Texture getTexture(String key) {
         Texture texture = textures.get(key);
         if (texture == null) {
-            String path = directory + "/" + key;
+            String path = game.getDirectory() + "/" + key;
             texture = TextureFactory.createTexture(path);
             textures.put(key, texture);
         }
         return texture;
+    }
+
+    /**
+     * Get lua script.
+     * @param key Script key.
+     * @return String
+     */
+    public String getScript(String key) {
+        String script = scripts.get(key);
+        if (script == null) {
+            String path = game.getDirectory() + "/" + key;
+            File file = new File(path);
+            if (file.exists()) {
+                script = path;
+                scripts.put(key, path);
+            }
+        }
+        return script;
+    }
+
+    /**
+     * Get font.
+     * @param key Font key.
+     * @return Font
+     */
+    public Font getFont(String key) {
+        Font font = fonts.get(key);
+        if (font == null) {
+            String path = game.getDirectory() + "/" + key;
+            font = FontFactory.createFont(path);
+            fonts.put(key, font);
+        }
+        return font;
+    }
+
+    /**
+     * Get game scene if it was loaded.
+     * @param key Scene name.
+     * @return String
+     */
+    public String getScene(String key) {
+        return scenes.get(key);
     }
 
     /**
@@ -58,7 +103,7 @@ public class ResourceManager {
     private void loadResources(String path) {
         Logger.log(Logger.Type.INFO, "Loading resources from:", path);
         FileSystem.readDirectoryData(path).stream().filter((entry) -> {
-            String key = FileSystem.relativize(directory, entry.toString());
+            String key = FileSystem.relativize(game.getDirectory(), entry.toString());
             if (Files.isDirectory(entry)) {
                 return true;
             } else if (FileSystem.isImageFile(entry.toString())) {
@@ -74,5 +119,4 @@ public class ResourceManager {
             return false;
         }).toList().forEach((dir) -> loadResources(dir.toString()));
     }
-
 }

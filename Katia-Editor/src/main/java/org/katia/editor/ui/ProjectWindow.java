@@ -1,33 +1,27 @@
-package org.katia.editor.windows;
+package org.katia.editor.ui;
 
 import imgui.ImGui;
-import imgui.ImGuiWindowClass;
 import imgui.flag.ImGuiStyleVar;
 import imgui.flag.ImGuiWindowFlags;
-import imgui.internal.flag.ImGuiDockNodeFlags;
 import lombok.Data;
 import org.katia.Logger;
 import org.katia.editor.Editor;
 import org.katia.editor.managers.ProjectManager;
 import org.katia.editor.menubar.MainMenuBar;
 import org.katia.editor.menubar.MenuAction;
-import org.katia.editor.widgets.ProjectDirectoryExplorerWidget;
+import org.katia.editor.ui.widgets.ProjectDirectoryExplorerWidget;
 
 @Data
-public class ProjectWindow implements UIComponent {
+public class ProjectWindow extends UICoreDockWindow {
 
-    ProjectManager pm;
     ProjectDirectoryExplorerWidget directoryExplorerWidget;
-    ImGuiWindowClass windowClass;
+
     public ProjectWindow() {
+        super("Project");
         Logger.log(Logger.Type.INFO, "Creating project window ...");
-        pm = ProjectManager.getInstance();
+
         directoryExplorerWidget = new ProjectDirectoryExplorerWidget();
         directoryExplorerWidget.setRootDirectory("C:\\Users\\milos\\Desktop\\Demo Game");
-        windowClass= new ImGuiWindowClass();
-        windowClass.setDockNodeFlagsOverrideSet(
-                ImGuiDockNodeFlags.NoDockingOverMe | ImGuiDockNodeFlags.NoDockingSplitMe | ImGuiDockNodeFlags.NoCloseButton | ImGuiDockNodeFlags.NoTabBar);
-
     }
 
     @Override
@@ -43,7 +37,7 @@ public class ProjectWindow implements UIComponent {
         ImGui.beginChild("##ProjectChild", -1, -1, true);
 
 
-        if (pm.isActive()) {
+        if (ProjectManager.getGame() != null) {
             renderProjectOpen();
         } else {
             renderProjectNotOpen();
@@ -56,9 +50,13 @@ public class ProjectWindow implements UIComponent {
 
     }
 
+    @Override
+    protected void body() {
+
+    }
+
     private void renderProjectOpen() {
         directoryExplorerWidget.render();
-
     }
 
     private void renderProjectNotOpen() {
@@ -66,13 +64,7 @@ public class ProjectWindow implements UIComponent {
         ImGui.setCursorPosY(ImGui.getWindowHeight() / 2);
 
         if (ImGui.button(" Open Project ")) {
-            Editor.getInstance().getUiRenderer().get(MainMenuBar.class).getActions().put(MenuAction.OPEN_PROJECT, true);
+            Editor.getInstance().getUi().get(MainMenuBar.class).getActions().put(MenuAction.OPEN_PROJECT, true);
         }
-    }
-
-    @Override
-    public void dispose() {
-        Logger.log(Logger.Type.DISPOSE, "Disposing of project window ...");
-
     }
 }

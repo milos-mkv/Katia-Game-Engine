@@ -1,7 +1,7 @@
 package org.katia.scripting;
 
 import lombok.Data;
-import lombok.Getter;
+import lombok.EqualsAndHashCode;
 import org.katia.Logger;
 import org.luaj.vm2.LuaFunction;
 import org.luaj.vm2.LuaValue;
@@ -10,16 +10,21 @@ import org.luaj.vm2.Varargs;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This class is responsible for storing logs from lua scripts with <code>print</code> function.
+ * @see LuaScriptExecutioner
+ */
+@EqualsAndHashCode(callSuper = true)
 @Data
 public class LuaConsole extends LuaFunction {
 
-    List<String> logs;
+    private final List<String> logs;
 
     /**
      * Lua console constructor.
      */
     public LuaConsole() {
-        Logger.log(Logger.Type.INFO, "Creating lua console!");
+        Logger.log(Logger.Type.INFO, "Creating lua console ...");
         logs = new ArrayList<>();
     }
 

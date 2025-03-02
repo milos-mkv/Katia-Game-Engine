@@ -1,25 +1,33 @@
 package org.katia.managers;
 
 import org.joml.Vector2f;
+import org.katia.Logger;
 import org.katia.game.Game;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.system.MemoryStack;
 
 import java.nio.DoubleBuffer;
 
+/**
+ * This class is responsible for managing user mouse and keyboard input.
+ * This class has to be exposed to Lua so that use can access controls.
+ * @see org.katia.scripting.LuaScriptExecutioner
+ */
 public class InputManager {
 
-    Game game;
-    final boolean[] keyStates;
-    final boolean[] mouseButtonStates;
-    final Vector2f lastCursorPosition;
-    double scrollOffset = 0;
+    private final Game game;
+
+    private final boolean[] keyStates;
+    private final boolean[] mouseButtonStates;
+    private final Vector2f lastCursorPosition;
+    private double scrollOffset = 0;
 
     /**
      * Input manager constructor.
      * @param game Game instance.
      */
     public InputManager(Game game) {
+        Logger.log(Logger.Type.INFO, "Creating input manager for game:", game.getDirectory());
         this.game = game;
         this.keyStates = new boolean[GLFW.GLFW_KEY_LAST + 1];
         this.mouseButtonStates = new boolean[GLFW.GLFW_MOUSE_BUTTON_LAST + 1];

@@ -5,10 +5,10 @@ import imgui.flag.*;
 import imgui.type.ImBoolean;
 import org.katia.FileSystem;
 import org.katia.Icons;
-import org.katia.editor.Editor;
+import org.katia.editor.managers.EditorAssetManager;
 import org.katia.editor.managers.EditorInputManager;
 import org.katia.factory.TextureFactory;
-import org.katia.gfx.Texture;
+import org.katia.gfx.resources.Texture;
 import org.lwjgl.glfw.GLFW;
 
 public class ImagePreviewPopup {
@@ -18,7 +18,7 @@ public class ImagePreviewPopup {
     private static boolean isSet = false;
 
     public static void setImage(String path) {
-        image = TextureFactory.createTexture(path);
+        image = EditorAssetManager.getInstance().getImage(path);
         ImagePreviewPopup.path = path;
         isSet = true;
     }

@@ -1,7 +1,6 @@
-package org.katia.editor.windows;
+package org.katia.editor.ui;
 
 import imgui.ImGui;
-import imgui.ImGuiWindowClass;
 import imgui.ImVec2;
 import imgui.extension.imguizmo.ImGuizmo;
 import imgui.extension.imguizmo.flag.Mode;
@@ -10,14 +9,13 @@ import imgui.flag.ImGuiCol;
 import imgui.flag.ImGuiMouseButton;
 import imgui.flag.ImGuiStyleVar;
 import imgui.flag.ImGuiWindowFlags;
-import imgui.internal.flag.ImGuiDockNodeFlags;
 import org.joml.Matrix4f;
 import org.katia.Icons;
 import org.katia.Logger;
 import org.katia.core.GameObject;
 import org.katia.core.components.TransformComponent;
 import org.katia.editor.Editor;
-import org.katia.editor.managers.EditorSceneManager;
+import org.katia.editor.managers.ProjectManager;
 import org.katia.editor.renderer.EditorCameraController;
 import org.katia.editor.renderer.EditorSceneRenderer;
 import org.katia.editor.renderer.Settings;
@@ -26,24 +24,25 @@ import static org.katia.Math.map;
 import static org.lwjgl.opengl.GL11.glReadPixels;
 import static org.lwjgl.opengl.GL30.*;
 
-public class SceneWindow implements UIComponent {
-    ImGuiWindowClass windowClass;
+public class SceneWindow extends UICoreDockWindow {
+
     private ImVec2 mouseLastPosition;
     int manipulationOperation;
+
     public SceneWindow() {
-        mouseLastPosition = new ImVec2(0, 0);
+        super("Scene");
         Logger.log(Logger.Type.INFO, "Creating scene window ...");
-        windowClass= new ImGuiWindowClass();
-        windowClass.setDockNodeFlagsOverrideSet(
-                ImGuiDockNodeFlags.NoDockingOverMe | ImGuiDockNodeFlags.NoDockingSplitMe | ImGuiDockNodeFlags.NoCloseButton | ImGuiDockNodeFlags.NoTabBar);
+        mouseLastPosition = new ImVec2(0, 0);
         manipulationOperation = Operation.TRANSLATE;
     }
 
     @Override
     public void render() {
-        ImGui.setNextWindowClass(windowClass);
+//        if (true) {
+//            return;
+//        }
         ImGui.pushStyleVar(ImGuiStyleVar.WindowPadding, 5, 5);
-
+        ImGui.setNextWindowClass(windowClass);
         ImGui.begin("Scene");
         var startCursorPosition = ImGui.getCursorPos();
 
@@ -80,22 +79,14 @@ public class SceneWindow implements UIComponent {
             glBindFramebuffer(GL_FRAMEBUFFER, EditorSceneRenderer.getInstance().getSelectFrameBuffer().getId());
             int[] i = new int[1];
             glReadPixels((int) finalX, (int) finalY, 1, 1, GL_RED_INTEGER, GL_INT, i);
-             GameObject gameObject = EditorSceneManager.getInstance().getScene().findBySelectID(i[0]);
+             GameObject gameObject = ProjectManager.getGame().getSceneManager().getActiveScene().findBySelectID(i[0]);
              if (gameObject != null) {
-                 Editor.getInstance().getUiRenderer().get(InspectorWindow.class).setGameObject(gameObject);
+                 Editor.getInstance().getUi().get(InspectorWindow.class).setGameObject(gameObject);
              }
             glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
         }
-//        if (GLFW.glfwGetMouseButton(Editor.getInstance().getHandle(), GLFW.GLFW_MOUSE_BUTTON_LEFT) == GLFW.GLFW_PRESS &&
-//                GLFW.glfwGetKey(Editor.getInstance().getHandle(), GLFW.GLFW_KEY_LEFT_CONTROL) == GLFW.GLFW_PRESS) {
-//            for (Map.Entry<String, Model> mas : scene.getModels().entrySet()) {
-//                if (mas.getValue().getId() == i[0]) {
-//                    Scene.getInstance().setSelectedModel(mas.getKey());
-//                    break;
-//                }
-//            }
-//        }
+
         ImVec2 currentMouseCursor = ImGui.getMousePos();
 
 
@@ -120,9 +111,14 @@ public class SceneWindow implements UIComponent {
         ImGui.popStyleVar();
     }
 
+    @Override
+    protected void body() {
+
+    }
+
     private void manipulate() {
 
-        GameObject gameObject = Editor.getInstance().getUiRenderer().get(InspectorWindow.class).getGameObject().get();
+        GameObject gameObject = Editor.getInstance().getUi().get(InspectorWindow.class).getGameObject().get();
         if (gameObject == null) {
             return;
         }
@@ -200,9 +196,5 @@ public class SceneWindow implements UIComponent {
         matrix.get(buffer);
         return buffer;
     }
-    @Override
-    public void dispose() {
-        Logger.log(Logger.Type.DISPOSE, "Disposing of scene window ...");
 
-    }
 }

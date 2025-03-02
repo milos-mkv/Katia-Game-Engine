@@ -38,6 +38,14 @@ public class EditorCameraController {
     }
 
     /**
+     * Get camera viewport.
+     * @return Vector2f
+     */
+    public Vector2f getViewport() {
+        return camera.getComponent(CameraComponent.class).getViewport();
+    }
+
+    /**
      * Get camera projection matrix.
      * @return Matrix4f
      */
