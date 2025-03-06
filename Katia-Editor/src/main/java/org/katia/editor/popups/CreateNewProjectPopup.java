@@ -53,14 +53,12 @@ public class CreateNewProjectPopup {
         ImGui.pushStyleVar(ImGuiStyleVar.ChildRounding, 7);
         ImGui.beginChild("Header", -1, 50, true, ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse);
 
-        ImGui.pushFont(EditorAssetManager.getInstance().getFonts().get("Default40"));
         ImGui.text("CREATE NEW PROJECT");
         ImGui.sameLine();
         ImGui.setCursorPosX(ImGui.getWindowWidth() - 40);
 
         renderCloseButton();
 
-        ImGui.popFont();
         ImGui.popStyleVar(2);
         ImGui.endChild();
     }

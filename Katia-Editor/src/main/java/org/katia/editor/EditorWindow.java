@@ -7,11 +7,10 @@ import imgui.gl3.ImGuiImplGl3;
 import imgui.glfw.ImGuiImplGlfw;
 import imgui.internal.ImGui;
 import lombok.Data;
+import lombok.Getter;
 import org.joml.Vector2i;
 import org.katia.Logger;
 import org.katia.editor.managers.EditorAssetManager;
-import org.katia.editor.menubar.MainMenuBar;
-import org.katia.editor.menubar.MenuAction;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWDropCallback;
 import org.lwjgl.glfw.GLFWVidMode;
@@ -19,29 +18,31 @@ import org.lwjgl.opengl.GL;
 import org.lwjgl.system.MemoryUtil;
 
 import java.util.Objects;
-import java.util.Vector;
-
-import static org.lwjgl.opengl.GL11.glViewport;
 
 /**
  * This class represents game editor window with ImGui capabilities.
- * It should be extended by Editor.
- * @see Editor
  */
 @Data
-public abstract class EditorWindow {
+public class EditorWindow {
 
-    protected long handle;
-    protected ImGuiImplGlfw imGuiImplGlfw;
-    protected ImGuiImplGl3 imGuiImplGl3;
-    protected Vector2i windowSize;
+    @Getter
+    static final EditorWindow instance = new EditorWindow();
 
+    private long handle;
+    private Vector2i size;
+
+    /**
+     * Editor Window constructor.
+     */
     public EditorWindow() {
         Logger.log(Logger.Type.INFO, "Editor Window Constructor");
         create();
     }
 
-    private void create() {
+    /**
+     * Create editor window.
+     */
+    protected void create() {
         Logger.log(Logger.Type.INFO, "Editor Window create");
         handle = GLFW.glfwCreateWindow(1200, 800, "Katia Editor", MemoryUtil.NULL, MemoryUtil.NULL);
         if (handle == MemoryUtil.NULL) {
@@ -52,12 +53,11 @@ public abstract class EditorWindow {
         GLFW.glfwShowWindow(handle);
         GLFW.glfwMakeContextCurrent(handle);
         GLFW.glfwSetWindowSizeLimits(handle, 1200, 800, GLFW.GLFW_DONT_CARE, GLFW.GLFW_DONT_CARE);
-        windowSize = new Vector2i(1200, 800);
+        size = new Vector2i(1200, 800);
 
         GL.createCapabilities();
         GLFW.glfwSetFramebufferSizeCallback(handle, (long handle, int w, int h) -> {
-//            glViewport(0, 0, w, h);
-            windowSize.set(w, h);
+            size.set(w, h);
         });
         GLFW.glfwSetKeyCallback(handle, (window, key, scancode, action, mods) -> {
             if (action == GLFW.GLFW_PRESS || action == GLFW.GLFW_REPEAT) {
@@ -89,11 +89,6 @@ public abstract class EditorWindow {
         ImGui.createContext();
         ImGui.styleColorsDark();
         ImGui.getIO().addConfigFlags(ImGuiConfigFlags.DockingEnable);
-        EditorAssetManager.getInstance();
-        imGuiImplGlfw = new ImGuiImplGlfw();
-        imGuiImplGl3 = new ImGuiImplGl3();
-        imGuiImplGlfw.init(handle, true);
-        imGuiImplGl3.init("#version 330");
         setupStyle();
     }
 
@@ -181,9 +176,8 @@ public abstract class EditorWindow {
 //        style.setWindowMenuButtonPosition(-1);
     }
 
-    public void dispose() {
+    public void dispose(){
         Logger.log(Logger.Type.DISPOSE, "Editor Window dispose");
-        imGuiImplGlfw.dispose();
-        imGuiImplGl3.dispose();
+        GLFW.glfwDestroyWindow(handle);
     }
 }

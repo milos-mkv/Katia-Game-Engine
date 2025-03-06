@@ -3,6 +3,7 @@ package org.katia.editor.managers;
 import lombok.Getter;
 import org.joml.Vector2f;
 import org.katia.editor.Editor;
+import org.katia.editor.EditorWindow;
 import org.katia.game.Game;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.system.MemoryStack;
@@ -39,7 +40,7 @@ public class EditorInputManager {
      * @return boolean
      */
     public boolean isKeyPressed(int key) {
-        return GLFW.glfwGetKey(Editor.getInstance().getHandle(), key) == GLFW.GLFW_PRESS;
+        return GLFW.glfwGetKey(EditorWindow.getInstance().getHandle(), key) == GLFW.GLFW_PRESS;
     }
 
     /**
@@ -48,7 +49,7 @@ public class EditorInputManager {
      * @return boolean
      */
     public boolean isKeyJustPressed(int key) {
-        boolean isCurrentlyPressed = GLFW.glfwGetKey(Editor.getInstance().getHandle(), key) == GLFW.GLFW_PRESS;
+        boolean isCurrentlyPressed = GLFW.glfwGetKey(EditorWindow.getInstance().getHandle(), key) == GLFW.GLFW_PRESS;
         if (isCurrentlyPressed && !keyStates[key]) {
             keyStates[key] = true;
             return true;
@@ -65,7 +66,7 @@ public class EditorInputManager {
      * @return boolean
      */
     public boolean isMouseButtonPressed(int button) {
-        return GLFW.glfwGetMouseButton(Editor.getInstance().getHandle(), button) == GLFW.GLFW_PRESS;
+        return GLFW.glfwGetMouseButton(EditorWindow.getInstance().getHandle(), button) == GLFW.GLFW_PRESS;
     }
 
     /**
@@ -74,7 +75,7 @@ public class EditorInputManager {
      * @return boolean
      */
     public boolean isMouseButtonJustPressed(int button) {
-        boolean isCurrentlyPressed = GLFW.glfwGetMouseButton(Editor.getInstance().getHandle(), button) == GLFW.GLFW_PRESS;
+        boolean isCurrentlyPressed = GLFW.glfwGetMouseButton(EditorWindow.getInstance().getHandle(), button) == GLFW.GLFW_PRESS;
         if (isCurrentlyPressed && !mouseButtonStates[button]) {
             mouseButtonStates[button] = true;
             return true;
@@ -93,7 +94,7 @@ public class EditorInputManager {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             DoubleBuffer xBuffer = stack.mallocDouble(1);
             DoubleBuffer yBuffer = stack.mallocDouble(1);
-            GLFW.glfwGetCursorPos(Editor.getInstance().getHandle(), xBuffer, yBuffer);
+            GLFW.glfwGetCursorPos(EditorWindow.getInstance().getHandle(), xBuffer, yBuffer);
             return new Vector2f((float) xBuffer.get(0), (float) yBuffer.get(0));
         }
     }
@@ -113,21 +114,21 @@ public class EditorInputManager {
      * Hide cursor.
      */
     public void hideCursor() {
-        GLFW.glfwSetInputMode(Editor.getInstance().getHandle(), GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_HIDDEN);
+        GLFW.glfwSetInputMode(EditorWindow.getInstance().getHandle(), GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_HIDDEN);
     }
 
     /**
      * Show cursor.
      */
     public void showCursor() {
-        GLFW.glfwSetInputMode(Editor.getInstance().getHandle(), GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_NORMAL);
+        GLFW.glfwSetInputMode(EditorWindow.getInstance().getHandle(), GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_NORMAL);
     }
 
     /**
      * Disable cursor.
      */
     public void disableCursor() {
-        GLFW.glfwSetInputMode(Editor.getInstance().getHandle(), GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_DISABLED);
+        GLFW.glfwSetInputMode(EditorWindow.getInstance().getHandle(), GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_DISABLED);
     }
 
     /**

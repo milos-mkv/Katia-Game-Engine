@@ -11,6 +11,7 @@ import org.katia.Logger;
 import org.katia.core.Scene;
 import org.katia.editor.Editor;
 import org.katia.editor.EditorUtils;
+import org.katia.editor.EditorWindow;
 import org.katia.editor.managers.EditorAssetManager;
 import org.katia.editor.managers.ProjectManager;
 import org.katia.editor.popups.CreateNewProjectPopup;
@@ -139,7 +140,7 @@ public class MainMenuBar implements UIComponent {
             Editor.getInstance().runGame.setDebug(true);
             Editor.getInstance().runGame.getSceneManager().setActiveScene("MainScene");
             Editor.getInstance().runGame.getScriptExecutioner().init();
-            GLFW.glfwMakeContextCurrent(Editor.getInstance().getHandle());
+            GLFW.glfwMakeContextCurrent(EditorWindow.getInstance().getHandle());
             GLFW.glfwSwapInterval(0);
         }
         CreateNewProjectPopup.render();
@@ -213,7 +214,7 @@ public class MainMenuBar implements UIComponent {
     }
 
     private void exitAction() {
-        GLFW.glfwSetWindowShouldClose(Editor.getInstance().getHandle(), true);
+        GLFW.glfwSetWindowShouldClose(EditorWindow.getInstance().getHandle(), true);
     }
 
 }

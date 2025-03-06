@@ -16,4 +16,5 @@ public class ConsoleWindow implements UIComponent {
 
         ImGui.end();
     }
+
 }

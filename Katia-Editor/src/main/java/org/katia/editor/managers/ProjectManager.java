@@ -3,8 +3,8 @@ package org.katia.editor.managers;
 import lombok.Getter;
 import org.katia.FileSystem;
 import org.katia.Logger;
-import org.katia.editor.Editor;
 import org.katia.editor.ui.ProjectWindow;
+import org.katia.editor.EditorUI;
 import org.katia.factory.GameFactory;
 import org.katia.game.Configuration;
 import org.katia.game.Game;
@@ -35,8 +35,7 @@ public abstract class ProjectManager {
         Assert(!validateProjectStructure(path), "Project structure is corrupted!");
 
         game = GameFactory.createWindowLessGame(path);
-        Editor.getInstance()
-                .getUi()
+        EditorUI.getInstance()
                 .get(ProjectWindow.class)
                 .getDirectoryExplorerWidget()
                 .setRootDirectory(path);

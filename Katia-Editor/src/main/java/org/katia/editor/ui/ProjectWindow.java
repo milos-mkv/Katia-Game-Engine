@@ -5,7 +5,7 @@ import imgui.flag.ImGuiStyleVar;
 import imgui.flag.ImGuiWindowFlags;
 import lombok.Data;
 import org.katia.Logger;
-import org.katia.editor.Editor;
+import org.katia.editor.EditorUI;
 import org.katia.editor.managers.ProjectManager;
 import org.katia.editor.menubar.MainMenuBar;
 import org.katia.editor.menubar.MenuAction;
@@ -50,6 +50,7 @@ public class ProjectWindow extends UICoreDockWindow {
 
     }
 
+
     @Override
     protected void body() {
 
@@ -64,7 +65,7 @@ public class ProjectWindow extends UICoreDockWindow {
         ImGui.setCursorPosY(ImGui.getWindowHeight() / 2);
 
         if (ImGui.button(" Open Project ")) {
-            Editor.getInstance().getUi().get(MainMenuBar.class).getActions().put(MenuAction.OPEN_PROJECT, true);
+            EditorUI.getInstance().get(MainMenuBar.class).getActions().put(MenuAction.OPEN_PROJECT, true);
         }
     }
 }

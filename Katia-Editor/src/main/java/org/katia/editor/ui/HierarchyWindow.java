@@ -10,7 +10,7 @@ import org.katia.Logger;
 import org.katia.core.GameObject;
 import org.katia.core.Scene;
 import org.katia.core.components.TransformComponent;
-import org.katia.editor.Editor;
+import org.katia.editor.EditorUI;
 import org.katia.editor.managers.EditorAssetManager;
 import org.katia.editor.managers.ProjectManager;
 import org.katia.editor.renderer.EditorCameraController;
@@ -97,7 +97,7 @@ public class HierarchyWindow extends UICoreDockWindow {
 
         // If item was clicked display it in inspector window.
         if (ImGui.isItemClicked()) {
-            Editor.getInstance().getUi().get(InspectorWindow.class).setGameObject(gameObject);
+            EditorUI.getInstance().get(InspectorWindow.class).setGameObject(gameObject);
         }
 
         if (ImGui.beginDragDropSource()) {
@@ -155,7 +155,7 @@ public class HierarchyWindow extends UICoreDockWindow {
 
         if (gameObjectToDelete != null) {
             gameObjectToDelete.removeFromParent();
-            Editor.getInstance().getUi().get(InspectorWindow.class).removeSelectedGameObject(gameObjectToDelete);
+            EditorUI.getInstance().get(InspectorWindow.class).removeSelectedGameObject(gameObjectToDelete);
             gameObjectToDelete = null;
         }
 
@@ -259,4 +259,5 @@ public class HierarchyWindow extends UICoreDockWindow {
             ImGui.endPopup();
         }
     }
+
 }

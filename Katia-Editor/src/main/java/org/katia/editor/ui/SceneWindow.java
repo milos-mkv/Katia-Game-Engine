@@ -14,7 +14,7 @@ import org.katia.Icons;
 import org.katia.Logger;
 import org.katia.core.GameObject;
 import org.katia.core.components.TransformComponent;
-import org.katia.editor.Editor;
+import org.katia.editor.EditorUI;
 import org.katia.editor.managers.ProjectManager;
 import org.katia.editor.renderer.EditorCameraController;
 import org.katia.editor.renderer.EditorSceneRenderer;
@@ -81,7 +81,7 @@ public class SceneWindow extends UICoreDockWindow {
             glReadPixels((int) finalX, (int) finalY, 1, 1, GL_RED_INTEGER, GL_INT, i);
              GameObject gameObject = ProjectManager.getGame().getSceneManager().getActiveScene().findBySelectID(i[0]);
              if (gameObject != null) {
-                 Editor.getInstance().getUi().get(InspectorWindow.class).setGameObject(gameObject);
+                 EditorUI.getInstance().get(InspectorWindow.class).setGameObject(gameObject);
              }
             glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
@@ -118,7 +118,7 @@ public class SceneWindow extends UICoreDockWindow {
 
     private void manipulate() {
 
-        GameObject gameObject = Editor.getInstance().getUi().get(InspectorWindow.class).getGameObject().get();
+        GameObject gameObject = EditorUI.getInstance().get(InspectorWindow.class).getGameObject().get();
         if (gameObject == null) {
             return;
         }

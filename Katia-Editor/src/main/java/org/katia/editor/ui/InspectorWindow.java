@@ -446,4 +446,5 @@ public class InspectorWindow extends UICoreDockWindow {
         renderAddComponentContextMenu(gameObject.get());
         ImGui.popFont();
     }
+
 }

@@ -45,3 +45,43 @@ Katia Game Engine
 
 #### Popups
 - [x] Image preview popup
+
+        GLFW.glfwSetFramebufferSizeCallback(handle, (long handle, int w, int h) -> {
+            windowSize.set(w, h);
+        });
+        GLFW.glfwSetKeyCallback(handle, (window, key, scancode, action, mods) -> {
+            if (action == GLFW.GLFW_PRESS || action == GLFW.GLFW_REPEAT) {
+                if ((mods & GLFW.GLFW_MOD_CONTROL) != 0) { // Check if Ctrl is pressed
+                    switch (key) {
+                        case GLFW.GLFW_KEY_N:
+//                            uiRenderer.get(MainMenuBar.class).getActions().put(MenuAction.CREATE_NEW_PROJECT, true);
+break;
+case GLFW.GLFW_KEY_O:
+//                            uiRenderer.get(MainMenuBar.class).getActions().put(MenuAction.OPEN_PROJECT, true);
+break;
+case GLFW.GLFW_KEY_S:
+//                            uiRenderer.get(MainMenuBar.class).getActions().put(MenuAction.SAVE_PROJECT, true);
+break;
+case GLFW.GLFW_KEY_W:
+//                            uiRenderer.get(MainMenuBar.class).getActions().put(MenuAction.EXIT, true);
+break;
+}
+}
+}
+});
+GLFW.glfwSetDropCallback(handle, GLFWDropCallback.create((win, count, names) -> {
+//            droppedFiles.clear();
+//            for (int i = 0; i < count; i++) {
+//                droppedFiles.add(GLFWDropCallback.getName(names, i));
+//            }
+}));
+
+//            if (runGame != null) {
+//                GLFW.glfwMakeContextCurrent(runGame.getWindow().getHandle());
+//                runGame.update(null);
+//
+//                if (GLFW.glfwWindowShouldClose(runGame.getWindow().getHandle())) {
+//                    runGame.dispose();
+//                    runGame = null;
+//                }
+//            }
