@@ -1,4 +1,4 @@
-package org.katia.editor.ui;
+package org.katia.editor.ui.windows;
 
 import imgui.*;
 import imgui.flag.ImGuiCol;
@@ -26,7 +26,7 @@ import java.util.Map;
 import java.util.Objects;
 
 @Data
-public class InspectorWindow extends UICoreDockWindow {
+public class InspectorWindow extends Window {
 
     WeakReference<GameObject> gameObject;
     Map<String, Runnable> components;
@@ -382,7 +382,6 @@ public class InspectorWindow extends UICoreDockWindow {
         if (gameObject == null || gameObject.get() == null) {
             return;
         }
-
         ImGui.pushFont(EditorAssetManager.getInstance().getFonts().get("Default25"));
 
         ImGui.columns(2);

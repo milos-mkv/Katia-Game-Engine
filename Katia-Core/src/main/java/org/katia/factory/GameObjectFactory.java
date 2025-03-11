@@ -50,7 +50,7 @@ public class GameObjectFactory {
     public static GameObject copy(GameObject gameObject) {
         GameObject copy = generateGameObjectFromJson(generateJsonFromGameObject(gameObject));
         setUUID(copy);
-        return null;
+        return copy;
     }
 
     /**

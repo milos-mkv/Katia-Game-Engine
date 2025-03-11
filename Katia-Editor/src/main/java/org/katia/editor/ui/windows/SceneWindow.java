@@ -1,4 +1,4 @@
-package org.katia.editor.ui;
+package org.katia.editor.ui.windows;
 
 import imgui.ImGui;
 import imgui.ImVec2;
@@ -24,7 +24,7 @@ import static org.katia.Math.map;
 import static org.lwjgl.opengl.GL11.glReadPixels;
 import static org.lwjgl.opengl.GL30.*;
 
-public class SceneWindow extends UICoreDockWindow {
+public class SceneWindow extends Window {
 
     private ImVec2 mouseLastPosition;
     int manipulationOperation;
@@ -81,7 +81,7 @@ public class SceneWindow extends UICoreDockWindow {
             glReadPixels((int) finalX, (int) finalY, 1, 1, GL_RED_INTEGER, GL_INT, i);
              GameObject gameObject = ProjectManager.getGame().getSceneManager().getActiveScene().findBySelectID(i[0]);
              if (gameObject != null) {
-                 EditorUI.getInstance().get(InspectorWindow.class).setGameObject(gameObject);
+                 EditorUI.getInstance().getWindow(InspectorWindow.class).setGameObject(gameObject);
              }
             glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
@@ -118,7 +118,7 @@ public class SceneWindow extends UICoreDockWindow {
 
     private void manipulate() {
 
-        GameObject gameObject = EditorUI.getInstance().get(InspectorWindow.class).getGameObject().get();
+        GameObject gameObject = EditorUI.getInstance().getWindow(InspectorWindow.class).getGameObject().get();
         if (gameObject == null) {
             return;
         }

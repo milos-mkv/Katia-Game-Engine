@@ -1,4 +1,4 @@
-package org.katia.editor.ui;
+package org.katia.editor.ui.windows;
 
 import imgui.ImGui;
 import imgui.flag.ImGuiStyleVar;
@@ -12,7 +12,7 @@ import org.katia.editor.ui.menubar.MenuAction;
 import org.katia.editor.ui.widgets.ProjectDirectoryExplorerWidget;
 
 @Data
-public class ProjectWindow extends UICoreDockWindow {
+public class ProjectWindow extends Window {
 
     ProjectDirectoryExplorerWidget directoryExplorerWidget;
 
@@ -23,37 +23,39 @@ public class ProjectWindow extends UICoreDockWindow {
         directoryExplorerWidget = new ProjectDirectoryExplorerWidget();
         directoryExplorerWidget.setRootDirectory("C:\\Users\\milos\\Desktop\\Demo Game");
     }
+//
+//    @Override
+//    public void render() {
+////        if (!visible)
+////            return;
+////        ImGui.setNextWindowClass(windowClass);
+////        ImGui.pushStyleVar(ImGuiStyleVar.WindowPadding, 5, 5);
+////
+////        ImGui.begin("Project", ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse);
+////        ImGui.pushStyleVar(ImGuiStyleVar.WindowPadding, 10, 5);
+////
+////        ImGui.textDisabled("PROJECT");
+////
+////        ImGui.beginChild("##ProjectChild", -1, -1, true);
+////
+////
+////        ImGui.endChild();
+////        ImGui.popStyleVar();
+////
+////        ImGui.end();
+////        ImGui.popStyleVar();
+//
+//    }
+
 
     @Override
-    public void render() {
-        ImGui.setNextWindowClass(windowClass);
-        ImGui.pushStyleVar(ImGuiStyleVar.WindowPadding, 5, 5);
-
-        ImGui.begin("Project", ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse);
-        ImGui.pushStyleVar(ImGuiStyleVar.WindowPadding, 10, 5);
-
-        ImGui.textDisabled("PROJECT");
-
-        ImGui.beginChild("##ProjectChild", -1, -1, true);
-
+    protected void body() {
 
         if (ProjectManager.getGame() != null) {
             renderProjectOpen();
         } else {
             renderProjectNotOpen();
         }
-        ImGui.endChild();
-        ImGui.popStyleVar();
-
-        ImGui.end();
-        ImGui.popStyleVar();
-
-    }
-
-
-    @Override
-    protected void body() {
-
     }
 
     private void renderProjectOpen() {
@@ -65,7 +67,7 @@ public class ProjectWindow extends UICoreDockWindow {
         ImGui.setCursorPosY(ImGui.getWindowHeight() / 2);
 
         if (ImGui.button(" Open Project ")) {
-            EditorUI.getInstance().get(MainMenuBar.class).getActions().put(MenuAction.OPEN_PROJECT, true);
+            EditorUI.getInstance().getWindow(MainMenuBar.class).getActions().put(MenuAction.OPEN_PROJECT, true);
         }
     }
 }

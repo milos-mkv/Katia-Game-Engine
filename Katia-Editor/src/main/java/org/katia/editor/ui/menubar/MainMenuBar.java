@@ -8,18 +8,19 @@ import lombok.Data;
 import org.katia.Icons;
 import org.katia.Logger;
 import org.katia.core.Scene;
-import org.katia.editor.Editor;
+import org.katia.editor.EditorUI;
 import org.katia.editor.EditorUtils;
 import org.katia.editor.EditorWindow;
 import org.katia.editor.managers.EditorAssetManager;
 import org.katia.editor.managers.ProjectManager;
+import org.katia.editor.ui.windows.HierarchyWindow;
+import org.katia.editor.ui.windows.InspectorWindow;
+import org.katia.editor.ui.windows.ProjectWindow;
 import org.katia.editor.ui.menubar.menus.*;
 import org.katia.editor.ui.popups.CreateProjectPopup;
 import org.katia.editor.ui.popups.CreateScenePopup;
 import org.katia.editor.ui.popups.OpenScenePopup;
-import org.katia.editor.ui.UIComponent;
 import org.katia.editor.ui.popups.PopupManager;
-import org.katia.factory.GameFactory;
 import org.katia.factory.SceneFactory;
 import org.lwjgl.glfw.GLFW;
 
@@ -31,7 +32,7 @@ import java.util.List;
  * This class represents editors main menu bar.
  */
 @Data
-public class MainMenuBar implements UIComponent {
+public class MainMenuBar {
 
     HashMap<MenuAction, Boolean> actions = new HashMap<MenuAction, Boolean>();
     List<Menu> menus;
@@ -54,7 +55,6 @@ public class MainMenuBar implements UIComponent {
     /**
      * Render main menu bar in editor window.
      */
-    @Override
     public void render() {
         ImGui.pushStyleVar(ImGuiStyleVar.FramePadding, 5, 5);
         ImGui.pushStyleVar(ImGuiStyleVar.WindowBorderSize, 0);
@@ -111,6 +111,21 @@ public class MainMenuBar implements UIComponent {
 //                    json);
 
         }
+        if (this.actions.get(MenuAction.TOGGLE_HIERARCHY_WINDOW)) {
+            EditorUI.getInstance().getWindow(HierarchyWindow.class).setVisible(
+                    !EditorUI.getInstance().getWindow(HierarchyWindow.class).isVisible()
+            );
+        }
+        if (this.actions.get(MenuAction.TOGGLE_INSPECTOR_WINDOW)) {
+            EditorUI.getInstance().getWindow(InspectorWindow.class).setVisible(
+                    !EditorUI.getInstance().getWindow(InspectorWindow.class).isVisible()
+            );
+        }
+        if (this.actions.get(MenuAction.TOGGLE_PROJECT_WINDOW)) {
+            EditorUI.getInstance().getWindow(ProjectWindow.class).setVisible(
+                    !EditorUI.getInstance().getWindow(ProjectWindow.class).isVisible()
+            );
+        }
         if (this.actions.get(MenuAction.RUN_GAME)) {
 //            Editor.getInstance().runGame = GameFactory.createGame("/home/mmilicevic/Desktop/test");
 //            Editor.getInstance().runGame.setDebug(true);
@@ -123,6 +138,9 @@ public class MainMenuBar implements UIComponent {
         actions.replaceAll((key, value) -> false);
     }
 
+    /**
+     * Render toolbar.
+     */
     private void renderToolbar() {
         ImGui.setCursorPosX(ImGui.getWindowWidth() - 310);
         ImGui.setCursorPosY(4);
@@ -131,11 +149,13 @@ public class MainMenuBar implements UIComponent {
         ImGui.beginChild("Run toolbar", 163, 30, true, ImGuiWindowFlags.NoScrollbar);
         EditorAssetManager.getInstance().getFonts().get("Default").setScale(0.8f);
         ImGui.pushFont(EditorAssetManager.getInstance().getFonts().get("Default"));
+
         ImGui.pushStyleVar(ImGuiStyleVar.FrameRounding, 5);
-            ImGui.pushStyleColor(ImGuiCol.ButtonHovered, 0.0f, 0.0f, 0.0f, 1.0f);
-            ImGui.pushStyleColor(ImGuiCol.Button, 0.0f, 0.0f, 0.0f, 0.0f);
-            ImGui.pushStyleColor(ImGuiCol.ButtonActive, 0.0f, 0.0f, 0.0f, 0.0f);
+        ImGui.pushStyleColor(ImGuiCol.ButtonHovered, 0.0f, 0.0f, 0.0f, 1.0f);
+        ImGui.pushStyleColor(ImGuiCol.Button, 0.0f, 0.0f, 0.0f, 0.0f);
+        ImGui.pushStyleColor(ImGuiCol.ButtonActive, 0.0f, 0.0f, 0.0f, 0.0f);
         ImGui.pushStyleVar(ImGuiStyleVar.FrameBorderSize, 0);
+
         ImGui.setCursorPosX(ImGui.getCursorPosX() + 2);
         var cursor = ImGui.getCursorPos();
         if (ImGui.button("##PLAY", 40, 30)) {
@@ -146,7 +166,6 @@ public class MainMenuBar implements UIComponent {
         ImGui.text(Icons.Play);
         ImGui.popStyleColor();
         ImGui.sameLine();
-//            ImGui.setCursorPos(cursor.x, cursor.y);
         ImGui.setCursorPos(ImGui.getCursorPosX()+5, cursor.y);
         cursor = ImGui.getCursorPos();
         ImGui.beginDisabled();

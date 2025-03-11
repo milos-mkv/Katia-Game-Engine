@@ -123,7 +123,7 @@ public class EditorWindow {
         colors[ImGuiCol.ButtonActive] = new float[]{0.4f, 0.7f, 1.0f, 1.0f}; // Active bright blue button
         colors[ImGuiCol.Header] = new float[]{0.2f, 0.25f, 0.3f, 1.0f}; // Neutral header
         colors[ImGuiCol.HeaderHovered] = new float[]{0.3f, 0.6f, 0.8f, 0.8f}; // Hovered light blue header
-        colors[ImGuiCol.HeaderActive] = new float[]{0.4f, 0.7f, 1.0f, 1.0f}; // Active bright blue header
+        colors[ImGuiCol.HeaderActive] = new float[]{0.8f, 0.4f, 0.4f, 1.0f}; // Active bright blue header
         colors[ImGuiCol.Separator] = new float[]{0.2f, 0.22f, 0.24f, 1.0f}; // Separator
         colors[ImGuiCol.SeparatorHovered] = new float[]{0.3f, 0.6f, 0.8f, 0.8f}; // Hovered light blue separator
         colors[ImGuiCol.SeparatorActive] = new float[]{0.4f, 0.7f, 1.0f, 1.0f}; // Active bright blue separator

@@ -1,6 +1,8 @@
 package org.katia.editor.ui.menubar.menus;
 
+import imgui.ImGui;
 import org.katia.editor.ui.menubar.MainMenuBar;
+import org.katia.editor.ui.menubar.MenuAction;
 
 /**
  * View menu bar.
@@ -24,6 +26,9 @@ public class ViewMenu extends Menu {
      */
     @Override
     protected void body() {
-
+        mainMenuBar.getActions().put(MenuAction.TOGGLE_HIERARCHY_WINDOW, ImGui.menuItem("Toggle Hierarchy Window"));
+        mainMenuBar.getActions().put(MenuAction.TOGGLE_INSPECTOR_WINDOW, ImGui.menuItem("Toggle Inspector Window"));
+        mainMenuBar.getActions().put(MenuAction.TOGGLE_PROJECT_WINDOW, ImGui.menuItem("Toggle Project Window"));
+        mainMenuBar.getActions().put(MenuAction.TOGGLE_CONSOLE_WINDOW, ImGui.menuItem("Toggle Console Window"));
     }
 }

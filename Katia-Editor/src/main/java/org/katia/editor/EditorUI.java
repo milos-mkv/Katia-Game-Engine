@@ -1,7 +1,11 @@
 package org.katia.editor;
 
 import imgui.ImGui;
+import imgui.ImVec2;
 import imgui.extension.imguizmo.ImGuizmo;
+import imgui.flag.ImGuiCol;
+import imgui.flag.ImGuiStyleVar;
+import imgui.flag.ImGuiWindowFlags;
 import imgui.gl3.ImGuiImplGl3;
 import imgui.glfw.ImGuiImplGlfw;
 import lombok.Data;
@@ -9,13 +13,12 @@ import lombok.Getter;
 import org.joml.Vector2i;
 import org.katia.Logger;
 import org.katia.editor.ui.menubar.MainMenuBar;
-import org.katia.editor.ui.*;
+import org.katia.editor.ui.windows.*;
 import org.katia.editor.ui.popups.PopupManager;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.List;
 
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
@@ -29,10 +32,10 @@ public class EditorUI {
     @Getter
     static EditorUI instance = new EditorUI();
 
-    HashMap<Class<?>, UIComponent> components;
+    HashMap<Class<?>, Window> windows;
 
     private PopupManager popupRenderer;
-
+    MainMenuBar mainMenuBar;
     ImGuiImplGl3 imGuiImplGl3;
     ImGuiImplGlfw imGuiImplGlfw;
 
@@ -41,21 +44,12 @@ public class EditorUI {
      */
     public EditorUI() {
         Logger.log(Logger.Type.INFO, "Editor UI Constructor");
-        components = new LinkedHashMap<>();
-
-        // List of component classes to registerSceneWindow.class,
-        List<Class<? extends UIComponent>> componentClasses = List.of(
-                DockSpace.class, HierarchyWindow.class, InspectorWindow.class, ProjectWindow.class,
-                MainMenuBar.class, SceneWindow.class //CodeEditorWindow.class
-        );
-
-        for (Class<? extends UIComponent> clazz : componentClasses) {
-            try {
-                components.put(clazz, clazz.getDeclaredConstructor().newInstance());
-            } catch (Exception e) {
-                Logger.log(Logger.Type.ERROR, "Failed to instantiate " + clazz.getSimpleName());
-            }
-        }
+        windows = new LinkedHashMap<>();
+        mainMenuBar = new MainMenuBar();
+        windows.put(HierarchyWindow.class, new HierarchyWindow());
+        windows.put(InspectorWindow.class, new InspectorWindow());
+        windows.put(ProjectWindow.class, new ProjectWindow());
+        windows.put(SceneWindow.class, new SceneWindow());
 
         imGuiImplGlfw = new ImGuiImplGlfw();
         imGuiImplGlfw.init(EditorWindow.getInstance().getHandle(), true);
@@ -72,8 +66,8 @@ public class EditorUI {
      * @param <T> Valid UI component
      */
     @SuppressWarnings("unchecked")
-    public <T> T get(Class<T>  component) {
-        return (T) components.get(component);
+    public <T> T getWindow(Class<T>  component) {
+        return (T) windows.get(component);
     }
 
     /**
@@ -89,7 +83,26 @@ public class EditorUI {
         ImGui.newFrame();
         ImGuizmo.beginFrame();
 
-        components.forEach((key, value) -> value.render());
+        ImVec2 viewportPos = ImGui.getMainViewport().getPos();
+        ImVec2 viewportSize = ImGui.getMainViewport().getSize();
+
+        float padding = 10.0f; // Adjust dock space bounds
+        ImGui.setNextWindowPos(viewportPos.x + padding, viewportPos.y + padding + 40);
+        ImGui.setNextWindowSize(viewportSize.x - 2 * padding, viewportSize.y - 2 * padding - 40);
+        ImGui.setNextWindowBgAlpha(0.0f); // Make it transparent if needed
+
+        ImGui.pushStyleVar(ImGuiStyleVar.WindowPadding, 1, 1);
+        ImGui.pushStyleVar(ImGuiStyleVar.WindowBorderSize, 0);
+        ImGui.pushStyleColor(ImGuiCol.Separator, 0.0f, 0.0f, 0.0f, 0.0f);
+
+        ImGui.begin("DockSpace", ImGuiWindowFlags.NoTitleBar | ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoMove);
+        ImGui.dockSpace(ImGui.getID("DockSpace"));
+        ImGui.end();
+
+        ImGui.popStyleColor();
+        ImGui.popStyleVar(2);
+        mainMenuBar.render();
+        windows.forEach((key, value) -> value.render());
 
 
         PopupManager.getInstance().render();

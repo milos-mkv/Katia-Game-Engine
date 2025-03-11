@@ -69,14 +69,8 @@ public class EditorCameraController {
     public void zoom(float delta) {
         var scale = camera.getComponent(TransformComponent.class).getScale();
 
-        scale.x += delta;
-        scale.y += delta;
-        if (scale.x <= 0.1f) {
-            scale.x = 0.1f;
-        }
-        if (scale.y <= 0.1f) {
-            scale.y = 0.1f;
-        }
+        scale.x = Math.max(0.1f, Math.min(2.0f, scale.x + delta));
+        scale.y = Math.max(0.1f, Math.min(2.0f, scale.y + delta));
     }
 
     /**

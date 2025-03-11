@@ -1,10 +1,12 @@
-package org.katia.editor.ui;
+package org.katia.editor.ui.windows;
 
 import imgui.ImGui;
 import imgui.ImVec2;
+import imgui.flag.ImGuiCol;
 import imgui.flag.ImGuiHoveredFlags;
 import imgui.flag.ImGuiTreeNodeFlags;
 import org.joml.Vector3f;
+import org.katia.Constants;
 import org.katia.Icons;
 import org.katia.Logger;
 import org.katia.core.GameObject;
@@ -20,7 +22,7 @@ import org.katia.factory.GameObjectFactory;
  * Hierarchy window displays current active scene structure with all its game objects.
  * @see Scene
  */
-public class HierarchyWindow extends UICoreDockWindow {
+public class HierarchyWindow extends Window {
 
     GameObject gameObjectToMove;
     GameObject gameObjectToMoveTo;
@@ -54,10 +56,10 @@ public class HierarchyWindow extends UICoreDockWindow {
         if (scene == null) {
             return;
         }
-
-        treeIndex = 0;
+         treeIndex = 0;
         ImGui.textDisabled(" " + scene.getName());
         ImGui.pushFont(EditorAssetManager.getInstance().getFonts().get("Default25"));
+
         int index = 0;
         for (GameObject gameObject : scene.getRootGameObject().getChildren()) {
             ImGui.separator();
@@ -65,6 +67,7 @@ public class HierarchyWindow extends UICoreDockWindow {
             displayGameObject(gameObject);
             index++;
         }
+
         ImGui.popFont();
 
         process();
@@ -86,7 +89,6 @@ public class HierarchyWindow extends UICoreDockWindow {
         }
         int flag = (ImGuiTreeNodeFlags.SpanFullWidth | ImGuiTreeNodeFlags.OpenOnArrow);
         boolean open = ImGui.treeNodeEx(Icons.Cube + " " + gameObject.getName(), flag);
-
         // If mouse double click move camera to game object.
         if (ImGui.isItemHovered(ImGuiHoveredFlags.None)) {
             if (ImGui.isMouseDoubleClicked(0)) {
@@ -97,7 +99,7 @@ public class HierarchyWindow extends UICoreDockWindow {
 
         // If item was clicked display it in inspector window.
         if (ImGui.isItemClicked()) {
-            EditorUI.getInstance().get(InspectorWindow.class).setGameObject(gameObject);
+            EditorUI.getInstance().getWindow(InspectorWindow.class).setGameObject(gameObject);
         }
 
         if (ImGui.beginDragDropSource()) {
@@ -155,7 +157,7 @@ public class HierarchyWindow extends UICoreDockWindow {
 
         if (gameObjectToDelete != null) {
             gameObjectToDelete.removeFromParent();
-            EditorUI.getInstance().get(InspectorWindow.class).removeSelectedGameObject(gameObjectToDelete);
+            EditorUI.getInstance().getWindow(InspectorWindow.class).removeSelectedGameObject(gameObjectToDelete);
             gameObjectToDelete = null;
         }
 
@@ -193,7 +195,7 @@ public class HierarchyWindow extends UICoreDockWindow {
 
         Scene scene = ProjectManager.getGame().getSceneManager().getActiveScene();//.getInstance().getScene();
         if (ImGui.beginPopupContextWindow()) {
-            ImGui.pushFont(EditorAssetManager.getInstance().getFonts().get("Default25"));
+            ImGui.pushFont(EditorAssetManager.getInstance().getFonts().get("Text20"));
             String component = null;
             if (ImGui.menuItem(" New Game Object")) {
                 scene.addGameObject(GameObjectFactory.createGameObject());
@@ -226,7 +228,7 @@ public class HierarchyWindow extends UICoreDockWindow {
      */
     private void displayGameObjectContextMenu(GameObject gameObject) {
         if (ImGui.beginPopupContextItem()) {
-            ImGui.pushFont(EditorAssetManager.getInstance().getFonts().get("Default25"));
+            ImGui.pushFont(EditorAssetManager.getInstance().getFonts().get("Text20"));
 
             String component = null;
             if (ImGui.menuItem(" New Game Object")) {
@@ -259,5 +261,4 @@ public class HierarchyWindow extends UICoreDockWindow {
             ImGui.endPopup();
         }
     }
-
 }

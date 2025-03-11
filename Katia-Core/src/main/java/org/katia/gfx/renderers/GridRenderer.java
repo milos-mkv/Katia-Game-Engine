@@ -25,7 +25,7 @@ public class GridRenderer extends Renderer {
     private int vao;
 
     private static final float GRID_SIZE = 100.0f;  // Block size for grid
-    private static final int MAX_LINES = 200;       // Maximum number of grid lines
+    private static final int MAX_LINES = 400;       // Maximum number of grid lines
 
     /**
      * Grid renderer default constructor.
@@ -67,7 +67,7 @@ public class GridRenderer extends Renderer {
         float cameraX = cameraPosition.x;
         float cameraY = cameraPosition.y;
 
-        float halfGridCount = 10; // Visible grid lines around the camera
+        float halfGridCount = 20; // Visible grid lines around the camera
         FloatBuffer vertexBuffer = BufferUtils.createFloatBuffer(MAX_LINES * 2 * 3);
 
         // Generate grid vertices dynamically

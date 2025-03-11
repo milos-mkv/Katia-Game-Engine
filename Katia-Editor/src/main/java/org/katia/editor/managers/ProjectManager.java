@@ -3,7 +3,7 @@ package org.katia.editor.managers;
 import lombok.Getter;
 import org.katia.FileSystem;
 import org.katia.Logger;
-import org.katia.editor.ui.ProjectWindow;
+import org.katia.editor.ui.windows.ProjectWindow;
 import org.katia.editor.EditorUI;
 import org.katia.factory.GameFactory;
 import org.katia.game.Configuration;
@@ -36,7 +36,7 @@ public abstract class ProjectManager {
 
         game = GameFactory.createWindowLessGame(path);
         EditorUI.getInstance()
-                .get(ProjectWindow.class)
+                .getWindow(ProjectWindow.class)
                 .getDirectoryExplorerWidget()
                 .setRootDirectory(path);
     }

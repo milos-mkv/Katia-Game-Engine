@@ -1,18 +1,16 @@
-package org.katia.editor.ui;
+package org.katia.editor.ui.windows;
 
 import imgui.ImColor;
 import imgui.ImGui;
 import imgui.extension.texteditor.TextEditor;
 import imgui.extension.texteditor.TextEditorLanguageDefinition;
 import imgui.extension.texteditor.flag.TextEditorPaletteIndex;
-import imgui.flag.ImGuiCol;
-import imgui.flag.ImGuiKey;
 import org.katia.editor.managers.EditorInputManager;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.*;
 
-public class CodeEditorWindow extends UICoreDockWindow {
+public class CodeEditorWindow extends Window {
 
     TextEditor editor;
     private final Set<String> keywords;
