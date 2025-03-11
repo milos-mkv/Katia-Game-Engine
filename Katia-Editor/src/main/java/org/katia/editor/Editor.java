@@ -39,6 +39,7 @@ public class Editor {
 
         ProjectManager.openProject("/home/mmilicevic/Desktop/test");
         ProjectManager.getGame().getSceneManager().setActiveScene("MainScene");
+
         GLFW.glfwSwapInterval(0);
         while (!GLFW.glfwWindowShouldClose(EditorWindow.getInstance().getHandle())) {
             GLFW.glfwPollEvents();

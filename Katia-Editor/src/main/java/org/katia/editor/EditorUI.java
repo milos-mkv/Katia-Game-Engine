@@ -8,8 +8,9 @@ import lombok.Data;
 import lombok.Getter;
 import org.joml.Vector2i;
 import org.katia.Logger;
-import org.katia.editor.menubar.MainMenuBar;
+import org.katia.editor.ui.menubar.MainMenuBar;
 import org.katia.editor.ui.*;
+import org.katia.editor.ui.popups.PopupManager;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.HashMap;
@@ -30,6 +31,8 @@ public class EditorUI {
 
     HashMap<Class<?>, UIComponent> components;
 
+    private PopupManager popupRenderer;
+
     ImGuiImplGl3 imGuiImplGl3;
     ImGuiImplGlfw imGuiImplGlfw;
 
@@ -43,7 +46,7 @@ public class EditorUI {
         // List of component classes to registerSceneWindow.class,
         List<Class<? extends UIComponent>> componentClasses = List.of(
                 DockSpace.class, HierarchyWindow.class, InspectorWindow.class, ProjectWindow.class,
-                MainMenuBar.class, CodeEditorWindow.class
+                MainMenuBar.class, SceneWindow.class //CodeEditorWindow.class
         );
 
         for (Class<? extends UIComponent> clazz : componentClasses) {
@@ -58,6 +61,8 @@ public class EditorUI {
         imGuiImplGlfw.init(EditorWindow.getInstance().getHandle(), true);
         imGuiImplGl3 = new ImGuiImplGl3();
         imGuiImplGl3.init("#version 430");
+
+        popupRenderer = new PopupManager();
     }
 
     /**
@@ -86,6 +91,12 @@ public class EditorUI {
 
         components.forEach((key, value) -> value.render());
 
+
+        PopupManager.getInstance().render();
+//        popupRenderer.getPopups().forEach(popup -> popup.render());
+//        CreateNewProjectPopup.getInstance().render();
+//        CreateNewScenePopup.getInstance().render();
+//        OpenScenePopup.getInstance().render();
         ImGui.render();
         imGuiImplGl3.renderDrawData(ImGui.getDrawData());
         GLFW.glfwSwapBuffers(EditorWindow.getInstance().getHandle());

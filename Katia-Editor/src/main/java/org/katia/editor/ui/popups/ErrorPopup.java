@@ -1,13 +1,13 @@
-package org.katia.editor.popups;
+package org.katia.editor.ui.popups;
 
 import imgui.ImGui;
-import imgui.ImVec2;
 import imgui.flag.ImGuiStyleVar;
 import org.katia.Icons;
 
 public class ErrorPopup {
 
     static String errorMessage = "";
+
     public static void open(String message) {
         errorMessage = message;
         ImGui.openPopup("Error Popup");

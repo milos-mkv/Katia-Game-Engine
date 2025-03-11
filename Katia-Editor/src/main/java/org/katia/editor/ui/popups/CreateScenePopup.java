@@ -1,9 +1,8 @@
-package org.katia.editor.popups;
+package org.katia.editor.ui.popups;
 
 import imgui.ImGui;
 import imgui.flag.ImGuiInputTextFlags;
 import imgui.type.ImString;
-import lombok.Getter;
 import org.katia.FileSystem;
 import org.katia.Logger;
 import org.katia.core.Scene;
@@ -12,27 +11,31 @@ import org.katia.factory.SceneFactory;
 
 import java.nio.file.Paths;
 
-
-public class CreateNewScenePopup extends Popup {
-
-    @Getter
-    static CreateNewScenePopup instance = new CreateNewScenePopup();
+/**
+ * This class represents create scene popup.
+ * @see org.katia.editor.ui.popups.Popup
+ */
+public class CreateScenePopup extends Popup {
 
     ImString sceneName;
 
-    public CreateNewScenePopup() {
-        super("Create Scene", "CREATE SCENE", 500, 130);
+    /**
+     * Create Scene Popup.
+     */
+    public CreateScenePopup() {
+        super("CREATE SCENE", 500, 125);
+        Logger.log(Logger.Type.INFO, "Create Scene Popup Constructor");
     }
 
     @Override
-    public void open() {
-        super.open();
-        sceneName = new ImString();
+    public void open(Object data) {
+        super.open(data);
+        this.sceneName = new ImString();
     }
 
     @Override
     public void body() {
-        ImGui.beginChild("##Child", -1, -45, true);
+        ImGui.beginChild("##Child", -1, -40, true);
 
         ImGui.columns(2);
         ImGui.setColumnWidth(-1, 80);
@@ -49,7 +52,6 @@ public class CreateNewScenePopup extends Popup {
             createButtonCallback();
         }
 
-        ErrorPopup.render();
     }
 
     /**

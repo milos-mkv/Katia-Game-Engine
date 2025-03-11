@@ -7,8 +7,8 @@ import lombok.Data;
 import org.katia.Logger;
 import org.katia.editor.EditorUI;
 import org.katia.editor.managers.ProjectManager;
-import org.katia.editor.menubar.MainMenuBar;
-import org.katia.editor.menubar.MenuAction;
+import org.katia.editor.ui.menubar.MainMenuBar;
+import org.katia.editor.ui.menubar.MenuAction;
 import org.katia.editor.ui.widgets.ProjectDirectoryExplorerWidget;
 
 @Data

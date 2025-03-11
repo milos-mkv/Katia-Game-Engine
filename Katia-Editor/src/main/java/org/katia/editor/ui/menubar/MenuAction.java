@@ -1,4 +1,4 @@
-package org.katia.editor.menubar;
+package org.katia.editor.ui.menubar;
 
 public enum MenuAction {
     CREATE_NEW_PROJECT,

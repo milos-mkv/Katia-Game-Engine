@@ -1,118 +1,55 @@
-package org.katia.editor.popups;
+package org.katia.editor.ui.popups;
 
 import imgui.*;
 import imgui.flag.*;
-import imgui.type.ImBoolean;
-import org.katia.FileSystem;
-import org.katia.Icons;
 import org.katia.editor.managers.EditorAssetManager;
-import org.katia.editor.managers.EditorInputManager;
-import org.katia.factory.TextureFactory;
 import org.katia.gfx.resources.Texture;
-import org.lwjgl.glfw.GLFW;
 
-public class ImagePreviewPopup {
+/**
+ * This class represents image preview popup.
+ * @see org.katia.editor.ui.popups.Popup
+ */
+public class ImagePreviewPopup extends Popup {
 
-    private static Texture image;
-    private static String path;
-    private static boolean isSet = false;
-
-    public static void setImage(String path) {
-        image = EditorAssetManager.getInstance().getImage(path);
-        ImagePreviewPopup.path = path;
-        isSet = true;
+    public ImagePreviewPopup() {
+        super("IMAGE PREVIEW", 700, 600);
     }
 
     /**
      * Render image preview popup.
      */
-    public static void render() {
-        if (!isSet) {
-            return;
-        }
-        ImVec2 workSize = ImGui.getMainViewport().getWorkSize();
-        ImVec2 modalSize = new ImVec2(700, 600);
-
-        ImGui.setNextWindowPos((workSize.x - modalSize.x) / 2, (workSize.y - modalSize.y) / 2);
-        ImGui.setNextWindowSize(modalSize.x, modalSize.y);
-
-        int flags = ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoScrollbar |
-                ImGuiWindowFlags.NoScrollWithMouse | ImGuiWindowFlags.NoTitleBar;
-
-        ImGui.pushStyleVar(ImGuiStyleVar.WindowPadding, 0, 5);
-        ImGui.pushStyleVar(ImGuiStyleVar.WindowBorderSize, 2);
-        ImGui.pushStyleColor(ImGuiCol.Border, 0.4f, 0.4f, 0.4f, 0.5f);
-
-        if (ImGui.beginPopupModal("Image Preview", new ImBoolean(true), flags)) {
-            renderHeader();
-            renderCheckerboardWithImage(image, image.getWidth(), image.getHeight(), 700, 550);
-            if (EditorInputManager.getInstance().isKeyJustPressed(GLFW.GLFW_KEY_ESCAPE)) {
-                ImGui.closeCurrentPopup();
-                isSet = false;
-            }
-            ImGui.endPopup();
-        }
-
-        ImGui.popStyleColor();
-        ImGui.popStyleVar(2);
+    @Override
+    public void body() {
+        Texture image = EditorAssetManager.getInstance().getImage((String) data);
+        renderCheckerboardWithImage(image, image.getWidth(), image.getHeight(), 700, 550);
     }
 
-    private static void renderHeader() {
-        String fileName = FileSystem.getFileName(path);
-
-        ImGui.textDisabled(" IMAGE");
-        ImGui.sameLine();
-        centerText(fileName);
-        ImGui.sameLine();
-        ImGui.setCursorPosX(ImGui.getWindowWidth() - 30);
-        setupCloseButton();
-        ImGui.sameLine();
-        ImGui.setCursorPosX(ImGui.getWindowWidth() - 30);
-        ImGui.text(Icons.SquareX);
-        ImGui.popStyleColor();
-    }
-
-    private static void centerText(String text) {
-        ImGui.setCursorPosX((ImGui.getWindowWidth() - ImGui.calcTextSize(text).x) / 2);
-        ImGui.text(text);
-    }
-
-    private static void setupCloseButton() {
-        ImGui.pushStyleVar(ImGuiStyleVar.FrameBorderSize, 0);
-        ImGui.pushStyleColor(ImGuiCol.Button, 0, 0, 0, 0);
-        ImGui.pushStyleColor(ImGuiCol.ButtonHovered, 0, 0, 0, 0);
-        ImGui.pushStyleColor(ImGuiCol.ButtonActive, 0, 0, 0, 0);
-
-        if (ImGui.button(" ")) {
-            ImGui.closeCurrentPopup();
-            isSet = false;
-        }
-        ImGui.popStyleVar();
-        ImGui.popStyleColor(3);
-        updateCloseButtonColor();
-    }
-
-    private static void updateCloseButtonColor() {
-        if (ImGui.isItemActive()) {
-            ImGui.pushStyleColor(ImGuiCol.Text, 0.8f, 0.4f, 0.4f, 1.0f);
-        } else if (ImGui.isItemHovered()) {
-            ImGui.pushStyleColor(ImGuiCol.Text, 0.3f, 0.6f, 0.8f, 0.8f);
-        } else {
-            ImGui.pushStyleColor(ImGuiCol.Text, 0.8f, 0.8f, 0.8f, 1.0f);
-        }
-    }
-
-    public static void renderCheckerboardWithImage(Texture texture, int textureWidth, int textureHeight, float displayWidth, float displayHeight) {
+    /**
+     * Render checkerboard with image in it.
+     * @param texture Image to render.
+     * @param textureWidth Image width.
+     * @param textureHeight Image height.
+     * @param displayWidth Max image width.
+     * @param displayHeight Max image height.
+     */
+    public void renderCheckerboardWithImage(Texture texture, int textureWidth, int textureHeight, float displayWidth, float displayHeight) {
         ImDrawList drawList = ImGui.getWindowDrawList();
         ImVec2 startPos = ImGui.getCursorScreenPos();
 
         drawCheckerboard(drawList, startPos, displayWidth, displayHeight);
-        reserveCheckerboardSpace(displayWidth, displayHeight);
+        ImGui.dummy(displayWidth, displayHeight);
 
         drawImage(texture, textureWidth, textureHeight, displayWidth, displayHeight, startPos);
     }
 
-    private static void drawCheckerboard(ImDrawList drawList, ImVec2 startPos, float displayWidth, float displayHeight) {
+    /**
+     * Render just checkerboard.
+     * @param drawList ImGui DrawList.
+     * @param startPos Start position.
+     * @param displayWidth Display width.
+     * @param displayHeight Display Height.
+     */
+    private void drawCheckerboard(ImDrawList drawList, ImVec2 startPos, float displayWidth, float displayHeight) {
         float checkerSize = 16.0f;
         int numColumns = (int) Math.ceil(displayWidth / checkerSize);
         int numRows = (int) Math.ceil(displayHeight / checkerSize);
@@ -132,10 +69,16 @@ public class ImagePreviewPopup {
         }
     }
 
-    private static void reserveCheckerboardSpace(float displayWidth, float displayHeight) {
-        ImGui.dummy(displayWidth, displayHeight);
-    }
-    private static void drawImage(Texture texture, int textureWidth, int textureHeight, float displayWidth, float displayHeight, ImVec2 startPos) {
+    /**
+     * Draw image.
+     * @param texture Image to draw.
+     * @param textureWidth Image width.
+     * @param textureHeight Image height.
+     * @param displayWidth Max display width.
+     * @param displayHeight Max display height.
+     * @param startPos Start position.
+     */
+    private void drawImage(Texture texture, int textureWidth, int textureHeight, float displayWidth, float displayHeight, ImVec2 startPos) {
         float aspectRatio = (float) textureWidth / textureHeight;
         float scaledWidth = textureWidth;
         float scaledHeight = textureHeight;
@@ -201,8 +144,7 @@ public class ImagePreviewPopup {
         }
     }
 
-
-    private static void renderImageInfo(ImDrawList drawList, Texture texture, float displayWidth, float displayHeight, ImVec2 startPos) {
+    private void renderImageInfo(ImDrawList drawList, Texture texture, float displayWidth, float displayHeight, ImVec2 startPos) {
         String dimensions = texture.getWidth() + "x" + texture.getHeight();
         ImVec2 textSize = ImGui.calcTextSize(dimensions);
 
@@ -212,7 +154,7 @@ public class ImagePreviewPopup {
         renderOutlinedText(drawList, dimensions, adjustedX, adjustedY, ImColor.intToColor(255, 255, 255, 255), ImColor.intToColor(0, 0, 0, 255));
     }
 
-    private static void renderOutlinedText(ImDrawList drawList, String text, float x, float y, int textColor, int outlineColor) {
+    private void renderOutlinedText(ImDrawList drawList, String text, float x, float y, int textColor, int outlineColor) {
         float outlineThickness = 2.0f;
 
         for (int dx = -1; dx <= 1; dx++) {

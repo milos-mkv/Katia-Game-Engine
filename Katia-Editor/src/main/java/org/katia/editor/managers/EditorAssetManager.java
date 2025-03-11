@@ -63,8 +63,8 @@ public class EditorAssetManager {
         short[] iconRanges = { (short) 0xF000, (short) 0xF8FF, (short) 0xE000, (short) 0xE8FF, 0 };
         io.getFonts().addFontFromFileTTF(path + "/fa-solid-900.ttf", 25.0f, config, iconRanges);
         config.setMergeMode(false);
-        fonts.put("Default15", io.getFonts().addFontFromFileTTF(path + "/Roboto-Regular.ttf", 25.0f));
         fonts.put("Text15", io.getFonts().addFontFromFileTTF(path + "/Roboto-Regular.ttf", 15));
+        fonts.put("Text20", io.getFonts().addFontFromFileTTF(path + "/Roboto-Regular.ttf", 20));
         fonts.put("Default25", io.getFonts().addFontFromFileTTF(path + "/JetBrainsMono-Medium.ttf", 25.0f));
         config.setMergeMode(true);
         io.getFonts().addFontFromFileTTF(path + "/fa-solid-900.ttf", 25.0f, config, iconRanges);

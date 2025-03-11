@@ -1,0 +1,209 @@
+package org.katia.editor.ui.menubar;
+
+import imgui.ImGui;
+import imgui.flag.ImGuiCol;
+import imgui.flag.ImGuiStyleVar;
+import imgui.flag.ImGuiWindowFlags;
+import lombok.Data;
+import org.katia.Icons;
+import org.katia.Logger;
+import org.katia.core.Scene;
+import org.katia.editor.Editor;
+import org.katia.editor.EditorUtils;
+import org.katia.editor.EditorWindow;
+import org.katia.editor.managers.EditorAssetManager;
+import org.katia.editor.managers.ProjectManager;
+import org.katia.editor.ui.menubar.menus.*;
+import org.katia.editor.ui.popups.CreateProjectPopup;
+import org.katia.editor.ui.popups.CreateScenePopup;
+import org.katia.editor.ui.popups.OpenScenePopup;
+import org.katia.editor.ui.UIComponent;
+import org.katia.editor.ui.popups.PopupManager;
+import org.katia.factory.GameFactory;
+import org.katia.factory.SceneFactory;
+import org.lwjgl.glfw.GLFW;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+/**
+ * This class represents editors main menu bar.
+ */
+@Data
+public class MainMenuBar implements UIComponent {
+
+    HashMap<MenuAction, Boolean> actions = new HashMap<MenuAction, Boolean>();
+    List<Menu> menus;
+
+    /**
+     * Main menu bar constructor.
+     */
+    public MainMenuBar() {
+        Logger.log(Logger.Type.INFO, "Creating main menu bar ...");
+        for (MenuAction action : MenuAction.values()) {
+            this.actions.put(action, false);
+        }
+        menus = new ArrayList<>();
+        menus.add(new FileMenu(this));
+        menus.add(new ViewMenu(this));
+        menus.add(new SceneMenu(this));
+        menus.add(new HelpMenu(this));
+    }
+
+    /**
+     * Render main menu bar in editor window.
+     */
+    @Override
+    public void render() {
+        ImGui.pushStyleVar(ImGuiStyleVar.FramePadding, 5, 5);
+        ImGui.pushStyleVar(ImGuiStyleVar.WindowBorderSize, 0);
+        ImGui.pushStyleVar(ImGuiStyleVar.WindowPadding, 15, 10);
+        if (ImGui.beginMainMenuBar()) {
+
+            ImGui.pushFont(EditorAssetManager.getInstance().getFonts().get("Default"));
+            ImGui.textDisabled(" KATIA ");
+            ImGui.popFont();
+
+            ImGui.sameLine();
+
+            menus.forEach(Menu::render);
+
+            ImGui.sameLine();
+
+
+            renderToolbar();
+            ImGui.sameLine();
+
+
+            ImGui.getIO().getDeltaTime();
+            ImGui.setCursorPosY(0);
+            ImGui.setCursorPosX(ImGui.getWindowWidth() - 130);
+            ImGui.textDisabled("FPS: " + (int) ImGui.getIO().getFramerate());
+            ImGui.endMainMenuBar();
+        }
+        ImGui.popStyleVar(3);
+        if (this.actions.get(MenuAction.CREATE_NEW_PROJECT)) {
+            PopupManager.getInstance().openPopup(CreateProjectPopup.class);
+        }
+        if (this.actions.get(MenuAction.OPEN_PROJECT)) {
+            openProjectAction();
+        }
+        if (this.actions.get(MenuAction.SAVE_PROJECT)) {
+            saveProjectAction();
+            ImGui.openPopup("Error Popup");
+        }
+        if (this.actions.get(MenuAction.EXIT)) {
+            exitAction();
+        }
+        if (this.actions.get(MenuAction.CREATE_NEW_SCENE)) {
+            PopupManager.getInstance().openPopup(CreateScenePopup.class);
+        }
+        if (this.actions.get(MenuAction.OPEN_SCENE)) {
+            PopupManager.getInstance().openPopup(OpenScenePopup.class);
+        }
+        if (this.actions.get(MenuAction.SAVE_SCENE)) {
+            Logger.log(Logger.Type.INFO, "SAVE SCENE!");
+            Scene scene = ProjectManager.getGame().getSceneManager().getActiveScene();// .getInstance().getScene();
+            String json = SceneFactory.generateJsonFromScene(scene);
+
+//            FileSystem.saveToFile(EditorSceneManager.getInstance().getPath(),
+//                    json);
+
+        }
+        if (this.actions.get(MenuAction.RUN_GAME)) {
+//            Editor.getInstance().runGame = GameFactory.createGame("/home/mmilicevic/Desktop/test");
+//            Editor.getInstance().runGame.setDebug(true);
+//            Editor.getInstance().runGame.getSceneManager().setActiveScene("MainScene");
+//            Editor.getInstance().runGame.getScriptExecutioner().init();
+//            GLFW.glfwMakeContextCurrent(EditorWindow.getInstance().getHandle());
+//            GLFW.glfwSwapInterval(0);
+        }
+
+        actions.replaceAll((key, value) -> false);
+    }
+
+    private void renderToolbar() {
+        ImGui.setCursorPosX(ImGui.getWindowWidth() - 310);
+        ImGui.setCursorPosY(4);
+
+        ImGui.pushStyleVar(ImGuiStyleVar.WindowPadding, 0, 0);
+        ImGui.beginChild("Run toolbar", 163, 30, true, ImGuiWindowFlags.NoScrollbar);
+        EditorAssetManager.getInstance().getFonts().get("Default").setScale(0.8f);
+        ImGui.pushFont(EditorAssetManager.getInstance().getFonts().get("Default"));
+        ImGui.pushStyleVar(ImGuiStyleVar.FrameRounding, 5);
+            ImGui.pushStyleColor(ImGuiCol.ButtonHovered, 0.0f, 0.0f, 0.0f, 1.0f);
+            ImGui.pushStyleColor(ImGuiCol.Button, 0.0f, 0.0f, 0.0f, 0.0f);
+            ImGui.pushStyleColor(ImGuiCol.ButtonActive, 0.0f, 0.0f, 0.0f, 0.0f);
+        ImGui.pushStyleVar(ImGuiStyleVar.FrameBorderSize, 0);
+        ImGui.setCursorPosX(ImGui.getCursorPosX() + 2);
+        var cursor = ImGui.getCursorPos();
+        if (ImGui.button("##PLAY", 40, 30)) {
+            actions.put(MenuAction.RUN_GAME, true);
+        }
+        ImGui.setCursorPos(cursor.x + 13, cursor.y + 6);
+        ImGui.pushStyleColor(ImGuiCol.Text, 0.4f, 0.8f, 0.4f, 0.8f);
+        ImGui.text(Icons.Play);
+        ImGui.popStyleColor();
+        ImGui.sameLine();
+//            ImGui.setCursorPos(cursor.x, cursor.y);
+        ImGui.setCursorPos(ImGui.getCursorPosX()+5, cursor.y);
+        cursor = ImGui.getCursorPos();
+        ImGui.beginDisabled();
+        if (ImGui.button("##PAUSE", 40, 30)) {
+
+        }
+        ImGui.setCursorPos(cursor.x + 14, cursor.y + 6);
+        ImGui.text(Icons.Pause);
+        ImGui.endDisabled();
+        ImGui.sameLine();
+        ImGui.setCursorPos(cursor.x + 40, cursor.y);
+
+        cursor = ImGui.getCursorPos();
+        if (ImGui.button("##SCRIPT", 40, 30)) {
+
+        }
+        ImGui.setCursorPos(cursor.x + 9, cursor.y + 6);
+        ImGui.text(Icons.Script);
+
+        ImGui.sameLine();
+        ImGui.setCursorPos(cursor.x + 40, cursor.y);
+
+        cursor = ImGui.getCursorPos();
+        if (ImGui.button("##SCENE", 40, 30)) {
+
+        }
+        ImGui.setCursorPos(cursor.x + 9, cursor.y + 6);
+        ImGui.text(Icons.Display);
+
+
+        EditorAssetManager.getInstance().getFonts().get("Default").setScale(1.0f);
+
+        ImGui.popFont();
+        ImGui.popStyleVar(2);
+            ImGui.popStyleColor(3);
+
+        ImGui.endChild();
+        ImGui.popStyleVar();
+    }
+
+    private void openProjectAction() {
+        String directory = EditorUtils.openFolderDialog();
+        if (directory != null && !directory.isEmpty()) {
+            try {
+                ProjectManager.openProject(directory);
+            } catch (RuntimeException e) {
+                Logger.log(Logger.Type.ERROR, e.getMessage());
+            }
+        }
+    }
+
+    private void saveProjectAction() {
+
+    }
+
+    private void exitAction() {
+        GLFW.glfwSetWindowShouldClose(EditorWindow.getInstance().getHandle(), true);
+    }
+
+}

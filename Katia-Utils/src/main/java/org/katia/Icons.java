@@ -28,4 +28,6 @@ public class Icons {
     public static String SquareX = "\uf2d3";
     public static String TriangleError = "\uf071";
     public static String NextPart = "\uf0da";
+    public static String Script = "\uf70e";
+    public static String Display = "\ue163";
 }

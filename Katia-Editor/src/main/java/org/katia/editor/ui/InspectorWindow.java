@@ -16,16 +16,11 @@ import org.katia.core.GameObject;
 import org.katia.core.components.*;
 import org.katia.editor.managers.EditorAssetManager;
 import org.katia.editor.managers.ProjectManager;
-import org.katia.editor.popups.SelectImagePopup;
 import org.katia.factory.ComponentFactory;
-import org.katia.factory.FontFactory;
-import org.katia.factory.TextureFactory;
-import org.katia.gfx.resources.Font;
 import org.katia.gfx.resources.Texture;
 
 import java.lang.ref.WeakReference;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -259,7 +254,6 @@ public class InspectorWindow extends UICoreDockWindow {
                     textureWidth, textureHeight, ImGui.getWindowWidth() - 20, 300);
             ImGui.separator();
         }
-        SelectImagePopup.getInstance().render();
     }
 
     /**

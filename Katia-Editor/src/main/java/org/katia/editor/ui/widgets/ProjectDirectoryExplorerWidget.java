@@ -11,10 +11,9 @@ import org.katia.FileSystem;
 import org.katia.Icons;
 import org.katia.Logger;
 import org.katia.editor.managers.EditorAssetManager;
-import org.katia.editor.popups.ErrorPopup;
 import org.katia.editor.popups.FontCreatorPopup;
-import org.katia.editor.popups.ImagePreviewPopup;
-import org.katia.factory.TextureFactory;
+import org.katia.editor.ui.popups.ImagePreviewPopup;
+import org.katia.editor.ui.popups.PopupManager;
 import org.katia.gfx.resources.Texture;
 
 import java.awt.*;
@@ -241,8 +240,9 @@ public class ProjectDirectoryExplorerWidget {
         ImGui.endChild();
         if (clickedFile != null) {
             if (FileSystem.isImageFile(clickedFile.toString())) {
-                ImGui.openPopup("Image Preview");
-                ImagePreviewPopup.setImage(clickedFile.toString());
+//                ImGui.openPopup("Image Preview");
+                PopupManager.getInstance().openPopup(ImagePreviewPopup.class, clickedFile.toString());
+//                ImagePreviewPopup.setImage(clickedFile.toString());
             }
             if (FileSystem.isFontFile(clickedFile.toString())) {
                 System.out.println("WT");
@@ -250,9 +250,8 @@ public class ProjectDirectoryExplorerWidget {
                 FontCreatorPopup.setFont(clickedFile.toString());
             }
         }
-        ImagePreviewPopup.render();
-        ErrorPopup.render();
-        FontCreatorPopup.render();
+//        ErrorPopup.render();
+//        FontCreatorPopup.render();
     }
 
     /**

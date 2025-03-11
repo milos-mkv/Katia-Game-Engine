@@ -45,16 +45,21 @@ public abstract class ProjectManager {
      * Create new project directory.
      * @param path Path to root directory of project.
      * @param name Project name (directory).
-     * @param configuration Game configuration.
      * @throws RuntimeException Throws when failed to create project.
      */
-    public static void createProject(String path, String name, Configuration configuration) throws RuntimeException {
+    public static void createProject(String path, String name) throws RuntimeException {
         Logger.log(Logger.Type.INFO, "Creating new project:", name, "Path:", path);
         Assert(name.isEmpty(), "Name is not valid!");
         Assert(path.isEmpty(), "Path is not valid!");
         Assert(!FileSystem.doesDirectoryExists(path), "Provided path is not valid!");
         Assert(FileSystem.doesDirectoryExists(path + "/" + name), "Directory already exists: " + name);
-        Assert(!configuration.isValid(), "Configuration is not valid!");
+
+        Configuration configuration = new Configuration();
+        configuration.setWidth(800);
+        configuration.setHeight(800);
+        configuration.setResizable(false);
+        configuration.setTitle("Game");
+        configuration.setVSync(false);
 
         String projectPath = path + "/" + name;
         Assert(!FileSystem.createDirectory(projectPath), "Failed to create project!");
