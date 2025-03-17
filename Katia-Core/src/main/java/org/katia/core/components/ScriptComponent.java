@@ -5,6 +5,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.luaj.vm2.LuaValue;
 
+import java.util.*;
+
 /**
  * GameObject script component.
  */
@@ -13,6 +15,9 @@ import org.luaj.vm2.LuaValue;
 public class ScriptComponent extends Component {
 
     String path;
+
+    List<Map.Entry<String, String>> params;
+
     @JsonIgnore
     LuaValue behaviourTable;
 
@@ -22,6 +27,7 @@ public class ScriptComponent extends Component {
     public ScriptComponent() {
         super("Script");
         this.behaviourTable = null;
+        this.params = new ArrayList<>();
     }
 
     /**

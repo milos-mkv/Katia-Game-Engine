@@ -34,27 +34,18 @@ public class SceneWindow extends Window {
         Logger.log(Logger.Type.INFO, "Creating scene window ...");
         mouseLastPosition = new ImVec2(0, 0);
         manipulationOperation = Operation.TRANSLATE;
+        windowFlags = ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse;
     }
 
     @Override
-    public void render() {
-//        if (true) {
-//            return;
-//        }
-        ImGui.pushStyleVar(ImGuiStyleVar.WindowPadding, 5, 5);
-        ImGui.setNextWindowClass(windowClass);
-        ImGui.begin("Scene");
-        var startCursorPosition = ImGui.getCursorPos();
-
-        Settings.w = ImGui.getWindowWidth();
+    protected void body() {
+                Settings.w = ImGui.getWindowWidth();
         Settings.h = ImGui.getWindowHeight();
-        ImGui.pushStyleVar(ImGuiStyleVar.WindowPadding, 3, 3);
+                var startCursorPosition = ImGui.getCursorPos();
 
-        ImGui.textDisabled("SCENE");
-        ImGui.beginChild("##SceneChild", -1, -1, true, ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse);
         var viewportOffset = ImGui.getCursorPos();
 
-        ImGui.image(EditorSceneRenderer.getInstance().getDefaultframeBuffer().getTexture(), ImGui.getWindowWidth() -6, ImGui.getWindowHeight() - 6, 0, 1, 1, 0);
+        ImGui.image(EditorSceneRenderer.getInstance().getDefaultframeBuffer().getTexture(), ImGui.getWindowWidth() -9, ImGui.getWindowHeight() - 9, 0, 1, 1, 0);
 
         var windowSize = ImGui.getWindowSize();
         var minBound = ImGui.getWindowPos();
@@ -79,10 +70,10 @@ public class SceneWindow extends Window {
             glBindFramebuffer(GL_FRAMEBUFFER, EditorSceneRenderer.getInstance().getSelectFrameBuffer().getId());
             int[] i = new int[1];
             glReadPixels((int) finalX, (int) finalY, 1, 1, GL_RED_INTEGER, GL_INT, i);
-             GameObject gameObject = ProjectManager.getGame().getSceneManager().getActiveScene().findBySelectID(i[0]);
-             if (gameObject != null) {
-                 EditorUI.getInstance().getWindow(InspectorWindow.class).setGameObject(gameObject);
-             }
+            GameObject gameObject = ProjectManager.getGame().getSceneManager().getActiveScene().findBySelectID(i[0]);
+            if (gameObject != null) {
+                EditorUI.getInstance().getWindow(InspectorWindow.class).setGameObject(gameObject);
+            }
             glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
         }
@@ -104,16 +95,6 @@ public class SceneWindow extends Window {
         manipulate();
         ImGui.setCursorPos(startCursorPosition.x + 10, startCursorPosition.y + 10);
         renderManipulationToolbar();
-        ImGui.endChild();
-        ImGui.popStyleVar();
-
-        ImGui.end();
-        ImGui.popStyleVar();
-    }
-
-    @Override
-    protected void body() {
-
     }
 
     private void manipulate() {

@@ -3,9 +3,11 @@ package org.katia.editor.managers;
 import lombok.Getter;
 import org.katia.FileSystem;
 import org.katia.Logger;
+import org.katia.core.Scene;
 import org.katia.editor.ui.windows.ProjectWindow;
 import org.katia.editor.EditorUI;
 import org.katia.factory.GameFactory;
+import org.katia.factory.SceneFactory;
 import org.katia.game.Configuration;
 import org.katia.game.Game;
 
@@ -82,5 +84,18 @@ public abstract class ProjectManager {
         Logger.log(Logger.Type.INFO, "Validating project structure:", path);
         Configuration configuration = Configuration.load(path + "/katia-conf.json");
         return configuration != null;
+    }
+
+    /**
+     * Save current active scene.
+     */
+    public static void saveCurrentScene() throws RuntimeException {
+        Logger.log(Logger.Type.INFO, "Saving current active scene ...");
+        Assert(game == null, "There is not active project!");
+        Scene scene = game.getSceneManager().getActiveScene();
+        Assert(scene == null, "There is no active scene!");
+        String json = SceneFactory.generateJsonFromScene(scene);
+        Assert(json == null || json.isEmpty(), "Unable to parse scene to valid format!");
+        FileSystem.saveToFile(game.getDirectory() + "/scenes/" + scene.getName() + ".scene", json);
     }
 }

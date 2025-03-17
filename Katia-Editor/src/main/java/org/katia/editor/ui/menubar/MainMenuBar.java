@@ -8,6 +8,7 @@ import lombok.Data;
 import org.katia.Icons;
 import org.katia.Logger;
 import org.katia.core.Scene;
+import org.katia.editor.Editor;
 import org.katia.editor.EditorUI;
 import org.katia.editor.EditorUtils;
 import org.katia.editor.EditorWindow;
@@ -56,7 +57,7 @@ public class MainMenuBar {
      * Render main menu bar in editor window.
      */
     public void render() {
-        ImGui.pushStyleVar(ImGuiStyleVar.FramePadding, 5, 5);
+        ImGui.pushStyleVar(ImGuiStyleVar.FramePadding, 5, 8);
         ImGui.pushStyleVar(ImGuiStyleVar.WindowBorderSize, 0);
         ImGui.pushStyleVar(ImGuiStyleVar.WindowPadding, 15, 10);
         if (ImGui.beginMainMenuBar()) {
@@ -103,13 +104,11 @@ public class MainMenuBar {
             PopupManager.getInstance().openPopup(OpenScenePopup.class);
         }
         if (this.actions.get(MenuAction.SAVE_SCENE)) {
-            Logger.log(Logger.Type.INFO, "SAVE SCENE!");
-            Scene scene = ProjectManager.getGame().getSceneManager().getActiveScene();// .getInstance().getScene();
-            String json = SceneFactory.generateJsonFromScene(scene);
-
-//            FileSystem.saveToFile(EditorSceneManager.getInstance().getPath(),
-//                    json);
-
+            try {
+                ProjectManager.saveCurrentScene();
+            } catch (RuntimeException e) {
+                Logger.log(Logger.Type.ERROR, e.toString());
+            }
         }
         if (this.actions.get(MenuAction.TOGGLE_HIERARCHY_WINDOW)) {
             EditorUI.getInstance().getWindow(HierarchyWindow.class).setVisible(
@@ -142,8 +141,8 @@ public class MainMenuBar {
      * Render toolbar.
      */
     private void renderToolbar() {
-        ImGui.setCursorPosX(ImGui.getWindowWidth() - 310);
-        ImGui.setCursorPosY(4);
+        ImGui.setCursorPosX(ImGui.getWindowWidth() - 340);
+        ImGui.setCursorPosY(8);
 
         ImGui.pushStyleVar(ImGuiStyleVar.WindowPadding, 0, 0);
         ImGui.beginChild("Run toolbar", 163, 30, true, ImGuiWindowFlags.NoScrollbar);
@@ -218,7 +217,8 @@ public class MainMenuBar {
     }
 
     private void saveProjectAction() {
-
+      String json = SceneFactory.generateJsonFromScene(ProjectManager.getGame().getSceneManager().getActiveScene());
+      System.out.println(json);
     }
 
     private void exitAction() {

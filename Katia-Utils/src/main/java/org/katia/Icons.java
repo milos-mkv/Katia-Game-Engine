@@ -30,4 +30,7 @@ public class Icons {
     public static String NextPart = "\uf0da";
     public static String Script = "\uf70e";
     public static String Display = "\ue163";
+    public static String Lock = "\uf023";
+    public static String Unlock = "\uf3c1";
+
 }

@@ -3,9 +3,11 @@ package org.katia.editor.ui.windows;
 import imgui.ImGui;
 import imgui.ImGuiWindowClass;
 import imgui.flag.ImGuiStyleVar;
+import imgui.flag.ImGuiWindowFlags;
 import imgui.internal.flag.ImGuiDockNodeFlags;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.joml.Vector2f;
 import org.katia.editor.managers.EditorAssetManager;
 
 @Data
@@ -15,6 +17,8 @@ public abstract class Window {
     protected String name;
     protected boolean visible;
     protected ImGuiWindowClass windowClass;
+    protected Vector2f childPadding = new Vector2f(5, 5);
+    protected int windowFlags;
 
     /**
      * Window constructor.
@@ -29,6 +33,7 @@ public abstract class Window {
                 | ImGuiDockNodeFlags.NoCloseButton
                 | ImGuiDockNodeFlags.NoTabBar
         );
+        this.windowFlags = ImGuiWindowFlags.None;
     }
 
     /**
@@ -43,9 +48,13 @@ public abstract class Window {
         ImGui.pushFont(EditorAssetManager.getInstance().getFont("Default"));
         ImGui.textDisabled(name.toUpperCase());
         ImGui.popFont();
-        ImGui.pushStyleVar(ImGuiStyleVar.WindowPadding, 0, 5);
+        ImGui.sameLine();
 
-        ImGui.beginChild("##" + name, -1, -1, true);
+        header();
+
+        ImGui.pushStyleVar(ImGuiStyleVar.WindowPadding, childPadding.x, childPadding.y);
+
+        ImGui.beginChild("##" + name, -1, -1, true, windowFlags);
 
             body();
 
@@ -53,6 +62,10 @@ public abstract class Window {
         ImGui.popStyleVar();
         ImGui.end();
         ImGui.popStyleVar();
+    }
+
+    protected void header() {
+        ImGui.newLine();
     }
 
     protected abstract void body();

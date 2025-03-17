@@ -98,17 +98,18 @@ public class HierarchyWindow extends Window {
         }
 
         // If item was clicked display it in inspector window.
-        if (ImGui.isItemClicked()) {
-            EditorUI.getInstance().getWindow(InspectorWindow.class).setGameObject(gameObject);
-        }
-
+//
         if (ImGui.beginDragDropSource()) {
             ImGui.setDragDropPayload("GameObject", gameObject);
             ImGui.text(gameObject.getName());
             ImGui.endDragDropSource();
         }
 
-        // NOTE: Moving object directly to another game object its just addition to list.
+        if (ImGui.isItemClicked()) {
+            EditorUI.getInstance().getWindow(InspectorWindow.class).setGameObject(gameObject);
+        }
+
+            // NOTE: Moving object directly to another game object its just addition to list.
         setDragTargetForGameObjectReorder(gameObject.getChildren().size(), gameObject);
         if (open) {
             displayGameObjectContextMenu(gameObject);

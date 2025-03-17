@@ -21,6 +21,7 @@ import org.katia.gfx.resources.Texture;
 
 import java.lang.ref.WeakReference;
 import java.nio.file.Path;
+import java.util.AbstractMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -30,6 +31,7 @@ public class InspectorWindow extends Window {
 
     WeakReference<GameObject> gameObject;
     Map<String, Runnable> components;
+    String locked = Icons.Unlock;
 
     public InspectorWindow() {
         super("Inspector");
@@ -81,7 +83,9 @@ public class InspectorWindow extends Window {
      * @param gameObject Game Object.
      */
     public void setGameObject(GameObject gameObject) {
-        this.gameObject = new WeakReference<>(gameObject);
+        if (locked == Icons.Unlock) {
+            this.gameObject = new WeakReference<>(gameObject);
+        }
     }
 
     /**
@@ -266,7 +270,7 @@ public class InspectorWindow extends Window {
             ImGui.text("Script");
             ImGui.nextColumn();
             ImString path = new ImString(scriptComponent.getPath());
-            ImGui.setNextItemWidth(-35);
+            ImGui.setNextItemWidth(-1);
             ImGui.beginDisabled();
             ImGui.inputText("##sciptPath", path);
             if (ImGui.beginDragDropTarget()) {
@@ -277,7 +281,52 @@ public class InspectorWindow extends Window {
                 ImGui.endDragDropTarget();
             }
             ImGui.endDisabled();
+            ImGui.nextColumn();
+            ImGui.text("Params");
+//            ImGui.sameLine();
+            ImGui.nextColumn();
+            if (ImGui.button(" + ")) {
+                scriptComponent.getParams().add(new AbstractMap.SimpleEntry<>("paramKey", ""));
+            }
             ImGui.columns(1);
+
+            ImGui.separator();
+            int indexToRemove = -1;
+            int index = 1;
+            for (var param : scriptComponent.getParams()) {
+                ImGui.textDisabled(String.format("%3s", index));
+                ImGui.sameLine();
+                ImString id = new ImString();
+                id.set(param.getKey().toString());
+                ImGui.setNextItemWidth(150);
+                ImGui.inputText("##Name" + index, id);
+                ImGui.sameLine();
+                ImString value = new ImString();
+                value.set(param.getValue().toString());
+                ImGui.beginDisabled();
+                ImGui.setNextItemWidth(-30);
+                ImGui.inputText("##Value" + index, value);
+                ImGui.endDisabled();
+                if (ImGui.beginDragDropTarget()) {
+                    GameObject payload = ImGui.acceptDragDropPayload("GameObject");
+                    if (payload != null ) {
+                        System.out.println(payload);
+                        param.setValue(payload.getId().toString());
+                    }
+                    ImGui.endDragDropTarget();
+                }
+                ImGui.sameLine();
+                if (ImGui.button("-##" + index)) {
+                    indexToRemove = index - 1;
+                }
+                index++;
+            }
+
+            if (indexToRemove > -1) {
+                scriptComponent.getParams().remove(indexToRemove);
+                indexToRemove = -1;
+            }
+
             ImGui.separator();
         }
     }
@@ -383,7 +432,6 @@ public class InspectorWindow extends Window {
             return;
         }
         ImGui.pushFont(EditorAssetManager.getInstance().getFonts().get("Default25"));
-
         ImGui.columns(2);
         ImGui.setColumnWidth(-1, 100);
         ImGui.columns(1);
@@ -440,4 +488,33 @@ public class InspectorWindow extends Window {
         ImGui.popFont();
     }
 
+    @Override
+    protected void header() {
+        EditorAssetManager.getInstance().getFont("Default25").setScale(0.7f);
+        ImGui.pushFont( EditorAssetManager.getInstance().getFont("Default25"));
+        ImGui.setCursorPosX(ImGui.getWindowWidth() - 28);
+        ImGui.setCursorPosY(ImGui.getCursorPosY() + 3);
+        var cursor = ImGui.getCursorPos();
+        ImGui.pushStyleColor(ImGuiCol.Button, 0, 0, 0, 0);
+        ImGui.pushStyleColor(ImGuiCol.ButtonHovered, 0, 0, 0, 0);
+        ImGui.pushStyleColor(ImGuiCol.ButtonActive, 0, 0, 0, 0);
+        ImGui.pushStyleVar(ImGuiStyleVar.FrameBorderSize, 0);
+        if (ImGui.button("  ##Lock", 20, 20)) {
+            locked = locked.equals(Icons.Lock) ? Icons.Unlock : Icons.Lock;
+        }
+        ImGui.popStyleVar();
+        ImGui.popStyleColor(3);
+        if (ImGui.isItemActive()) {
+            ImGui.pushStyleColor(ImGuiCol.Text, 0.8f, 0.4f, 0.4f, 1.0f);
+        } else if (ImGui.isItemHovered()) {
+            ImGui.pushStyleColor(ImGuiCol.Text, 0.3f, 0.6f, 0.8f, 0.8f);
+        } else {
+            ImGui.pushStyleColor(ImGuiCol.Text, 0.6f, 0.6f, 0.6f, 1.0f);
+        }
+        ImGui.setCursorPos(cursor.x + 3, cursor.y + 2);
+        ImGui.text(locked);
+        ImGui.popStyleColor();
+        ImGui.popFont();
+        EditorAssetManager.getInstance().getFont("Default25").setScale(1.0f);
+    }
 }
