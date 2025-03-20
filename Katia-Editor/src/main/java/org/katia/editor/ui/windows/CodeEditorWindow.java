@@ -2,9 +2,13 @@ package org.katia.editor.ui.windows;
 
 import imgui.ImColor;
 import imgui.ImGui;
+import imgui.ImVec2;
 import imgui.extension.texteditor.TextEditor;
 import imgui.extension.texteditor.TextEditorLanguageDefinition;
 import imgui.extension.texteditor.flag.TextEditorPaletteIndex;
+import imgui.flag.ImGuiCol;
+import org.katia.FileSystem;
+import org.katia.editor.EditorUI;
 import org.katia.editor.managers.EditorInputManager;
 import org.lwjgl.glfw.GLFW;
 
@@ -15,6 +19,9 @@ public class CodeEditorWindow extends Window {
     TextEditor editor;
     private final Set<String> keywords;
     private String currentSuggestion = null;
+    private String file = "";
+    boolean toSave = false;
+    String oldData = "";
 
     public CodeEditorWindow() {
         super("Code Editor");
@@ -26,8 +33,8 @@ public class CodeEditorWindow extends Window {
                 "and", "break", "do", "else", "elseif", "end", "false", "for",
                 "function", "if", "in", "local", "nil", "not", "or", "repeat",
                 "return", "then", "true", "until", "while",
-                "coroutine", "string", "table", "math", "io", "os", "debug",
-                "Behaviour"
+                "coroutine", "string", "table", "math", "io", "os", "debug", "self"
+
         ));
 
         lua.setKeywords(keywords.toArray(new String[0]));
@@ -69,6 +76,10 @@ public class CodeEditorWindow extends Window {
         luaIdentifiers.put("os", "Lua OS library");
         luaIdentifiers.put("debug", "Lua debug library");
 
+        luaIdentifiers.put("Behaviour", "Lua debug library");
+        luaIdentifiers.put("Input", "Lua debug library");
+        luaIdentifiers.put("SceneManager", "Lua debug library");
+
 //        luaIdentifiers.put("Behaviour", "Game Object Behaviour Instance");
 
 
@@ -82,10 +93,54 @@ public class CodeEditorWindow extends Window {
 
     }
 
+    public void openFile(String file) {
+        EditorUI.getInstance().getWindow(SceneWindow.class).setVisible(false);
+        visible = true;
+        this.file = file;
+
+        String data = FileSystem.readFromFile(file);
+        editor.setText(data);
+        oldData = data;
+        editor.setShowWhitespaces(false);
+    }
+
+    @Override
+    protected void header() {
+        ImVec2 size = ImGui.calcTextSize((toSave ? "* " : "  ") + FileSystem.getFileName(file) );
+        ImGui.setCursorPosX(ImGui.getWindowWidth() - size.x - 5);
+        ImGui.textDisabled((toSave ? "* " : "  ") + FileSystem.getFileName(file));
+
+    }
+
     @Override
     protected void body() {
+        var cursor = ImGui.getCursorPos();
         editor.render("code editors");
+
+//        ImGui.setCursorPos(cursor.x, cursor.y);
+//        ImVec2 size = ImGui.calcTextSize(FileSystem.getFileName(file) + (toSave ? "*" : ""));
+//
+//        ImGui.setCursorPosX(ImGui.getWindowWidth() - size.x - 25);
+//        ImGui.setCursorPosY(ImGui.getCursorPosY() + 5);
+//        ImGui.pushStyleColor(ImGuiCol.ChildBg, 0, 0, 0, 0.4f);
+//        ImGui.beginChild("FileName", size.x + 10, 35, true);
+//        ImGui.textDisabled(FileSystem.getFileName(file) + (toSave ? "*" : ""));
+//        ImGui.endChild();
+//        ImGui.popStyleColor();
         handleAutocomplete();
+
+        if (EditorInputManager.getInstance().isKeyPressed(GLFW.GLFW_KEY_LEFT_CONTROL) &&
+        EditorInputManager.getInstance().isKeyJustPressed(GLFW.GLFW_KEY_S)) {
+            FileSystem.saveToFile(file, editor.getText());
+            toSave = false;
+            oldData = editor.getText();
+        }
+
+        if (toSave == false) {
+            if (!oldData.equals(editor.getText())) {
+                toSave = true;
+            }
+        }
     }
 
     private void handleAutocomplete() {

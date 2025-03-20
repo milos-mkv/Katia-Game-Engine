@@ -14,9 +14,7 @@ import org.katia.editor.EditorUtils;
 import org.katia.editor.EditorWindow;
 import org.katia.editor.managers.EditorAssetManager;
 import org.katia.editor.managers.ProjectManager;
-import org.katia.editor.ui.windows.HierarchyWindow;
-import org.katia.editor.ui.windows.InspectorWindow;
-import org.katia.editor.ui.windows.ProjectWindow;
+import org.katia.editor.ui.windows.*;
 import org.katia.editor.ui.menubar.menus.*;
 import org.katia.editor.ui.popups.CreateProjectPopup;
 import org.katia.editor.ui.popups.CreateScenePopup;
@@ -29,6 +27,7 @@ import org.lwjgl.glfw.GLFW;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * This class represents editors main menu bar.
@@ -158,8 +157,14 @@ public class MainMenuBar {
 
         ImGui.setCursorPosX(ImGui.getCursorPosX() + 2);
         var cursor = ImGui.getCursorPos();
+        if (Editor.getInstance().getRunGame() != null ) {
+            ImGui.beginDisabled();
+        }
         if (ImGui.button("##PLAY", 40, 30)) {
             actions.put(MenuAction.RUN_GAME, true);
+        }
+        if (Editor.getInstance().getRunGame() != null ) {
+            ImGui.endDisabled();
         }
         ImGui.setCursorPos(cursor.x + 13, cursor.y + 6);
         ImGui.pushStyleColor(ImGuiCol.Text, 0.4f, 0.8f, 0.4f, 0.8f);
@@ -168,20 +173,27 @@ public class MainMenuBar {
         ImGui.sameLine();
         ImGui.setCursorPos(ImGui.getCursorPosX()+5, cursor.y);
         cursor = ImGui.getCursorPos();
-        ImGui.beginDisabled();
+        if (Editor.getInstance().getRunGame() == null ) {
+            ImGui.beginDisabled();
+        }
         if (ImGui.button("##PAUSE", 40, 30)) {
-
+            GLFW.glfwSetWindowShouldClose(Editor.getInstance().getRunGame().getWindow().getHandle(), true);
         }
         ImGui.setCursorPos(cursor.x + 14, cursor.y + 6);
         ImGui.text(Icons.Pause);
-        ImGui.endDisabled();
+        if (Editor.getInstance().getRunGame() == null ) {
+            ImGui.endDisabled();
+        }
         ImGui.sameLine();
         ImGui.setCursorPos(cursor.x + 40, cursor.y);
 
         cursor = ImGui.getCursorPos();
-        if (ImGui.button("##SCRIPT", 40, 30)) {
 
+        if (ImGui.button("##SCRIPT", 40, 30)) {
+            EditorUI.getInstance().getWindow(CodeEditorWindow.class).setVisible(true);
+            EditorUI.getInstance().getWindow(SceneWindow.class).setVisible(false);
         }
+
         ImGui.setCursorPos(cursor.x + 9, cursor.y + 6);
         ImGui.text(Icons.Script);
 
@@ -190,7 +202,8 @@ public class MainMenuBar {
 
         cursor = ImGui.getCursorPos();
         if (ImGui.button("##SCENE", 40, 30)) {
-
+            EditorUI.getInstance().getWindow(CodeEditorWindow.class).setVisible(false);
+            EditorUI.getInstance().getWindow(SceneWindow.class).setVisible(true);
         }
         ImGui.setCursorPos(cursor.x + 9, cursor.y + 6);
         ImGui.text(Icons.Display);

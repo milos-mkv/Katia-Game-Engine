@@ -114,7 +114,7 @@ public class LuaScriptExecutioner {
                 .get("package")
                 .set("path", LuaValue.valueOf(scriptsPath.getPath() + existingPath));
 
-        scene.getGlobals().set("InputManager", CoerceJavaToLua.coerce(game.getInputManager()));
+        scene.getGlobals().set("Input", CoerceJavaToLua.coerce(game.getInputManager()));
         scene.getGlobals().set("SceneManager", CoerceJavaToLua.coerce(game.getSceneManager()));
         scene.getGlobals().set("Window", CoerceJavaToLua.coerce(game.getWindow()));
         scene.getGlobals().set("print", this.console);
