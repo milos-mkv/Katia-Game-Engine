@@ -46,6 +46,18 @@ public class Editor {
             EditorSceneRenderer.getInstance().render();
             EditorUI.getInstance().render();
             GLFW.glfwMakeContextCurrent(EditorWindow.getInstance().getHandle());
+
+            if (runGame != null) {
+                GLFW.glfwMakeContextCurrent(runGame.getWindow().getHandle());
+                runGame.update(null);
+
+                if (GLFW.glfwWindowShouldClose(runGame.getWindow().getHandle())) {
+                    runGame.dispose();
+                    runGame = null;
+                }
+            }
+            GLFW.glfwMakeContextCurrent(EditorWindow.getInstance().getHandle());
+
         }
 
         dispose();

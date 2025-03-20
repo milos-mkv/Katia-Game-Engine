@@ -1,5 +1,6 @@
 package org.katia.managers;
 
+import lombok.Data;
 import org.katia.FileSystem;
 import org.katia.Logger;
 import org.katia.factory.FontFactory;
@@ -15,6 +16,7 @@ import java.util.HashMap;
 /**
  * This class is responsible for loading all game resources.
  */
+@Data
 public class ResourceManager {
 
     private final Game game;
@@ -93,7 +95,8 @@ public class ResourceManager {
      * @return String
      */
     public String getScene(String key) {
-        return scenes.get(key);
+        String sceneJson = scenes.get(key);
+        return sceneJson;
     }
 
     /**

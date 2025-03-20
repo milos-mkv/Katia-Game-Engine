@@ -22,6 +22,7 @@ import org.katia.editor.ui.popups.CreateProjectPopup;
 import org.katia.editor.ui.popups.CreateScenePopup;
 import org.katia.editor.ui.popups.OpenScenePopup;
 import org.katia.editor.ui.popups.PopupManager;
+import org.katia.factory.GameFactory;
 import org.katia.factory.SceneFactory;
 import org.lwjgl.glfw.GLFW;
 
@@ -126,12 +127,12 @@ public class MainMenuBar {
             );
         }
         if (this.actions.get(MenuAction.RUN_GAME)) {
-//            Editor.getInstance().runGame = GameFactory.createGame("/home/mmilicevic/Desktop/test");
-//            Editor.getInstance().runGame.setDebug(true);
-//            Editor.getInstance().runGame.getSceneManager().setActiveScene("MainScene");
-//            Editor.getInstance().runGame.getScriptExecutioner().init();
-//            GLFW.glfwMakeContextCurrent(EditorWindow.getInstance().getHandle());
-//            GLFW.glfwSwapInterval(0);
+            Editor.getInstance().runGame = GameFactory.createGame(ProjectManager.getGame().getDirectory());
+            Editor.getInstance().runGame.setDebug(true);
+            Editor.getInstance().runGame.getSceneManager().setActiveScene(ProjectManager.getGame().getSceneManager().getActiveScene().getName());
+            Editor.getInstance().runGame.getScriptExecutioner().init();
+            GLFW.glfwMakeContextCurrent(EditorWindow.getInstance().getHandle());
+            GLFW.glfwSwapInterval(0);
         }
 
         actions.replaceAll((key, value) -> false);

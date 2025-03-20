@@ -94,7 +94,7 @@ public class CameraRenderer extends Renderer {
         shaderProgram.setUniformMatrix4("view", camera.getComponent(TransformComponent.class).getWorldTransformMatrix().invert());
         shaderProgram.setUniformMatrix4("model", worldTransform);
         shaderProgram.setUniformBoolean("isCamera", 1);
-        shaderProgram.setUniformVec3("bgColor", gameObject.getComponent(CameraComponent.class).getBackground());
+        shaderProgram.setUniformVec3("bgColor", new Vector3f(1, 1, 1));
         if (select) {
             shaderProgram.setUniformInt("selectId", gameObject.getSelectID());
         }

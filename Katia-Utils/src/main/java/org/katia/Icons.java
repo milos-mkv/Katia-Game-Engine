@@ -12,6 +12,7 @@ public class Icons {
     public static String Image = "\uf03e";
     public static String Cube = "\uf1b2";
     public static String Plus = "\uf055";
+    public static String PlusMinus = "\ue43c";
     public static String Box = "\uf466";
     public static String CircleInfo = "\uf05a";
     public static String Check = "\uf00c";

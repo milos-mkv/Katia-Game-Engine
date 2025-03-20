@@ -28,13 +28,11 @@ public class OpenScenePopup extends Popup {
      */
     @Override
     public void body() {
-        ImGui.beginChild("##Child", -1, -1, true);
         if (ProjectManager.getGame() == null) {
             renderNoProjectOpen();
         } else {
             renderScenesList();
         }
-        ImGui.endChild();
     }
 
     private void renderNoProjectOpen() {
@@ -48,7 +46,7 @@ public class OpenScenePopup extends Popup {
         List<Path> items = FileSystem.readDirectoryData(ProjectManager.getGame().getDirectory() + "/scenes");
         for (Path path : items) {
             ImGui.columns(2);
-            ImGui.setColumnWidth(-1, 390);
+            ImGui.setColumnWidth(-1, 380);
             float y = ImGui.getCursorPosY();
             ImGui.setCursorPosY(y + 4);
             ImGui.text(" " + Icons.FileVideo + " ");
@@ -58,9 +56,10 @@ public class OpenScenePopup extends Popup {
             ImGui.nextColumn();
             if (ImGui.button(" OPEN ##" + path)) {
                 try {
+                    String filename = FileSystem.getFilenameWithoutExtension(path.getFileName().toString());
                     ProjectManager.getGame()
                             .getSceneManager()
-                            .setActiveScene(path.getFileName().toString());
+                            .setActiveScene(filename);
                     ImGui.closeCurrentPopup();
                 } catch (RuntimeException e) {
                     Logger.log(Logger.Type.ERROR, e.toString());

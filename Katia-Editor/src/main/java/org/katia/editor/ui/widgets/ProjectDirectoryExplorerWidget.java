@@ -11,6 +11,7 @@ import org.katia.FileSystem;
 import org.katia.Icons;
 import org.katia.Logger;
 import org.katia.editor.managers.EditorAssetManager;
+import org.katia.editor.managers.ProjectManager;
 import org.katia.editor.popups.FontCreatorPopup;
 import org.katia.editor.ui.popups.ImagePreviewPopup;
 import org.katia.editor.ui.popups.PopupManager;
@@ -173,7 +174,9 @@ public class ProjectDirectoryExplorerWidget {
                         clickedDirectory = entry;
                         Logger.log(clickedDirectory.toString());
 
-                    } else {
+                    }        if (FileSystem.isSceneFile(entry.toString())) {
+                        ProjectManager.getGame().getSceneManager().setActiveScene(filename);
+                    }else {
 //                    if (FileSystem.isImageFile(entry.getFileName().toString())) {
                         clickedFile = entry;
                         Logger.log(clickedFile.toString());
@@ -200,6 +203,7 @@ public class ProjectDirectoryExplorerWidget {
                         ImGui.endDragDropSource();
                     }
                 }
+
 
 
                 if (ImGui.isItemHovered(ImGuiHoveredFlags.None)) {

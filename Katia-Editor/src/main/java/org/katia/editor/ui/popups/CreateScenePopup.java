@@ -1,6 +1,7 @@
 package org.katia.editor.ui.popups;
 
 import imgui.ImGui;
+import imgui.flag.ImGuiCol;
 import imgui.flag.ImGuiInputTextFlags;
 import imgui.type.ImString;
 import org.katia.FileSystem;
@@ -23,7 +24,7 @@ public class CreateScenePopup extends Popup {
      * Create Scene Popup.
      */
     public CreateScenePopup() {
-        super("CREATE SCENE", 500, 125);
+        super("CREATE SCENE", 500, 130);
         Logger.log(Logger.Type.INFO, "Create Scene Popup Constructor");
     }
 
@@ -35,8 +36,6 @@ public class CreateScenePopup extends Popup {
 
     @Override
     public void body() {
-        ImGui.beginChild("##Child", -1, -40, true);
-
         ImGui.columns(2);
         ImGui.setColumnWidth(-1, 80);
         ImGui.setCursorPosY(ImGui.getCursorPosY() + 2);
@@ -46,12 +45,14 @@ public class CreateScenePopup extends Popup {
 
         ImGui.inputText("##Scene name", sceneName, ImGuiInputTextFlags.CharsNoBlank);
         ImGui.columns(1);
-        ImGui.endChild();
         ImGui.setCursorPosX(ImGui.getWindowWidth() / 2 - 50);
+        ImGui.pushStyleColor(ImGuiCol.ButtonHovered, 0.3f, 0.6f, 0.8f, 0.8f);
+        ImGui.pushStyleColor(ImGuiCol.ButtonActive, 0.8f, 0.4f, 0.4f, 1.0f);
         if (ImGui.button(" CREATE ")) {
             createButtonCallback();
         }
-
+        ImGui.popStyleColor(2);
+        ErrorPopup.render();
     }
 
     /**
@@ -68,6 +69,13 @@ public class CreateScenePopup extends Popup {
             String json = SceneFactory.generateJsonFromScene(scene);
             FileSystem.saveToFile(Paths.get(
                     ProjectManager.getGame().getDirectory(), "scenes", sceneName + ".scene").toString(), json);
+
+            ProjectManager.getGame()
+                    .getResourceManager()
+                    .getScenes()
+                    .put(sceneName.toString(), FileSystem.readFromFile(ProjectManager.getGame().getDirectory() + "/scenes/" + sceneName.toString() + ".scene"));
+            ProjectManager.getGame().getSceneManager().setActiveScene(sceneName.toString());
+            ImGui.closeCurrentPopup();
         }
     }
 }

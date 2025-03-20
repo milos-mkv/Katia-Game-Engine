@@ -11,6 +11,7 @@ import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.lib.jse.CoerceJavaToLua;
 
 import java.net.URL;
+import java.util.UUID;
 
 /**
  * This class is responsible for executing lua vm for current running game scene in game instance.
@@ -65,6 +66,15 @@ public class LuaScriptExecutioner {
             LuaTable params = new LuaTable();
             params.set("gameObject", CoerceJavaToLua.coerce(gameObject));
             params.set("scene", CoerceJavaToLua.coerce(scene));
+
+            for (var key : component.getParams()) {
+                try {
+                    params.set(key.getKey(), CoerceJavaToLua.coerce(scene.find(UUID.fromString(key.getValue()))));
+                } catch (IllegalArgumentException e) {
+
+                }
+            }
+
             component.getBehaviourTable().get("init").call(component.getBehaviourTable(), params);
         }
         for(GameObject child : gameObject.getChildren()) {

@@ -204,6 +204,24 @@ public class GameObject {
     }
 
     /**
+     * Find child game object based on its name.
+     * @param name Name of Game Object.
+     * @return GameObject
+     */
+    public GameObject find(UUID id) {
+        for (GameObject child : children) {
+            if (child.getId().equals(id)) {
+                return child;
+            }
+            GameObject inChild = child.find(id);
+            if (inChild != null) {
+                return inChild;
+            }
+        }
+        return null;
+    }
+
+    /**
      * Find child game object with provided select ID.
      * @param id Select ID.
      * @return GameObject

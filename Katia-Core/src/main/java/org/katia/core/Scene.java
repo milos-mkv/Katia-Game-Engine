@@ -9,6 +9,8 @@ import org.katia.factory.GameObjectFactory;
 import org.luaj.vm2.Globals;
 import org.luaj.vm2.lib.jse.JsePlatform;
 
+import java.util.UUID;
+
 /**
  * Game scene representation class.
  */
@@ -65,6 +67,10 @@ public class Scene {
      */
     public GameObject find(String name) {
         return rootGameObject.find(name);
+    }
+
+    public GameObject find(UUID id) {
+        return rootGameObject.find(id);
     }
 
     /**

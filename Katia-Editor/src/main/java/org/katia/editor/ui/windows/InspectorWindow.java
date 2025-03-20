@@ -150,8 +150,8 @@ public class InspectorWindow extends Window {
 
         // Checkerboard settings
         float checkerSize = 16.0f; // Size of each checkerboard square
-        int numColumns = (int) Math.ceil(displayWidth / checkerSize);
-        int numRows = (int) Math.ceil(displayHeight / checkerSize);
+        int numColumns = (int) Math.ceil(displayWidth + 10 / checkerSize) ;
+        int numRows = (int) Math.ceil(displayHeight / checkerSize) ;
 
         // Draw the checkerboard pattern
         for (int row = 0; row < numRows; row++) {
@@ -174,7 +174,7 @@ public class InspectorWindow extends Window {
         // Draw the border around the checkerboard
         int borderColor = ImColor.intToColor(100, 100, 100, 255); // Light gray border color
         float borderThickness = 2.0f; // Thickness of the border
-        drawList.addRect(startPos.x, startPos.y, startPos.x + displayWidth + 5, startPos.y + displayHeight + 5, borderColor, 0.0f, 0, borderThickness);
+        drawList.addRect(startPos.x, startPos.y, startPos.x + displayWidth + 12, startPos.y + displayHeight + 5, borderColor, 0.0f, 0, borderThickness);
 
         // Calculate the image's aspect ratio
         float aspectRatio = (float) textureWidth / textureHeight;
@@ -283,7 +283,6 @@ public class InspectorWindow extends Window {
             ImGui.endDisabled();
             ImGui.nextColumn();
             ImGui.text("Params");
-//            ImGui.sameLine();
             ImGui.nextColumn();
             if (ImGui.button(" + ")) {
                 scriptComponent.getParams().add(new AbstractMap.SimpleEntry<>("paramKey", ""));
@@ -293,6 +292,8 @@ public class InspectorWindow extends Window {
             ImGui.separator();
             int indexToRemove = -1;
             int index = 1;
+            String keyToChange = null;
+            int indexToChange = -1;
             for (var param : scriptComponent.getParams()) {
                 ImGui.textDisabled(String.format("%3s", index));
                 ImGui.sameLine();
@@ -300,6 +301,10 @@ public class InspectorWindow extends Window {
                 id.set(param.getKey().toString());
                 ImGui.setNextItemWidth(150);
                 ImGui.inputText("##Name" + index, id);
+                if (!id.toString().equals(param.getKey().toString())) {
+                    keyToChange = id.toString();
+                    indexToChange = index -1 ;
+                }
                 ImGui.sameLine();
                 ImString value = new ImString();
                 value.set(param.getValue().toString());
@@ -316,9 +321,33 @@ public class InspectorWindow extends Window {
                     ImGui.endDragDropTarget();
                 }
                 ImGui.sameLine();
-                if (ImGui.button("-##" + index)) {
+                EditorAssetManager.getInstance().getFont("Default25").setScale(0.7f);
+                ImGui.pushFont(    EditorAssetManager.getInstance().getFont("Default25"));
+                ImGui.pushStyleColor(ImGuiCol.ButtonActive, 0, 0, 0, 0);
+                ImGui.pushStyleColor(ImGuiCol.ButtonHovered, 0, 0, 0, 0);
+                ImGui.pushStyleColor(ImGuiCol.Button, 0, 0, 0, 0);
+                ImGui.pushStyleVar(ImGuiStyleVar.FrameBorderSize, 0);
+                ImGui.setCursorPosY(ImGui.getCursorPosY() + 5);
+                var cursor = ImGui.getCursorPos();
+                if (ImGui.button(" ##" + index)) {
                     indexToRemove = index - 1;
                 }
+                ImGui.popStyleVar();
+                ImGui.popStyleColor(3);
+
+                if (ImGui.isItemActive()) {
+                    ImGui.pushStyleColor(ImGuiCol.Text, 0.8f, 0.4f, 0.4f, 1.0f);
+                } else if (ImGui.isItemHovered()) {
+                    ImGui.pushStyleColor(ImGuiCol.Text, 0.3f, 0.6f, 0.8f, 0.8f);
+                } else {
+                    ImGui.pushStyleColor(ImGuiCol.Text, 0.6f, 0.6f, 0.6f, 1.0f);
+                }
+                ImGui.setCursorPos(cursor.x + 3, cursor.y + 3);
+                ImGui.text(Icons.Trash);
+                ImGui.popStyleColor();
+                ImGui.setCursorPosY(ImGui.getCursorPosY() + 2);
+                EditorAssetManager.getInstance().getFont("Default25").setScale(1.0f);
+                ImGui.popFont();
                 index++;
             }
 
@@ -326,9 +355,16 @@ public class InspectorWindow extends Window {
                 scriptComponent.getParams().remove(indexToRemove);
                 indexToRemove = -1;
             }
+            if (keyToChange != null) {
+                String value = scriptComponent.getParams().get(indexToChange).getValue();
+                scriptComponent.getParams().add(indexToChange, new AbstractMap.SimpleEntry<>(keyToChange, value));
+                scriptComponent.getParams().remove(indexToChange + 1);
+
+            }
 
             ImGui.separator();
         }
+
     }
 
     /**
@@ -467,19 +503,28 @@ public class InspectorWindow extends Window {
         ImGui.pushStyleColor(ImGuiCol.ButtonActive, 0, 0, 0, 0);
         ImGui.pushStyleVar(ImGuiStyleVar.FrameBorderSize, 0);
         var cur = ImGui.getCursorPos();
+        ImGui.setCursorPosX(ImGui.getWindowWidth() - 32);
+
         if (ImGui.button("  ##AddComponent")) {
             ImGui.openPopup("Add Component Menu");
         }
         ImGui.popStyleVar();
         ImGui.popStyleColor(3);
 
-        if (ImGui.isItemHovered()) {
-            ImGui.pushStyleColor(ImGuiCol.Text, 0.8f, 0.3f, 0.3f, 1f);
+        if (ImGui.isItemActive()) {
+            ImGui.pushStyleColor(ImGuiCol.Text, 0.8f, 0.4f, 0.4f, 1.0f);
+        } else if (ImGui.isItemHovered()) {
+            ImGui.pushStyleColor(ImGuiCol.Text, 0.3f, 0.6f, 0.8f, 0.8f);
         } else {
-            ImGui.pushStyleColor(ImGuiCol.Text, 0.3f, 0.8f, 0.3f, 1f);
+            ImGui.pushStyleColor(ImGuiCol.Text, 0.6f, 0.6f, 0.6f, 1.0f);
         }
-        ImGui.setCursorPos(cur.x + 4, cur.y + 3);
-        ImGui.text(Icons.Plus);
+        ImGui.setCursorPos(ImGui.getWindowWidth() - 30, cur.y + 5);
+        EditorAssetManager.getInstance().getFont("Default25").setScale(0.7f);
+        ImGui.pushFont( EditorAssetManager.getInstance().getFont("Default25"));
+        ImGui.text(Icons.PlusMinus);
+        EditorAssetManager.getInstance().getFont("Default25").setScale(1.0f);
+
+        ImGui.popFont();
         ImGui.popStyleColor();
         for (Component component : gameObject.get().getComponents().values()) {
             components.get(component.getComponentType()).run();
