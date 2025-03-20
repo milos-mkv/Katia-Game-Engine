@@ -16,13 +16,13 @@ public class Main {
 
         Game game = GameFactory.createGame("/home/mmilicevic/Desktop/test");
         game.setDebug(true);
-        game.getSceneManager().setActiveScene("MainScene");
+        game.getSceneManager().setActiveScene("asd");
         GLFW.glfwSwapInterval(0);
         game.getScriptExecutioner().init();
-
         while (!GLFW.glfwWindowShouldClose(game.getWindow().getHandle())) {
             game.update(null);
         }
+        game.getAudioManager().dispose();
         game.dispose();
 
         EngineCore.dispose();

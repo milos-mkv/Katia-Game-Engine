@@ -71,7 +71,7 @@ public class LuaScriptExecutioner {
                 try {
                     params.set(key.getKey(), CoerceJavaToLua.coerce(scene.find(UUID.fromString(key.getValue()))));
                 } catch (IllegalArgumentException e) {
-
+                    params.set(key.getKey(), CoerceJavaToLua.coerce(key.getValue()));
                 }
             }
 
@@ -117,6 +117,8 @@ public class LuaScriptExecutioner {
         scene.getGlobals().set("Input", CoerceJavaToLua.coerce(game.getInputManager()));
         scene.getGlobals().set("SceneManager", CoerceJavaToLua.coerce(game.getSceneManager()));
         scene.getGlobals().set("Window", CoerceJavaToLua.coerce(game.getWindow()));
+        scene.getGlobals().set("AudioManager", CoerceJavaToLua.coerce(game.getAudioManager()));
+
         scene.getGlobals().set("print", this.console);
     }
 }

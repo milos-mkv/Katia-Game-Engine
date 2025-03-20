@@ -68,6 +68,7 @@ public class Editor {
      */
     public void dispose() {
         Logger.log(Logger.Type.DISPOSE, "Disposing of Editor");
+        ProjectManager.getGame().getAudioManager().dispose();
         EditorUI.getInstance().dispose();
         EditorAssetManager.getInstance().dispose();
         EditorWindow.getInstance().dispose();

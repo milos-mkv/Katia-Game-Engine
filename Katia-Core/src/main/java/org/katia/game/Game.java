@@ -4,6 +4,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.katia.Logger;
 import org.katia.gfx.resources.FrameBuffer;
+import org.katia.managers.AudioManager;
 import org.katia.managers.ResourceManager;
 import org.katia.scripting.LuaScriptExecutioner;
 import org.katia.gfx.SceneRenderer;
@@ -26,6 +27,7 @@ public class Game {
     boolean debug;
     float deltaTime = 0;
     float previousTime = 0;
+    AudioManager audioManager;
 
     /**
      * Crete new game instance.
@@ -74,6 +76,7 @@ public class Game {
      */
     public void dispose() {
         Logger.log(Logger.Type.DISPOSE, "Disposing of game instance ...");
+        audioManager.dispose();
         window.dispose();
     }
 }

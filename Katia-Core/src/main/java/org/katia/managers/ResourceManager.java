@@ -3,9 +3,11 @@ package org.katia.managers;
 import lombok.Data;
 import org.katia.FileSystem;
 import org.katia.Logger;
+import org.katia.factory.AudioFactory;
 import org.katia.factory.FontFactory;
 import org.katia.factory.TextureFactory;
 import org.katia.game.Game;
+import org.katia.gfx.resources.Audio;
 import org.katia.gfx.resources.Font;
 import org.katia.gfx.resources.Texture;
 
@@ -24,6 +26,7 @@ public class ResourceManager {
     HashMap<String, Font> fonts;
     HashMap<String, String> scripts;
     HashMap<String, String> scenes;
+    HashMap<String, Audio> audios;
 
     /**
      * Resource manager constructor.
@@ -37,6 +40,7 @@ public class ResourceManager {
         fonts = new HashMap<>();
         scripts = new HashMap<>();
         scenes = new HashMap<>();
+        audios = new HashMap<>();
 
         loadResources(game.getDirectory());
     }
@@ -118,6 +122,8 @@ public class ResourceManager {
             } else if (FileSystem.isSceneFile(entry.toString())) {
                 scenes.put(FileSystem.getFilenameWithoutExtension(FileSystem.getFileName(entry.toString())),
                         FileSystem.readFromFile(entry.toString()));
+            } else if (FileSystem.isSoundFile(entry.toString())) {
+                audios.put(key, AudioFactory.createAudio(entry.toString()));
             }
             return false;
         }).toList().forEach((dir) -> loadResources(dir.toString()));

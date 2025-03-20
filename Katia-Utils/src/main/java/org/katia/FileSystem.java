@@ -102,7 +102,7 @@ public abstract class FileSystem {
      */
     public static boolean isSoundFile(String path) {
         return (!Files.isDirectory(Paths.get(path))) && (
-                Objects.equals(getFileExtension(path), "mp3") || Objects.equals(getFileExtension(path), "wav")
+                Objects.equals(getFileExtension(path), "ogg") || Objects.equals(getFileExtension(path), "wav")
         );
     }
 

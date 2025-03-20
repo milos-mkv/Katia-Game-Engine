@@ -5,6 +5,7 @@ import org.katia.game.Configuration;
 import org.katia.game.Game;
 import org.katia.game.Window;
 import org.katia.gfx.SceneRenderer;
+import org.katia.managers.AudioManager;
 import org.katia.managers.InputManager;
 import org.katia.managers.ResourceManager;
 import org.katia.managers.SceneManager;
@@ -26,6 +27,8 @@ public abstract class GameFactory {
         game.setDirectory(directory);
         game.setConfiguration(Configuration.load(directory + "/katia-conf.json"));
         game.setWindow(new Window(game));
+        game.setAudioManager(new AudioManager(game));
+
         game.setResourceManager(new ResourceManager(game));
         game.setSceneManager(new SceneManager(game));
         game.setInputManager(new InputManager(game));
@@ -44,6 +47,7 @@ public abstract class GameFactory {
         Game game = new Game();
         game.setDirectory(directory);
         game.setConfiguration(Configuration.load(directory + "/katia-conf.json"));
+        game.setAudioManager(new AudioManager(game));
         game.setResourceManager(new ResourceManager(game));
         game.setSceneManager(new SceneManager(game));
         // NOTE: We do not need:

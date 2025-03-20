@@ -76,11 +76,23 @@ public class CodeEditorWindow extends Window {
         luaIdentifiers.put("os", "Lua OS library");
         luaIdentifiers.put("debug", "Lua debug library");
 
-        luaIdentifiers.put("Behaviour", "Lua debug library");
+        luaIdentifiers.put("Behaviour", """
+                Parent class of game object behaviour.
+                Fields:
+                 - self.params - Params passed from game engine to script.
+                 - self.gameObject - This game object.
+                 - self.scene - Current scene.
+                Methods:
+                 - update(dt)
+                """);
         luaIdentifiers.put("Input", "Lua debug library");
         luaIdentifiers.put("SceneManager", "Lua debug library");
-
-//        luaIdentifiers.put("Behaviour", "Game Object Behaviour Instance");
+        luaIdentifiers.put("AudioManager", """
+                Audio manager.
+                Methods:
+                 - play(audio) - Play audio.
+                 - stop(audio) - Stop audio.
+                """);
 
 
         // Apply the custom identifiers

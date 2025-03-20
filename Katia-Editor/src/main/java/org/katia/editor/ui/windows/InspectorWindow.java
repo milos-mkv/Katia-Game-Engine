@@ -313,10 +313,18 @@ public class InspectorWindow extends Window {
                 ImGui.inputText("##Value" + index, value);
                 ImGui.endDisabled();
                 if (ImGui.beginDragDropTarget()) {
-                    GameObject payload = ImGui.acceptDragDropPayload("GameObject");
-                    if (payload != null ) {
+                    Object payload = ImGui.acceptDragDropPayload("GameObject");
+                    if (payload != null && payload instanceof GameObject) {
+
                         System.out.println(payload);
-                        param.setValue(payload.getId().toString());
+                        param.setValue(((GameObject) payload).getId().toString());
+                    }
+                    if (payload instanceof Path) {
+                        param.setValue(
+                                FileSystem.relativize(
+                                        ProjectManager.getGame().getDirectory(),
+                                        payload.toString()));
+
                     }
                     ImGui.endDragDropTarget();
                 }

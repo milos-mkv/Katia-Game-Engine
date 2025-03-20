@@ -208,6 +208,13 @@ public class ProjectDirectoryExplorerWidget {
                         ImGui.endDragDropSource();
                     }
                 }
+                if (FileSystem.isSoundFile(entry.toString())) {
+                    if (ImGui.beginDragDropSource()) {
+                        ImGui.setDragDropPayload("GameObject", entry);
+                        ImGui.text(entry.toString());
+                        ImGui.endDragDropSource();
+                    }
+                }
 
 
 
