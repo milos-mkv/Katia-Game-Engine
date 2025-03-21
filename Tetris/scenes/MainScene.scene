@@ -1,0 +1,326 @@
+{
+  "name" : "MainScene",
+  "rootGameObject" : {
+    "id" : "ce854a7e-cdb0-4cb5-88b8-a3c1360aaf3a",
+    "name" : "Root",
+    "children" : [ {
+      "id" : "61c0be96-79f4-4042-a278-323adb2e8eb5",
+      "name" : "Main Camera",
+      "children" : [ ],
+      "components" : {
+        "org.katia.core.components.TransformComponent" : {
+          "type" : "TransformComponent",
+          "componentType" : "Transform",
+          "position" : {
+            "x" : 400.00034,
+            "y" : 400.0,
+            "z" : 0.0,
+            "finite" : true
+          },
+          "rotation" : 0.0,
+          "scale" : {
+            "x" : 1.0,
+            "y" : 1.0,
+            "z" : 1.0,
+            "finite" : true
+          },
+          "worldPosition" : {
+            "x" : 400.00034,
+            "y" : 400.0,
+            "finite" : true
+          }
+        },
+        "org.katia.core.components.CameraComponent" : {
+          "type" : "CameraComponent",
+          "componentType" : "Camera",
+          "viewport" : {
+            "x" : 800.0,
+            "y" : 800.0,
+            "finite" : true
+          },
+          "background" : {
+            "x" : 0.28316468,
+            "y" : 0.6602564,
+            "z" : 0.18199375,
+            "finite" : true
+          }
+        }
+      },
+      "active" : true
+    }, {
+      "id" : "303af9cb-5046-4eb7-a410-79f9bdf272fb",
+      "name" : "Game Object",
+      "children" : [ ],
+      "components" : {
+        "org.katia.core.components.TransformComponent" : {
+          "type" : "TransformComponent",
+          "componentType" : "Transform",
+          "position" : {
+            "x" : 388.80017,
+            "y" : 351.0,
+            "z" : 0.0,
+            "finite" : true
+          },
+          "rotation" : 0.0,
+          "scale" : {
+            "x" : 9.23,
+            "y" : 9.23,
+            "z" : 1.0,
+            "finite" : true
+          },
+          "worldPosition" : {
+            "x" : 388.80017,
+            "y" : 351.0,
+            "finite" : true
+          }
+        },
+        "org.katia.core.components.SpriteComponent" : {
+          "type" : "SpriteComponent",
+          "componentType" : "Sprite",
+          "path" : "images/Pattern02.png"
+        }
+      },
+      "active" : true
+    }, {
+      "id" : "b0e94956-82ee-47b6-990b-ebed2562516b",
+      "name" : "Background",
+      "children" : [ {
+        "id" : "56875a95-3264-4804-9e1a-088c752cc6f1",
+        "name" : "Border",
+        "children" : [ ],
+        "components" : {
+          "org.katia.core.components.TransformComponent" : {
+            "type" : "TransformComponent",
+            "componentType" : "Transform",
+            "position" : {
+              "x" : 0.0,
+              "y" : 0.0,
+              "z" : 0.0,
+              "finite" : true
+            },
+            "rotation" : 0.0,
+            "scale" : {
+              "x" : 1.0,
+              "y" : 1.0,
+              "z" : 1.0,
+              "finite" : true
+            },
+            "worldPosition" : {
+              "x" : 400.0,
+              "y" : 400.0,
+              "finite" : true
+            }
+          },
+          "org.katia.core.components.SpriteComponent" : {
+            "type" : "SpriteComponent",
+            "componentType" : "Sprite",
+            "path" : "images/Border.png"
+          }
+        },
+        "active" : true
+      }, {
+        "id" : "6d7dab6c-8198-4025-bc15-3ba79cebbf87",
+        "name" : "TetrisText",
+        "children" : [ ],
+        "components" : {
+          "org.katia.core.components.TransformComponent" : {
+            "type" : "TransformComponent",
+            "componentType" : "Transform",
+            "position" : {
+              "x" : -95.400116,
+              "y" : 324.80005,
+              "z" : 0.0,
+              "finite" : true
+            },
+            "rotation" : 0.0,
+            "scale" : {
+              "x" : 1.0,
+              "y" : 1.0,
+              "z" : 1.0,
+              "finite" : true
+            },
+            "worldPosition" : {
+              "x" : 304.59988,
+              "y" : 724.80005,
+              "finite" : true
+            }
+          },
+          "org.katia.core.components.TextComponent" : {
+            "type" : "TextComponent",
+            "componentType" : "Text",
+            "text" : "TERTIS",
+            "path" : "fonts/Roboto-Regular.ttf",
+            "color" : {
+              "x" : 0.08505917,
+              "y" : 0.2704446,
+              "z" : 0.36858976,
+              "w" : 1.0,
+              "finite" : true
+            },
+            "scale" : 1.0
+          }
+        },
+        "active" : true
+      } ],
+      "components" : {
+        "org.katia.core.components.TransformComponent" : {
+          "type" : "TransformComponent",
+          "componentType" : "Transform",
+          "position" : {
+            "x" : 400.0,
+            "y" : 400.0,
+            "z" : 0.0,
+            "finite" : true
+          },
+          "rotation" : 0.0,
+          "scale" : {
+            "x" : 1.0,
+            "y" : 1.0,
+            "z" : 1.0,
+            "finite" : true
+          },
+          "worldPosition" : {
+            "x" : 400.0,
+            "y" : 400.0,
+            "finite" : true
+          }
+        },
+        "org.katia.core.components.SpriteComponent" : {
+          "type" : "SpriteComponent",
+          "componentType" : "Sprite",
+          "path" : "images/Background.png"
+        }
+      },
+      "active" : true
+    }, {
+      "id" : "d8e145e4-6d30-44b9-af56-9ff087f82d17",
+      "name" : "Sprite",
+      "children" : [ ],
+      "components" : {
+        "org.katia.core.components.TransformComponent" : {
+          "type" : "TransformComponent",
+          "componentType" : "Transform",
+          "position" : {
+            "x" : 0.0,
+            "y" : 0.0,
+            "z" : 0.0,
+            "finite" : true
+          },
+          "rotation" : 0.0,
+          "scale" : {
+            "x" : 0.9999693,
+            "y" : 0.9999693,
+            "z" : 1.0,
+            "finite" : true
+          },
+          "worldPosition" : {
+            "x" : 0.0,
+            "y" : 0.0,
+            "finite" : true
+          }
+        },
+        "org.katia.core.components.SpriteComponent" : {
+          "type" : "SpriteComponent",
+          "componentType" : "Sprite",
+          "path" : "images/Tetromino_block1_2.png"
+        }
+      },
+      "active" : true
+    }, {
+      "id" : "fbb526ea-40f8-4b01-87d1-35bfdc8a91bf",
+      "name" : "GameLogic",
+      "children" : [ ],
+      "components" : {
+        "org.katia.core.components.TransformComponent" : {
+          "type" : "TransformComponent",
+          "componentType" : "Transform",
+          "position" : {
+            "x" : 0.0,
+            "y" : 0.0,
+            "z" : 0.0,
+            "finite" : true
+          },
+          "rotation" : 0.0,
+          "scale" : {
+            "x" : 1.0,
+            "y" : 1.0,
+            "z" : 1.0,
+            "finite" : true
+          },
+          "worldPosition" : {
+            "x" : 0.0,
+            "y" : 0.0,
+            "finite" : true
+          }
+        },
+        "org.katia.core.components.ScriptComponent" : {
+          "type" : "ScriptComponent",
+          "componentType" : "Script",
+          "path" : "scripts/GameLogic.lua",
+          "params" : [ {
+            "tetrimino" : "d8e145e4-6d30-44b9-af56-9ff087f82d17"
+          }, {
+            "holder" : "11b8a0c7-a56f-4646-925c-d5e69172b231"
+          }, {
+            "music" : "sounds/MEGALOVANIA.ogg"
+          } ]
+        }
+      },
+      "active" : true
+    }, {
+      "id" : "11b8a0c7-a56f-4646-925c-d5e69172b231",
+      "name" : "Cursor",
+      "children" : [ ],
+      "components" : {
+        "org.katia.core.components.TransformComponent" : {
+          "type" : "TransformComponent",
+          "componentType" : "Transform",
+          "position" : {
+            "x" : 0.0,
+            "y" : 0.0,
+            "z" : 0.0,
+            "finite" : true
+          },
+          "rotation" : 0.0,
+          "scale" : {
+            "x" : 1.0,
+            "y" : 1.0,
+            "z" : 1.0,
+            "finite" : true
+          },
+          "worldPosition" : {
+            "x" : 0.0,
+            "y" : 0.0,
+            "finite" : true
+          }
+        }
+      },
+      "active" : true
+    } ],
+    "components" : {
+      "org.katia.core.components.TransformComponent" : {
+        "type" : "TransformComponent",
+        "componentType" : "Transform",
+        "position" : {
+          "x" : 0.0,
+          "y" : 0.0,
+          "z" : 0.0,
+          "finite" : true
+        },
+        "rotation" : 0.0,
+        "scale" : {
+          "x" : 1.0,
+          "y" : 1.0,
+          "z" : 1.0,
+          "finite" : true
+        },
+        "worldPosition" : {
+          "x" : 0.0,
+          "y" : 0.0,
+          "finite" : true
+        }
+      }
+    },
+    "active" : true
+  }
+}

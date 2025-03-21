@@ -51,6 +51,7 @@ public class EditorUI {
         windows.put(ProjectWindow.class, new ProjectWindow());
         windows.put(SceneWindow.class, new SceneWindow());
         windows.put(CodeEditorWindow.class, new CodeEditorWindow());
+        windows.put(ConsoleWindow.class, new ConsoleWindow());
 
         imGuiImplGlfw = new ImGuiImplGlfw();
         imGuiImplGlfw.init(EditorWindow.getInstance().getHandle(), true);

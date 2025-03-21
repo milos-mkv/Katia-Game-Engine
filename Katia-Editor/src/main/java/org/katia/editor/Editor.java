@@ -37,7 +37,7 @@ public class Editor {
     public void run() {
         Logger.log(Logger.Type.INFO, "Editor run");
 
-        ProjectManager.openProject("/home/mmilicevic/Desktop/test");
+        ProjectManager.openProject("/home/mmilicevic/Desktop/Tetris");
         ProjectManager.getGame().getSceneManager().setActiveScene("MainScene");
 
         GLFW.glfwSwapInterval(0);

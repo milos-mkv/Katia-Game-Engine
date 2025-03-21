@@ -1,5 +1,6 @@
 package org.katia.scripting;
 
+import lombok.Data;
 import org.katia.Logger;
 import org.katia.Main;
 import org.katia.core.GameObject;
@@ -16,6 +17,7 @@ import java.util.UUID;
 /**
  * This class is responsible for executing lua vm for current running game scene in game instance.
  */
+@Data
 public class LuaScriptExecutioner {
 
     private final Game game;
@@ -77,8 +79,9 @@ public class LuaScriptExecutioner {
 
             component.getBehaviourTable().get("init").call(component.getBehaviourTable(), params);
         }
-        for(GameObject child : gameObject.getChildren()) {
-            executeInit(child);
+
+        for (int i = gameObject.getChildren().size() - 1; i >= 0 ; i--) {
+            executeInit(gameObject.getChildren().get(i));
         }
     }
 
@@ -118,6 +121,7 @@ public class LuaScriptExecutioner {
         scene.getGlobals().set("SceneManager", CoerceJavaToLua.coerce(game.getSceneManager()));
         scene.getGlobals().set("Window", CoerceJavaToLua.coerce(game.getWindow()));
         scene.getGlobals().set("AudioManager", CoerceJavaToLua.coerce(game.getAudioManager()));
+        scene.getGlobals().set("GameObject", CoerceJavaToLua.coerce(new LuaGameObject()));
 
         scene.getGlobals().set("print", this.console);
     }

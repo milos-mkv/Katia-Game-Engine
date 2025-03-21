@@ -148,7 +148,7 @@ public class ImagePreviewPopup extends Popup {
         String dimensions = texture.getWidth() + "x" + texture.getHeight();
         ImVec2 textSize = ImGui.calcTextSize(dimensions);
 
-        float adjustedX = startPos.x + displayWidth - textSize.x - 10;
+        float adjustedX = startPos.x + displayWidth - textSize.x - 200;
         float adjustedY = startPos.y + displayHeight - textSize.y - 10;
 
         renderOutlinedText(drawList, dimensions, adjustedX, adjustedY, ImColor.intToColor(255, 255, 255, 255), ImColor.intToColor(0, 0, 0, 255));

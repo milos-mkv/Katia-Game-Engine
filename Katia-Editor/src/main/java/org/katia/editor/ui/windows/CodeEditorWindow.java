@@ -76,6 +76,7 @@ public class CodeEditorWindow extends Window {
         luaIdentifiers.put("os", "Lua OS library");
         luaIdentifiers.put("debug", "Lua debug library");
 
+        luaIdentifiers.put("GameObject", "Lua debug library");
         luaIdentifiers.put("Behaviour", """
                 Parent class of game object behaviour.
                 Fields:
@@ -100,7 +101,7 @@ public class CodeEditorWindow extends Window {
 
         editor.setLanguageDefinition(lua);
         int[] p = editor.getPalette();
-        p[TextEditorPaletteIndex.Background] = ImColor.rgba(36, 41, 46, 255);
+        p[TextEditorPaletteIndex.Background] = ImColor.rgba(25, 25, 25, 255);
         editor.setPalette(p);
 
     }

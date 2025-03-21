@@ -133,6 +133,13 @@ public class GameObject {
         }
     }
 
+    public void removeAllChildren() {
+        for (var child : children) {
+            child.setParent(null);
+        }
+        children = new ArrayList<>();
+    }
+
     /**
      * Remove child game object at index.
      * @param index Index.

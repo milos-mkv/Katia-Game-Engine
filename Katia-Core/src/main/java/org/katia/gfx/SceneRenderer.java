@@ -11,6 +11,8 @@ import org.katia.game.Game;
 import org.katia.gfx.renderers.*;
 import org.katia.gfx.resources.FrameBuffer;
 
+import java.util.ConcurrentModificationException;
+
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL11C.glViewport;
 import static org.lwjgl.opengl.GL30.GL_FRAMEBUFFER;
@@ -76,9 +78,11 @@ public class SceneRenderer {
             }
         }
 
-
-        renderGameObject(scene.getRootGameObject());
-
+        try {
+            renderGameObject(scene.getRootGameObject());
+        } catch (ConcurrentModificationException e) {
+            Logger.log(e.toString());
+        }
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
 

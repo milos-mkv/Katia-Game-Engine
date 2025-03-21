@@ -1,0 +1,9 @@
+{
+  "title" : "Game",
+  "width" : 800,
+  "height" : 800,
+  "vSync" : false,
+  "resizable" : false,
+  "valid" : true,
+  "vsync" : false
+}
