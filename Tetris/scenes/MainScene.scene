@@ -263,6 +263,8 @@
             "holder" : "11b8a0c7-a56f-4646-925c-d5e69172b231"
           }, {
             "music" : "sounds/MEGALOVANIA.ogg"
+          }, {
+            "gridMinos" : "39c47f54-ea14-4f25-a7a5-e4878491ad3d"
           } ]
         }
       },
@@ -291,6 +293,35 @@
           "worldPosition" : {
             "x" : 0.0,
             "y" : 0.0,
+            "finite" : true
+          }
+        }
+      },
+      "active" : true
+    }, {
+      "id" : "39c47f54-ea14-4f25-a7a5-e4878491ad3d",
+      "name" : "GridMinos",
+      "children" : [ ],
+      "components" : {
+        "org.katia.core.components.TransformComponent" : {
+          "type" : "TransformComponent",
+          "componentType" : "Transform",
+          "position" : {
+            "x" : 265.0,
+            "y" : 685.0,
+            "z" : 0.0,
+            "finite" : true
+          },
+          "rotation" : 0.0,
+          "scale" : {
+            "x" : 1.0,
+            "y" : 1.0,
+            "z" : 1.0,
+            "finite" : true
+          },
+          "worldPosition" : {
+            "x" : 265.0,
+            "y" : 685.0,
             "finite" : true
           }
         }

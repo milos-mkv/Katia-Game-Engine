@@ -38,6 +38,7 @@ function GameLogic:init(params)
 	for key, value in pairs(params) do
 		print(key, value)
 	end
+	self.gridMinos = params.gridMinos
 	self.tetrimino = params.tetrimino
 	self.holder = params.holder
 	self.grid = {
@@ -72,7 +73,7 @@ end
 function GameLogic:spawnNewBlock()
 	print("Spawn new block")
 	self.currentPeace = "T"
-
+self.rotation = 1
 	self.cursor = self:getDefaultCursor()
 	print("Default Cursor:", self.cursor.x, ":", self.cursor.y)
 	self.rotation = 2
@@ -125,6 +126,10 @@ function GameLogic:move_on_y_axis(dt)
 	if Input:isKeyJustPressed(KEY_S) and (not self:check_collision_y()) then
 		self.cursor.y = self.cursor.y + 1
 	end
+	if Input:isKeyJustPressed(KEY_O) and (self:check_collision_y()) then
+		print("WWW")
+		self:place_tetrimino()
+	end
 end
 
 --- @brief Check if current tetrimino collides on x axis.
@@ -134,10 +139,10 @@ function GameLogic:check_collision_x(side)
 	local tet = self:getCurrentPeace()
 	for i = 1, #tet do
 		for j = 1, #tet[i] do
-			if side == "Left"  and (tet[i][j] == 1) and (self.cursor.x + j - 1 == 1 or self.grid[self.cursor.y + i - 1][self.cursor.x + j - 1] == 1) then
+			if side == "Left"  and (tet[i][j] == 1) and (self.cursor.x + j - 1 == 1 or self.grid[self.cursor.y + i - 1][self.cursor.x + j - 2] == 1) then
 				return true
 			end
-			if side == "Right" and (tet[i][j] == 1) and (self.cursor.x + j + 1 == 12 or self.grid[self.cursor.y + i - 1][self.cursor.x + j + 1] == 1) then
+			if side == "Right" and (tet[i][j] == 1) and (self.cursor.x + j + 1 == 12 or self.grid[self.cursor.y + i - 1][self.cursor.x + j + 2] == 1) then
 				return true
 			end
 		end
@@ -151,7 +156,7 @@ function GameLogic:check_collision_y()
 	local tet = self:getCurrentPeace()
 	for i = 1, #tet do
 		for j = 1, #tet[i] do
-			if (tet[i][j] == 1) and (self.cursor.y + i == 21 or self.grid[self.cursor.y + i][self.cursor.x + j] == 1) then
+			if (tet[i][j] == 1) and (self.cursor.y + i == 21 or self.grid[self.cursor.y + i][self.cursor.x + j - 1] == 1) then
 				return true
 			end
 		end
@@ -195,16 +200,34 @@ function GameLogic:rotate()
 	if (self.cursor.x < 1) then
 		self.cursor.x = 1
 	end
-if (self.cursor.x + #p[1] == 12) then
+
+    if (self.cursor.x + #p[1] == 12) then
 		self.cursor.x = 11 - #p[1]
 	end
 end
 
+function GameLogic:place_tetrimino()
+    local p = self:getCurrentPeace()
+    for i = 1, #p do
+    	for j = 1, #p[i] do
+    		if p[i][j] == 1 then
+    			self.grid[self.cursor.y + i - 1][self.cursor.x + j - 1] = 1
+    			local mino = GameObject:create(self.tetrimino)
+    			self.gridMinos:addChild(mino)
+    			local pos = mino:getComponent("Transform"):getPosition()
+    			pos.x = (self.cursor.x + j - 2) * self.size
+    			pos.y = (self.cursor.y + i - 2) * self.size * -1
+    		end
+    	end
+   	end
+   	self:spawnNewBlock()
+end
 
 function GameLogic:update(dt)
 	local hp = self.holder:getComponent("Transform"):getPosition()
 	hp.x = self.offsetX + (self.size * (self.cursor.x - 1))
 	hp.y = self.offsetY - (self.size * (self.cursor.y - 1))
+
 	if Input:isKeyJustPressed(KEY_SPACE) then
 		print("CURSOR: X:", self.cursor.x, " Y:", self.cursor.y, " R:", self.rotation)
 		for i = 1, 20 do
@@ -215,28 +238,20 @@ function GameLogic:update(dt)
 			print(row)
 		end
 	end
+
 	self:move_on_x_axis(dt)
 	self:move_on_y_axis(dt)
 	self:rotate()
 
 
-	if Input:isKeyJustPressed(KEY_C) then
-		local p = self:getCurrentPeace()
-		for i = 1, #p do
-			for j = 1, #p[i] do
-				if p[i][j] == 1 then
-					self.grid[self.cursor.y + i - 1][self.cursor.x + j - 1] = 1
-				end
-			
-			end
-		end
-	end
-
-	if (Input:isKeyJustPressed
+	-- if (Input:isKeyJustPressed(KEY_O)) then
+	-- 	AudioManager:play(self.params.music)
+	-- end
 
 end
 
 return GameLogic
+
 
 
 
