@@ -4,10 +4,12 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import org.katia.Logger;
+import org.katia.core.Scene;
 import org.katia.editor.managers.EditorAssetManager;
 import org.katia.editor.managers.ProjectManager;
 import org.katia.editor.renderer.EditorSceneRenderer;
 import org.katia.game.Game;
+import org.katia.managers.SceneManager;
 import org.lwjgl.glfw.GLFW;
 
 /**
@@ -20,6 +22,7 @@ public class Editor {
     static final Editor instance = new Editor();
 
     public Game runGame;
+    public Scene oldScene;
 
     /**
      * Editor constructor.
@@ -54,6 +57,9 @@ public class Editor {
                 if (GLFW.glfwWindowShouldClose(runGame.getWindow().getHandle())) {
                     runGame.dispose();
                     runGame = null;
+                    ProjectManager.getGame().getSceneManager().setActiveScene(
+                            ProjectManager.getGame().getSceneManager().getActiveScene().getName()
+                    );
                 }
             }
             GLFW.glfwMakeContextCurrent(EditorWindow.getInstance().getHandle());
