@@ -10,15 +10,22 @@ import imgui.flag.ImGuiMouseButton;
 import imgui.flag.ImGuiStyleVar;
 import imgui.flag.ImGuiWindowFlags;
 import org.joml.Matrix4f;
+import org.joml.Vector3f;
+import org.katia.FileSystem;
 import org.katia.Icons;
 import org.katia.Logger;
 import org.katia.core.GameObject;
+import org.katia.core.components.SpriteComponent;
 import org.katia.core.components.TransformComponent;
 import org.katia.editor.EditorUI;
 import org.katia.editor.managers.ProjectManager;
 import org.katia.editor.renderer.EditorCameraController;
 import org.katia.editor.renderer.EditorSceneRenderer;
 import org.katia.editor.renderer.Settings;
+import org.katia.factory.GameObjectFactory;
+
+import java.nio.file.Path;
+import java.util.Arrays;
 
 import static org.katia.Math.map;
 import static org.lwjgl.opengl.GL11.glReadPixels;
@@ -45,7 +52,7 @@ public class SceneWindow extends Window {
 
         var viewportOffset = ImGui.getCursorPos();
 
-        ImGui.image(EditorSceneRenderer.getInstance().getDefaultframeBuffer().getTexture(), ImGui.getWindowWidth() -9, ImGui.getWindowHeight() - 9, 0, 1, 1, 0);
+        ImGui.image(EditorSceneRenderer.getInstance().getDefaultframeBuffer().getTexture(), ImGui.getWindowWidth() -11, ImGui.getWindowHeight() - 9, 0, 1, 1, 0);
 
         var windowSize = ImGui.getWindowSize();
         var minBound = ImGui.getWindowPos();
@@ -65,7 +72,22 @@ public class SceneWindow extends Window {
 
         float finalX = map(m.x, 0, vbounds[1].x - vbounds[0].x, 0, Settings.w);
         float finalY = map(m.y, 0, vbounds[1].y - vbounds[0].y, 0, Settings.h);
+        if (ImGui.beginDragDropTarget()) {
+            Path payload = ImGui.acceptDragDropPayload("ImageFile");
+            if (payload != null ) {
+                GameObject gameObject = GameObjectFactory.createGameObjectWithComponent("Sprite");
+                gameObject.getComponent(SpriteComponent.class).setPath(
+                        FileSystem.relativize(ProjectManager.getGame().getDirectory(), payload.toString())
+                );
 
+                gameObject.getComponent(TransformComponent.class).setPosition(new Vector3f(0, 0, 0));
+                ProjectManager.getGame().getSceneManager().getActiveScene().addGameObject(gameObject);
+                System.out.println(payload);
+                EditorUI.getInstance().getWindow(InspectorWindow.class).setGameObject(gameObject);
+//                textComponent.setPath(FileSystem.relativize(ProjectManager.getGame().getDirectory(), payload.toString()));
+            }
+            ImGui.endDragDropTarget();
+        }
         if (ImGui.isMouseDoubleClicked(ImGuiMouseButton.Left)) {
             glBindFramebuffer(GL_FRAMEBUFFER, EditorSceneRenderer.getInstance().getSelectFrameBuffer().getId());
             int[] i = new int[1];
@@ -97,6 +119,31 @@ public class SceneWindow extends Window {
         renderManipulationToolbar();
     }
 
+    public static boolean containsNaN(Matrix4f matrix) {
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 4; j++) {
+                if (Float.isNaN(matrix.get(i, j))) {
+                    return true;  // Found NaN
+                }
+            }
+        }
+        return false;  // No NaN found
+    }
+    private static float sanitizeZero(float value) {
+        return (value == -0.0f) ? 0.0f : value;
+    }
+    public static Matrix4f sanitizeMatrix(Matrix4f m) {
+        Matrix4f sanitized = new Matrix4f(m);
+        for (int col = 0; col < 4; col++) {
+            for (int row = 0; row < 4; row++) {
+                float v = sanitized.get(col, row);
+                if (Float.isNaN(v) || Float.isInfinite(v) || Math.abs(v) < 1e-7f || v == -0.0f) {
+                    sanitized.set(col, row, 0.0f);
+                }
+            }
+        }
+        return sanitized;
+    }
     private void manipulate() {
 
         GameObject gameObject = EditorUI.getInstance().getWindow(InspectorWindow.class).getGameObject().get();
@@ -114,15 +161,30 @@ public class SceneWindow extends Window {
         var proj = matrixToFloatBuffer(engineCamera.getProjectionMatrix());
 
         var t = gameObject.getComponent(TransformComponent.class);
-
-        var transform = matrixToFloatBuffer(t.getWorldTransformMatrix());
+        var tt = t.getWorldTransformMatrix();
+        var transform = matrixToFloatBuffer(tt);
 
         float rot = gameObject.getComponent(TransformComponent.class).getRotation();
         ImGuizmo.manipulate(view, proj, transform, manipulationOperation, Mode.WORLD);
 
         if (ImGuizmo.isUsing()) {
+//            var m = new Matrix4f().set(transform);
+//            if (containsNaN(m)) {
+//                if (t.getPosition().x == 0) {
+//                    t.getPosition().x = 1;
+//                }
+//                if (t.getPosition().y == 0) {
+//                    t.getPosition().y = 1;
+//                }
+//                return;
+//            }
+//                var s = t.getWorldTransformMatrix();
+//                var tts = matrixToFloatBuffer(s);
+//                var p = gameObject.getComponent(TransformComponent.class).getPosition();
+//                return;
+//            }
             t.setWorldTransformMatrix(new Matrix4f().set(transform));
-
+            System.out.println(new Matrix4f().set(transform));
             // FIXME: For some reason when using scale it resets rotation. Find why is that.
             if (manipulationOperation == Operation.SCALE) {
                 gameObject.getComponent(TransformComponent.class).setRotation(rot);

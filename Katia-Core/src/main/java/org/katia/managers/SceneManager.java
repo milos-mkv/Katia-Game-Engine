@@ -49,4 +49,9 @@ public class SceneManager {
         // This will be overwritten in Editor were we are going to set editor camera for use.
         camera = Objects.requireNonNull(activeScene).find("Main Camera");
     }
+
+    public void setCustomScene(Scene scene) {
+        activeScene = scene;
+        camera = Objects.requireNonNull(activeScene).find("Main Camera");
+    }
 }

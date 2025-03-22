@@ -73,15 +73,17 @@ end
 function GameLogic:spawnNewBlock()
 	print("Spawn new block")
 	self.currentPeace = "T"
-self.rotation = 1
+	self.rotation = 1
 	self.cursor = self:getDefaultCursor()
 	print("Default Cursor:", self.cursor.x, ":", self.cursor.y)
 	self.rotation = 2
 	local p = self:getCurrentPeace()
 	self.blocks = {}
+	self.holder:removeAllChildren()
 	for i = 1, #p do
 		for j = 1, #p[i] do
 			if (p[i][j] == 1) then
+				print(i, j)
 				local block = GameObject:create(self.tetrimino)
 				local pos = block:getComponent("Transform"):getPosition()
 				pos.x = ((j-1) * self.size)
@@ -142,7 +144,7 @@ function GameLogic:check_collision_x(side)
 			if side == "Left"  and (tet[i][j] == 1) and (self.cursor.x + j - 1 == 1 or self.grid[self.cursor.y + i - 1][self.cursor.x + j - 2] == 1) then
 				return true
 			end
-			if side == "Right" and (tet[i][j] == 1) and (self.cursor.x + j + 1 == 12 or self.grid[self.cursor.y + i - 1][self.cursor.x + j + 2] == 1) then
+			if side == "Right" and (tet[i][j] == 1) and (self.cursor.x + j + 1 == 12 or self.grid[self.cursor.y + i - 1][self.cursor.x + j] == 1) then
 				return true
 			end
 		end
@@ -244,13 +246,14 @@ function GameLogic:update(dt)
 	self:rotate()
 
 
-	-- if (Input:isKeyJustPressed(KEY_O)) then
-	-- 	AudioManager:play(self.params.music)
-	-- end
+	 if (Input:isKeyJustPressed(KEY_R)) then
+	 	AudioManager:play(self.params.music)
+	 end
 
 end
 
 return GameLogic
+
 
 
 

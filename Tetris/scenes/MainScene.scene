@@ -39,9 +39,9 @@
             "finite" : true
           },
           "background" : {
-            "x" : 0.28316468,
-            "y" : 0.6602564,
-            "z" : 0.18199375,
+            "x" : 0.125,
+            "y" : 0.125,
+            "z" : 0.125,
             "finite" : true
           }
         }
@@ -80,7 +80,7 @@
           "path" : "images/Pattern02.png"
         }
       },
-      "active" : true
+      "active" : false
     }, {
       "id" : "b0e94956-82ee-47b6-990b-ebed2562516b",
       "name" : "Background",
