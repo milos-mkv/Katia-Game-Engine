@@ -100,7 +100,7 @@ public class ResourceManager {
      */
     public String getScene(String key) {
         String sceneJson = scenes.get(key);
-        return sceneJson;
+        return FileSystem.readFromFile(sceneJson);
     }
 
     /**
@@ -121,7 +121,7 @@ public class ResourceManager {
                 scripts.put(key, entry.toString());
             } else if (FileSystem.isSceneFile(entry.toString())) {
                 scenes.put(FileSystem.getFilenameWithoutExtension(FileSystem.getFileName(entry.toString())),
-                        FileSystem.readFromFile(entry.toString()));
+                       entry.toString());
             } else if (FileSystem.isSoundFile(entry.toString())) {
                 audios.put(key, AudioFactory.createAudio(entry.toString()));
             }

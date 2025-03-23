@@ -14,21 +14,161 @@ local GameLogic = classes.class(Behaviour)
 require("Constants")
 
 TETRIMINOS = {
-	["T"] = {
-		[1] = {
-			[1] = { 0, 1, 0 }, [2] = { 1, 1, 1 },
-	 	},
-		[2] = {
-			[1] = { 0, 1, 0 }, [2] = { 0, 1, 1 }, [3] = { 0, 1, 0 }
-		},
-		[3] = {
-			[1] = { 0, 0, 0 }, [2] = { 1, 1, 1 }, [3] = { 0, 1, 0 }
-		},
-		[4] = {
-			[1] = { 0, 1 }, [2] = { 1, 1 }, [3] = { 0, 1 }
-		}
-	}
+    T = {
+        {
+            { 0, 1, 0 },
+            { 1, 1, 1 }
+        },
+        {
+            { 0, 1, 0 },
+            { 0, 1, 1 },
+            { 0, 1, 0 }
+        },
+        {
+            { 0, 0, 0 },
+            { 1, 1, 1 },
+            { 0, 1, 0 }
+        },
+        {
+            { 0, 1 },
+            { 1, 1 },
+            { 0, 1 }
+        }
+    },
+
+    L = {
+        {
+            { 0, 0, 0 },
+            { 1, 1, 1 },
+            { 1, 0, 0 }
+        },
+        {
+            { 1, 1 },
+            { 0, 1 },
+            { 0, 1 }
+        },
+        {
+            { 0, 0, 1 },
+            { 1, 1, 1 }
+        },
+        {
+            { 0, 1, 0 },
+            { 0, 1, 0 },
+            { 0, 1, 1 }
+        }
+    },
+
+    J = {
+        {
+            { 1, 0, 0 },
+            { 1, 1, 1 }
+        },
+        {
+            { 0, 1, 1 },
+            { 0, 1, 0 },
+            { 0, 1, 0 }
+        },
+        {
+            { 0, 0, 0 },
+            { 1, 1, 1 },
+            { 0, 0, 1 }
+        },
+        {
+            { 0, 1 },
+            { 0, 1 },
+            { 1, 1 }
+        }
+    },
+
+    O = {
+        {
+            { 1, 1 },
+            { 1, 1 }
+        },
+        {
+            { 1, 1 },
+            { 1, 1 }
+        },
+        {
+            { 1, 1 },
+            { 1, 1 }
+        },
+        {
+            { 1, 1 },
+            { 1, 1 }
+        }
+    },
+
+    I = {
+        {
+            { 0, 0, 0, 0 },
+            { 1, 1, 1, 1 }
+        },
+        {
+            { 0, 1 },
+            { 0, 1 },
+            { 0, 1 },
+            { 0, 1 }
+        },
+        {
+            { 0, 0, 0, 0 },
+            { 1, 1, 1, 1 }
+        },
+        {
+            { 0, 1 },
+            { 0, 1 },
+            { 0, 1 },
+            { 0, 1 }
+        }
+    },
+
+    S = {
+        {
+            { 0, 0, 0 },
+            { 0, 1, 1 },
+            { 1, 1, 0 }
+        },
+        {
+            { 0, 1, 0 },
+            { 0, 1, 1 },
+            { 0, 0, 1 }
+        },
+        {
+            { 0, 0, 0 },
+            { 0, 1, 1 },
+            { 1, 1, 0 }
+        },
+        {
+            { 0, 1, 0 },
+            { 0, 1, 1 },
+            { 0, 0, 1 }
+        }
+    },
+
+    Z = {
+        {
+            { 0, 0, 0 },
+            { 1, 1, 0 },
+            { 0, 1, 1 }
+        },
+        {
+            { 0, 0, 1 },
+            { 0, 1, 1 },
+            { 0, 1, 0 }
+        },
+        {
+            { 0, 0, 0 },
+            { 1, 1, 0 },
+            { 0, 1, 1 }
+        },
+        {
+            { 0, 0, 1 },
+            { 0, 1, 1 },
+            { 0, 1, 0 }
+        }
+    }
 }
+
 COLS = 10
 ROWS = 20
 
@@ -41,6 +181,18 @@ function GameLogic:init(params)
 	self.gridMinos = params.gridMinos
 	self.tetrimino = params.tetrimino
 	self.holder = params.holder
+	self.pattern = params.pattern
+
+	for i = 1, 5 do
+		for j = 1, 5 do
+		local p = GameObject:create(self.pattern)
+		local pos = p:getComponent("Transform"):getPosition()
+		pos.x = (i-1) * 192
+		pos.y = (j-1) * 225
+params._bg:addChild(p)
+	end
+	end
+
 	self.grid = {
 		[ 1] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
 		[ 2] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
@@ -72,7 +224,19 @@ end
 
 function GameLogic:spawnNewBlock()
 	print("Spawn new block")
-	self.currentPeace = "T"
+	-- Seed the random number generator once (at program start)
+	math.randomseed(os.time())
+
+	-- Get all keys from the TETRIS_PEACES table
+	local keys = {}
+	for k in pairs(TETRIMINOS) do
+	    table.insert(keys, k)
+	end
+
+	-- Pick a random piece name
+	local randomKey = keys[math.random(#keys)]
+
+	self.currentPeace = randomKey
 	self.rotation = 1
 	self.cursor = self:getDefaultCursor()
 	print("Default Cursor:", self.cursor.x, ":", self.cursor.y)
@@ -100,7 +264,7 @@ end
 
 function GameLogic:getDefaultCursor()
 	return {
-		x = COLS / 2 - #self:getCurrentPeace() / 2,
+		x = math.ceil(COLS / 2 - #self:getCurrentPeace() / 2) ,
 		y = 1
 	}
 end
@@ -124,14 +288,25 @@ end
 
 --- @brief Move current tetrimino on y axis.
 --- @param dt number - Delta time.
+t = 0
+s = false
 function GameLogic:move_on_y_axis(dt)
-	if Input:isKeyJustPressed(KEY_S) and (not self:check_collision_y()) then
+	t = t+dt
+	if  t > 0.05 then
+		s = true
+	else
+		s = false
+	end
+	if s==true and Input:isKeyPressed(KEY_S) and (not self:check_collision_y()) then
 		self.cursor.y = self.cursor.y + 1
-	end
-	if Input:isKeyJustPressed(KEY_O) and (self:check_collision_y()) then
-		print("WWW")
+		s = false
+		t = 0
+		if self:check_collision_y() then
 		self:place_tetrimino()
+
+		end
 	end
+
 end
 
 --- @brief Check if current tetrimino collides on x axis.
@@ -225,6 +400,28 @@ function GameLogic:place_tetrimino()
    	self:spawnNewBlock()
 end
 
+function GameLogic:check_for_cleared_lines()
+	for i = ROWS, 1, -1 do
+		local sum = 0
+		for j = 1, #self.grid[i] do
+			sum = sum + self.grid[i][j]
+		end
+		if (sum == 10) then
+						-- Remove the full row
+			table.remove(self.grid, i)
+
+			-- Insert a new empty row at the top
+			local empty_row = {}
+			for _ = 1, COLS do
+				table.insert(empty_row, 0)
+			end
+			table.insert(self.grid, 1, empty_row)
+
+			print("FODIUN")
+		end
+	end
+end
+
 function GameLogic:update(dt)
 	local hp = self.holder:getComponent("Transform"):getPosition()
 	hp.x = self.offsetX + (self.size * (self.cursor.x - 1))
@@ -244,7 +441,7 @@ function GameLogic:update(dt)
 	self:move_on_x_axis(dt)
 	self:move_on_y_axis(dt)
 	self:rotate()
-
+	self:check_for_cleared_lines()
 
 	 if (Input:isKeyJustPressed(KEY_R)) then
 	 	AudioManager:play(self.params.music)
@@ -253,6 +450,14 @@ function GameLogic:update(dt)
 end
 
 return GameLogic
+
+
+
+
+
+
+
+
 
 
 

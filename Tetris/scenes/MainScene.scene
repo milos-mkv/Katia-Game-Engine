@@ -48,39 +48,34 @@
       },
       "active" : true
     }, {
-      "id" : "303af9cb-5046-4eb7-a410-79f9bdf272fb",
-      "name" : "Game Object",
+      "id" : "503167c3-18e2-4b40-bc00-68f97c836185",
+      "name" : "_patternbg",
       "children" : [ ],
       "components" : {
         "org.katia.core.components.TransformComponent" : {
           "type" : "TransformComponent",
           "componentType" : "Transform",
           "position" : {
-            "x" : 388.80017,
-            "y" : 351.0,
+            "x" : 0.0,
+            "y" : 0.0,
             "z" : 0.0,
             "finite" : true
           },
           "rotation" : 0.0,
           "scale" : {
-            "x" : 9.23,
-            "y" : 9.23,
+            "x" : 1.0,
+            "y" : 1.0,
             "z" : 1.0,
             "finite" : true
           },
           "worldPosition" : {
-            "x" : 388.80017,
-            "y" : 351.0,
+            "x" : 0.0,
+            "y" : 0.0,
             "finite" : true
           }
-        },
-        "org.katia.core.components.SpriteComponent" : {
-          "type" : "SpriteComponent",
-          "componentType" : "Sprite",
-          "path" : "images/Pattern02.png"
         }
       },
-      "active" : false
+      "active" : true
     }, {
       "id" : "b0e94956-82ee-47b6-990b-ebed2562516b",
       "name" : "Background",
@@ -118,49 +113,6 @@
           }
         },
         "active" : true
-      }, {
-        "id" : "6d7dab6c-8198-4025-bc15-3ba79cebbf87",
-        "name" : "TetrisText",
-        "children" : [ ],
-        "components" : {
-          "org.katia.core.components.TransformComponent" : {
-            "type" : "TransformComponent",
-            "componentType" : "Transform",
-            "position" : {
-              "x" : -95.400116,
-              "y" : 324.80005,
-              "z" : 0.0,
-              "finite" : true
-            },
-            "rotation" : 0.0,
-            "scale" : {
-              "x" : 1.0,
-              "y" : 1.0,
-              "z" : 1.0,
-              "finite" : true
-            },
-            "worldPosition" : {
-              "x" : 304.59988,
-              "y" : 724.80005,
-              "finite" : true
-            }
-          },
-          "org.katia.core.components.TextComponent" : {
-            "type" : "TextComponent",
-            "componentType" : "Text",
-            "text" : "TERTIS",
-            "path" : "fonts/Roboto-Regular.ttf",
-            "color" : {
-              "x" : 0.08505917,
-              "y" : 0.2704446,
-              "z" : 0.36858976,
-              "w" : 1.0,
-              "finite" : true
-            },
-            "scale" : 1.0
-          }
-        },
-        "active" : true
       } ],
       "components" : {
         "org.katia.core.components.TransformComponent" : {
@@ -188,7 +140,7 @@
         "org.katia.core.components.SpriteComponent" : {
           "type" : "SpriteComponent",
           "componentType" : "Sprite",
-          "path" : "images/Background.png"
+          "path" : "images/Pasted image.png"
         }
       },
       "active" : true
@@ -201,8 +153,8 @@
           "type" : "TransformComponent",
           "componentType" : "Transform",
           "position" : {
-            "x" : 0.0,
-            "y" : 0.0,
+            "x" : -260.99982,
+            "y" : 221.4003,
             "z" : 0.0,
             "finite" : true
           },
@@ -214,8 +166,8 @@
             "finite" : true
           },
           "worldPosition" : {
-            "x" : 0.0,
-            "y" : 0.0,
+            "x" : -260.99982,
+            "y" : 221.4003,
             "finite" : true
           }
         },
@@ -265,6 +217,10 @@
             "music" : "sounds/MEGALOVANIA.ogg"
           }, {
             "gridMinos" : "39c47f54-ea14-4f25-a7a5-e4878491ad3d"
+          }, {
+            "pattern" : "c870bc87-b3c9-42c8-951f-8ae5377f11d8"
+          }, {
+            "_bg" : "503167c3-18e2-4b40-bc00-68f97c836185"
           } ]
         }
       },
@@ -324,6 +280,40 @@
             "y" : 685.0,
             "finite" : true
           }
+        }
+      },
+      "active" : true
+    }, {
+      "id" : "c870bc87-b3c9-42c8-951f-8ae5377f11d8",
+      "name" : "Sprite",
+      "children" : [ ],
+      "components" : {
+        "org.katia.core.components.TransformComponent" : {
+          "type" : "TransformComponent",
+          "componentType" : "Transform",
+          "position" : {
+            "x" : -190.80006,
+            "y" : 881.3001,
+            "z" : 0.0,
+            "finite" : true
+          },
+          "rotation" : 0.0,
+          "scale" : {
+            "x" : 1.0,
+            "y" : 1.0,
+            "z" : 1.0,
+            "finite" : true
+          },
+          "worldPosition" : {
+            "x" : -190.80006,
+            "y" : 881.3001,
+            "finite" : true
+          }
+        },
+        "org.katia.core.components.SpriteComponent" : {
+          "type" : "SpriteComponent",
+          "componentType" : "Sprite",
+          "path" : "images/Pattern04.png"
         }
       },
       "active" : true
