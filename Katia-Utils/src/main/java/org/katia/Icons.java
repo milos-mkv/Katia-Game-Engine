@@ -34,4 +34,6 @@ public class Icons {
     public static String Lock = "\uf023";
     public static String Unlock = "\uf3c1";
 
+    public static String Terminal = "\uf120";
+    public static String TreeFolder = "\uf802";
 }

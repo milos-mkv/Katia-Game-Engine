@@ -18,6 +18,7 @@ import org.katia.Logger;
         @JsonSubTypes.Type(value = CameraComponent.class, name = "CameraComponent"),
         @JsonSubTypes.Type(value = ScriptComponent.class, name = "ScriptComponent"),
         @JsonSubTypes.Type(value = TextComponent.class, name = "TextComponent"),
+        @JsonSubTypes.Type(value = AnimationComponent.class, name = "AnimationComponent"),
 })
 @Data
 @NoArgsConstructor

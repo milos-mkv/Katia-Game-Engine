@@ -26,6 +26,10 @@ public abstract class SceneFactory {
         objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
     }
 
+    public static Scene createScene(String name, int width, int height) {
+        return createScene(name, width, height, true);
+    }
+
     /**
      * Create scene.
      * @param name Scene name.
@@ -33,17 +37,17 @@ public abstract class SceneFactory {
      * @param height Main camera viewport height.
      * @return Scene
      */
-    public static Scene createScene(String name, int width, int height) {
+    public static Scene createScene(String name, int width, int height, boolean createCamera) {
         Scene scene = new Scene(name);
+        if (createCamera) {
+            GameObject mainCameraGameObject = GameObjectFactory.createGameObject("Main Camera");
+            mainCameraGameObject.addComponent(new CameraComponent());
+            mainCameraGameObject.getComponent(TransformComponent.class).setPosition(new Vector3f(0, 0, 0));
+            mainCameraGameObject.getComponent(TransformComponent.class).setScale(new Vector3f(1, 1, 0));
+            mainCameraGameObject.getComponent(CameraComponent.class).setViewport(new Vector2f(width, height));
 
-        GameObject mainCameraGameObject = GameObjectFactory.createGameObject("Main Camera");
-        mainCameraGameObject.addComponent(new CameraComponent());
-        mainCameraGameObject.getComponent(TransformComponent.class).setPosition(new Vector3f(0, 0, 0));
-        mainCameraGameObject.getComponent(TransformComponent.class).setScale(new Vector3f(1, 1, 0));
-        mainCameraGameObject.getComponent(CameraComponent.class).setViewport(new Vector2f(width, height));
-
-        scene.addGameObject(mainCameraGameObject);
-
+            scene.addGameObject(mainCameraGameObject);
+        }
         Logger.log(Logger.Type.SUCCESS, "Scene created:", name);
         return scene;
     }

@@ -7,13 +7,17 @@ import imgui.flag.ImGuiHoveredFlags;
 import imgui.flag.ImGuiStyleVar;
 import imgui.flag.ImGuiWindowFlags;
 import imgui.type.ImString;
+import lombok.Data;
+import org.joml.Vector3f;
 import org.katia.FileSystem;
 import org.katia.Icons;
 import org.katia.Logger;
+import org.katia.core.components.CameraComponent;
 import org.katia.editor.EditorUI;
 import org.katia.editor.managers.EditorAssetManager;
 import org.katia.editor.managers.ProjectManager;
 import org.katia.editor.popups.FontCreatorPopup;
+import org.katia.editor.renderer.EditorCameraController;
 import org.katia.editor.ui.popups.ImagePreviewPopup;
 import org.katia.editor.ui.popups.PopupManager;
 import org.katia.editor.ui.windows.CodeEditorWindow;
@@ -26,6 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+@Data
 public class ProjectDirectoryExplorerWidget {
 
     String root;
@@ -54,9 +59,9 @@ public class ProjectDirectoryExplorerWidget {
 
     public void loadDirectory(String path) {
         Logger.log(Logger.Type.INFO, "Directory explorer load directory:", path);
-        if (Objects.equals(this.path, path)) {
-            return;
-        }
+//        if (Objects.equals(this.path, path)) {
+//            return;
+//        }
         this.path = path;
         this.data = FileSystem.readDirectoryData(path);
         setDirDepth(path);
@@ -180,6 +185,11 @@ public class ProjectDirectoryExplorerWidget {
                         ProjectManager.getGame().getSceneManager().setActiveScene(filename);
                     } else if (FileSystem.isLuaFile(entry.toString())) {
                         EditorUI.getInstance().getWindow(CodeEditorWindow.class).openFile(entry.toString());
+                    } else if (FileSystem.isPrefabFile(entry.toString())) {
+                        ProjectManager.openPrefab(entry.toString());
+                        EditorCameraController.getInstance().getCamera().getComponent(CameraComponent.class).setBackground(
+                                new Vector3f(0.16f, 0.18f, 0.2f)
+                        );
                     }
                     else {
 //                    if (FileSystem.isImageFile(entry.getFileName().toString())) {

@@ -45,6 +45,11 @@ public class SceneWindow extends Window {
     }
 
     @Override
+    protected void header() {
+        ImGui.textDisabled("adsa");
+    }
+
+    @Override
     protected void body() {
                 Settings.w = ImGui.getWindowWidth();
         Settings.h = ImGui.getWindowHeight();

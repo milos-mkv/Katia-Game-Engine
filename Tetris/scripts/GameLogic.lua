@@ -182,7 +182,7 @@ function GameLogic:init(params)
 	self.tetrimino = params.tetrimino
 	self.holder = params.holder
 	self.pattern = params.pattern
-
+	self.fb = params.fb
 	for i = 1, 5 do
 		for j = 1, 5 do
 		local p = GameObject:create(self.pattern)
@@ -302,8 +302,7 @@ function GameLogic:move_on_y_axis(dt)
 		s = false
 		t = 0
 		if self:check_collision_y() then
-		self:place_tetrimino()
-
+			self:place_tetrimino()
 		end
 	end
 
@@ -421,11 +420,21 @@ function GameLogic:check_for_cleared_lines()
 		end
 	end
 end
-
+aa =0
 function GameLogic:update(dt)
+	aa = aa + dt
+	if aa > 0.5 then
+		aa = 0
+print(dt)
+	end
+
+	--fb_pos.x = fb_pos.x + 1
+	--fb_pos.y = fb_pos.y + 1
 	local hp = self.holder:getComponent("Transform"):getPosition()
 	hp.x = self.offsetX + (self.size * (self.cursor.x - 1))
 	hp.y = self.offsetY - (self.size * (self.cursor.y - 1))
+	
+
 
 	if Input:isKeyJustPressed(KEY_SPACE) then
 		print("CURSOR: X:", self.cursor.x, " Y:", self.cursor.y, " R:", self.rotation)
@@ -450,6 +459,13 @@ function GameLogic:update(dt)
 end
 
 return GameLogic
+
+
+
+
+
+
+
 
 
 

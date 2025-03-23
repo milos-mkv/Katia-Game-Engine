@@ -3,10 +3,12 @@ package org.katia.editor.managers;
 import lombok.Getter;
 import org.katia.FileSystem;
 import org.katia.Logger;
+import org.katia.core.GameObject;
 import org.katia.core.Scene;
 import org.katia.editor.ui.windows.ProjectWindow;
 import org.katia.editor.EditorUI;
 import org.katia.factory.GameFactory;
+import org.katia.factory.GameObjectFactory;
 import org.katia.factory.SceneFactory;
 import org.katia.game.Configuration;
 import org.katia.game.Game;
@@ -24,6 +26,8 @@ public abstract class ProjectManager {
 
     @Getter
     static Game game;
+
+    static Scene prefabScene;
 
     /**
      * Open project from provided path to project directory.
@@ -97,5 +101,13 @@ public abstract class ProjectManager {
         String json = SceneFactory.generateJsonFromScene(scene);
         Assert(json == null || json.isEmpty(), "Unable to parse scene to valid format!");
         FileSystem.saveToFile(game.getDirectory() + "/scenes/" + scene.getName() + ".scene", json);
+    }
+    public static void openPrefab(String prefabPath) {
+        prefabScene = SceneFactory.createScene("PrefabScene", 800, 600, false);
+        GameObject a = GameObjectFactory.generateGameObjectFromJson(
+                FileSystem.readFromFile(prefabPath)
+        );
+        prefabScene.addGameObject(a);
+        game.getSceneManager().setCustomScene(prefabScene);
     }
 }
