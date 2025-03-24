@@ -30,6 +30,10 @@ public abstract class SceneFactory {
         return createScene(name, width, height, true);
     }
 
+    public static Scene createScene(String name) {
+        return createScene(name, 0, 0, false);
+    }
+
     /**
      * Create scene.
      * @param name Scene name.

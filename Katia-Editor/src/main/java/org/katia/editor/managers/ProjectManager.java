@@ -1,10 +1,13 @@
 package org.katia.editor.managers;
 
 import lombok.Getter;
+import org.joml.Vector3f;
 import org.katia.FileSystem;
 import org.katia.Logger;
 import org.katia.core.GameObject;
 import org.katia.core.Scene;
+import org.katia.core.components.CameraComponent;
+import org.katia.editor.renderer.EditorCameraController;
 import org.katia.editor.ui.windows.ProjectWindow;
 import org.katia.editor.EditorUI;
 import org.katia.factory.GameFactory;
@@ -27,8 +30,10 @@ public abstract class ProjectManager {
     @Getter
     static Game game;
 
-    static Scene prefabScene;
+    static String currentScenePath;
 
+    public static boolean isPrefab = false;
+    static String oldScenePath;
     /**
      * Open project from provided path to project directory.
      * @param path Path to project directory.
@@ -100,14 +105,35 @@ public abstract class ProjectManager {
         Assert(scene == null, "There is no active scene!");
         String json = SceneFactory.generateJsonFromScene(scene);
         Assert(json == null || json.isEmpty(), "Unable to parse scene to valid format!");
-        FileSystem.saveToFile(game.getDirectory() + "/scenes/" + scene.getName() + ".scene", json);
+        FileSystem.saveToFile(currentScenePath, json);
     }
-    public static void openPrefab(String prefabPath) {
-        prefabScene = SceneFactory.createScene("PrefabScene", 800, 600, false);
-        GameObject a = GameObjectFactory.generateGameObjectFromJson(
-                FileSystem.readFromFile(prefabPath)
-        );
-        prefabScene.addGameObject(a);
-        game.getSceneManager().setCustomScene(prefabScene);
+
+    /**
+     * Set current active scene.
+     * @param path Path to the scene file. (This can also use prefab files)
+     */
+    public static void setCurrentScene(String path) {
+        Logger.log(Logger.Type.INFO, "Setting current active scene:", path);
+        oldScenePath = currentScenePath;
+        currentScenePath = path;
+        Scene scene = SceneFactory.generateSceneFromJson(FileSystem.readFromFile(path));
+        game.getSceneManager().setActiveScene(scene);
+
+        Vector3f color;
+        isPrefab = FileSystem.isPrefabFile(path);
+        if (isPrefab) {
+            color = new Vector3f(0.16f, 0.18f, 0.2f);
+            Logger.log(Logger.Type.INFO, "Current active scene is prefab!");
+        } else {
+            color = new Vector3f(0.1f, 0.1f, 0.1f);
+        }
+        EditorCameraController.getInstance()
+                .getCamera()
+                .getComponent(CameraComponent.class)
+                .setBackground(color);
+    }
+
+    public static void closePrefab() {
+        setCurrentScene(oldScenePath);
     }
 }

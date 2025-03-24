@@ -105,6 +105,9 @@ public class TextRenderer extends Renderer {
         GameObject camera = game.getSceneManager().getCamera();
         TextComponent textComponent = gameObject.getComponent(TextComponent.class);
         TransformComponent transformComponent = gameObject.getComponent(TransformComponent.class);
+//        glEnable(GL_BLEND);
+//        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+//        glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA); // premultiplied alpha blend
 
         ShaderProgram shaderProgram =
                 select ? selectShader : defaultShader

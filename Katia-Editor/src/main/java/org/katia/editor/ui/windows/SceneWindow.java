@@ -15,14 +15,19 @@ import org.katia.FileSystem;
 import org.katia.Icons;
 import org.katia.Logger;
 import org.katia.core.GameObject;
+import org.katia.core.Scene;
 import org.katia.core.components.SpriteComponent;
 import org.katia.core.components.TransformComponent;
 import org.katia.editor.EditorUI;
+import org.katia.editor.managers.EditorAssetManager;
+import org.katia.editor.managers.EditorInputManager;
 import org.katia.editor.managers.ProjectManager;
 import org.katia.editor.renderer.EditorCameraController;
 import org.katia.editor.renderer.EditorSceneRenderer;
 import org.katia.editor.renderer.Settings;
 import org.katia.factory.GameObjectFactory;
+import org.katia.factory.SceneFactory;
+import org.lwjgl.glfw.GLFW;
 
 import java.nio.file.Path;
 import java.util.Arrays;
@@ -46,7 +51,43 @@ public class SceneWindow extends Window {
 
     @Override
     protected void header() {
-        ImGui.textDisabled("adsa");
+        if (!ProjectManager.isPrefab) {
+            ImGui.newLine();
+            title = "SCENE";
+            return;
+        }
+        title = "PREFAB";
+        ImGui.textDisabled(" (" + ProjectManager.getGame().getSceneManager()
+                .getActiveScene().getName() + ")");
+        ImGui.sameLine();
+        ImGui.setCursorPosX(ImGui.getWindowWidth() - 30);
+        var cursor = ImGui.getCursorPos();
+        ImGui.pushStyleColor(ImGuiCol.Button, 0, 0, 0, 0);
+        ImGui.pushStyleColor(ImGuiCol.ButtonActive, 0, 0, 0, 0);
+        ImGui.pushStyleColor(ImGuiCol.ButtonHovered, 0, 0, 0, 0);
+        ImGui.pushStyleVar(ImGuiStyleVar.FrameBorderSize, 0);
+        if (ImGui.button("  ##OpenConsole", 25, 25)) {
+            ProjectManager.closePrefab();
+        }
+        ImGui.popStyleVar();
+        ImGui.popStyleColor(3);
+        EditorAssetManager.getInstance().getFont("Default25").setScale(0.7f);
+        ImGui.pushFont(EditorAssetManager.getInstance().getFont("Default25"));
+        ImGui.setCursorPos(cursor.x + 3, cursor.y + 5);
+
+        if (ImGui.isItemActive()) {
+            ImGui.pushStyleColor(ImGuiCol.Text, 0.8f, 0.4f, 0.4f, 1.0f);
+        } else if (ImGui.isItemHovered()) {
+            ImGui.pushStyleColor(ImGuiCol.Text, 0.3f, 0.6f, 0.8f, 0.8f);
+        } else {
+            ImGui.pushStyleColor(ImGuiCol.Text, 0.6f, 0.6f, 0.6f, 1.0f);
+        }
+        ImGui.text(Icons.SquareX);
+        ImGui.popStyleColor();
+        EditorAssetManager.getInstance().getFont("Default25").setScale(1f);
+
+        ImGui.popFont();
+        ImGui.setCursorPosY(ImGui.getCursorPosY() + 3);
     }
 
     @Override
@@ -93,6 +134,17 @@ public class SceneWindow extends Window {
             }
             ImGui.endDragDropTarget();
         }
+        if (ImGui.beginDragDropTarget()) {
+            Object payload = ImGui.acceptDragDropPayload("Prefab");
+            if (payload instanceof Path) {
+                Scene scene = SceneFactory.generateSceneFromJson(
+                       FileSystem.readFromFile(
+                        payload.toString()));
+                GameObject g = scene.getRootGameObject().getChildren().get(0);
+                ProjectManager.getGame().getSceneManager().getActiveScene().addGameObject(g);
+            }
+            ImGui.endDragDropTarget();
+        }
         if (ImGui.isMouseDoubleClicked(ImGuiMouseButton.Left)) {
             glBindFramebuffer(GL_FRAMEBUFFER, EditorSceneRenderer.getInstance().getSelectFrameBuffer().getId());
             int[] i = new int[1];
@@ -122,6 +174,11 @@ public class SceneWindow extends Window {
         manipulate();
         ImGui.setCursorPos(startCursorPosition.x + 10, startCursorPosition.y + 10);
         renderManipulationToolbar();
+
+        if (EditorInputManager.getInstance().isKeyPressed(GLFW.GLFW_KEY_LEFT_CONTROL) &&
+            EditorInputManager.getInstance().isKeyJustPressed(GLFW.GLFW_KEY_S))   {
+            ProjectManager.saveCurrentScene();
+        }
     }
 
     public static boolean containsNaN(Matrix4f matrix) {

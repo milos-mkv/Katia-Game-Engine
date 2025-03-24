@@ -50,7 +50,7 @@ public class SceneManager {
         camera = Objects.requireNonNull(activeScene).find("Main Camera");
     }
 
-    public void setCustomScene(Scene scene) {
+    public void setActiveScene(Scene scene) {
         activeScene = scene;
         camera = Objects.requireNonNull(activeScene).find("Main Camera");
     }

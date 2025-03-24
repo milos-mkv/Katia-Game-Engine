@@ -1,15 +1,12 @@
 package org.katia.editor;
 
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import org.katia.Logger;
-import org.katia.core.Scene;
 import org.katia.editor.managers.EditorAssetManager;
 import org.katia.editor.managers.ProjectManager;
 import org.katia.editor.renderer.EditorSceneRenderer;
 import org.katia.game.Game;
-import org.katia.managers.SceneManager;
 import org.lwjgl.glfw.GLFW;
 
 /**
@@ -22,7 +19,6 @@ public class Editor {
     static final Editor instance = new Editor();
 
     public Game runGame;
-    public Scene oldScene;
 
     /**
      * Editor constructor.
@@ -41,7 +37,7 @@ public class Editor {
         Logger.log(Logger.Type.INFO, "Editor run");
 
         ProjectManager.openProject("/home/mmilicevic/Documents/GitHub/Katia-Game-Engine/Tetris");
-        ProjectManager.getGame().getSceneManager().setActiveScene("MainScene");
+        ProjectManager.setCurrentScene("/home/mmilicevic/Documents/GitHub/Katia-Game-Engine/Tetris/scenes/MainScene.scene");
 
         GLFW.glfwSwapInterval(0);
         while (!GLFW.glfwWindowShouldClose(EditorWindow.getInstance().getHandle())) {
@@ -65,7 +61,6 @@ public class Editor {
             GLFW.glfwMakeContextCurrent(EditorWindow.getInstance().getHandle());
 
         }
-
         dispose();
     }
 

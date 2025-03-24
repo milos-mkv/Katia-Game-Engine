@@ -1,0 +1,67 @@
+{
+  "name" : "PrefabSceneFB",
+  "rootGameObject" : {
+    "id" : "b77e2dbf-b3f8-4dbc-be55-1293e13e3d9f",
+    "name" : "Root",
+    "children" : [ {
+      "id" : "8db096d9-1b88-46ab-9f96-3ebe3544c720",
+      "name" : "FB",
+      "children" : [ ],
+      "components" : {
+        "org.katia.core.components.TransformComponent" : {
+          "type" : "TransformComponent",
+          "componentType" : "Transform",
+          "position" : {
+            "x" : -118.80026,
+            "y" : 36.39979,
+            "z" : 0.0,
+            "finite" : true
+          },
+          "rotation" : 0.0,
+          "scale" : {
+            "x" : 1.0,
+            "y" : 1.0,
+            "z" : 1.0,
+            "finite" : true
+          },
+          "worldPosition" : {
+            "x" : -118.80026,
+            "y" : 36.39979,
+            "finite" : true
+          }
+        },
+        "org.katia.core.components.SpriteComponent" : {
+          "type" : "SpriteComponent",
+          "componentType" : "Sprite",
+          "path" : "images/Fx_clean01.png"
+        }
+      },
+      "active" : true
+    } ],
+    "components" : {
+      "org.katia.core.components.TransformComponent" : {
+        "type" : "TransformComponent",
+        "componentType" : "Transform",
+        "position" : {
+          "x" : 0.0,
+          "y" : 0.0,
+          "z" : 0.0,
+          "finite" : true
+        },
+        "rotation" : 0.0,
+        "scale" : {
+          "x" : 1.0,
+          "y" : 1.0,
+          "z" : 1.0,
+          "finite" : true
+        },
+        "worldPosition" : {
+          "x" : 0.0,
+          "y" : 0.0,
+          "finite" : true
+        }
+      }
+    },
+    "active" : true
+  }
+}

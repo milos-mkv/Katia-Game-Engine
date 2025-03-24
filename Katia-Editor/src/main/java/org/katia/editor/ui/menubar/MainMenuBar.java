@@ -129,7 +129,7 @@ public class MainMenuBar {
             Editor.getInstance().runGame = GameFactory.createGame(ProjectManager.getGame().getDirectory());
             Editor.getInstance().runGame.setDebug(true);
 //            Editor.getInstance().runGame.getSceneManager().setActiveScene(ProjectManager.getGame().getSceneManager().getActiveScene().getName());
-            Editor.getInstance().runGame.getSceneManager().setCustomScene(ProjectManager.getGame().getSceneManager().getActiveScene());
+            Editor.getInstance().runGame.getSceneManager().setActiveScene(ProjectManager.getGame().getSceneManager().getActiveScene());
             Editor.getInstance().runGame.getScriptExecutioner().init();
             GLFW.glfwMakeContextCurrent(EditorWindow.getInstance().getHandle());
             GLFW.glfwSwapInterval(0);

@@ -36,4 +36,5 @@ public class Icons {
 
     public static String Terminal = "\uf120";
     public static String TreeFolder = "\uf802";
+    public static String TextHeight = "\uf550";
 }

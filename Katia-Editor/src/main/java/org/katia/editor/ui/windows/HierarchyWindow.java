@@ -11,6 +11,8 @@ import org.katia.Icons;
 import org.katia.Logger;
 import org.katia.core.GameObject;
 import org.katia.core.Scene;
+import org.katia.core.components.CameraComponent;
+import org.katia.core.components.TextComponent;
 import org.katia.core.components.TransformComponent;
 import org.katia.editor.EditorUI;
 import org.katia.editor.managers.EditorAssetManager;
@@ -88,7 +90,14 @@ public class HierarchyWindow extends Window {
                     ImGui.getColorU32(0.1f, 0.1f, 0.1f, 0.3f));
         }
         int flag = (ImGuiTreeNodeFlags.SpanFullWidth | ImGuiTreeNodeFlags.OpenOnArrow);
-        boolean open = ImGui.treeNodeEx(Icons.Cube + " " + gameObject.getName(), flag);
+        String icon = Icons.Cube;
+        if (gameObject.getComponent(CameraComponent.class) != null) {
+            icon = Icons.Camera;
+        }
+        if (gameObject.getComponent(TextComponent.class) != null) {
+            icon = Icons.TextHeight;// Icons.Font;
+        }
+        boolean open = ImGui.treeNodeEx(icon+ " " + gameObject.getName(), flag);
         // If mouse double click move camera to game object.
         if (ImGui.isItemHovered(ImGuiHoveredFlags.None)) {
             if (ImGui.isMouseDoubleClicked(0)) {

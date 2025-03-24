@@ -67,13 +67,13 @@ public class CreateScenePopup extends Popup {
             var conf = ProjectManager.getGame().getConfiguration();
             Scene scene = SceneFactory.createScene(sceneName.toString(), conf.getWidth(), conf.getHeight());
             String json = SceneFactory.generateJsonFromScene(scene);
-            FileSystem.saveToFile(Paths.get(
-                    ProjectManager.getGame().getDirectory(), "scenes", sceneName + ".scene").toString(), json);
+            String path = Paths.get(ProjectManager.getGame().getDirectory(), "scenes", sceneName + ".scene").toString();
+            FileSystem.saveToFile(path, json);
 
             ProjectManager.getGame()
                     .getResourceManager()
                     .getScenes()
-                    .put(sceneName.toString(), FileSystem.readFromFile(ProjectManager.getGame().getDirectory() + "/scenes/" + sceneName.toString() + ".scene"));
+                    .put(sceneName.toString(), path);
             ProjectManager.getGame().getSceneManager().setActiveScene(sceneName.toString());
             ImGui.closeCurrentPopup();
         }

@@ -328,6 +328,17 @@ public class InspectorWindow extends Window {
                     }
                     ImGui.endDragDropTarget();
                 }
+                if (ImGui.beginDragDropTarget()) {
+                    Object payload = ImGui.acceptDragDropPayload("Prefab");
+                    if (payload instanceof Path) {
+                        param.setValue(
+                                FileSystem.relativize(
+                                        ProjectManager.getGame().getDirectory(),
+                                        payload.toString()));
+
+                    }
+                    ImGui.endDragDropTarget();
+                }
                 ImGui.sameLine();
                 EditorAssetManager.getInstance().getFont("Default25").setScale(0.7f);
                 ImGui.pushFont(    EditorAssetManager.getInstance().getFont("Default25"));

@@ -12,6 +12,7 @@ import org.joml.Vector3f;
 import org.katia.FileSystem;
 import org.katia.Icons;
 import org.katia.Logger;
+import org.katia.core.Scene;
 import org.katia.core.components.CameraComponent;
 import org.katia.editor.EditorUI;
 import org.katia.editor.managers.EditorAssetManager;
@@ -21,6 +22,7 @@ import org.katia.editor.renderer.EditorCameraController;
 import org.katia.editor.ui.popups.ImagePreviewPopup;
 import org.katia.editor.ui.popups.PopupManager;
 import org.katia.editor.ui.windows.CodeEditorWindow;
+import org.katia.factory.SceneFactory;
 import org.katia.gfx.resources.Texture;
 
 import java.awt.*;
@@ -181,15 +183,12 @@ public class ProjectDirectoryExplorerWidget {
                         clickedDirectory = entry;
                         Logger.log(clickedDirectory.toString());
 
-                    } else  if (FileSystem.isSceneFile(entry.toString())) {
-                        ProjectManager.getGame().getSceneManager().setActiveScene(filename);
+                    } else if (FileSystem.isSceneFile(entry.toString())) {
+                        ProjectManager.setCurrentScene(entry.toString());
                     } else if (FileSystem.isLuaFile(entry.toString())) {
                         EditorUI.getInstance().getWindow(CodeEditorWindow.class).openFile(entry.toString());
                     } else if (FileSystem.isPrefabFile(entry.toString())) {
-                        ProjectManager.openPrefab(entry.toString());
-                        EditorCameraController.getInstance().getCamera().getComponent(CameraComponent.class).setBackground(
-                                new Vector3f(0.16f, 0.18f, 0.2f)
-                        );
+                        ProjectManager.setCurrentScene(entry.toString());
                     }
                     else {
 //                    if (FileSystem.isImageFile(entry.getFileName().toString())) {
@@ -225,7 +224,13 @@ public class ProjectDirectoryExplorerWidget {
                         ImGui.endDragDropSource();
                     }
                 }
-
+                if (FileSystem.isPrefabFile(entry.toString())) {
+                    if (ImGui.beginDragDropSource()) {
+                        ImGui.setDragDropPayload("Prefab", entry);
+                        ImGui.text(entry.toString());
+                        ImGui.endDragDropSource();
+                    }
+                }
 
 
                 if (ImGui.isItemHovered(ImGuiHoveredFlags.None)) {

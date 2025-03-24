@@ -9,6 +9,7 @@ import org.katia.FileSystem;
 import org.katia.Icons;
 import org.katia.Logger;
 import org.katia.core.GameObject;
+import org.katia.core.Scene;
 import org.katia.editor.EditorUI;
 import org.katia.editor.managers.EditorAssetManager;
 import org.katia.editor.managers.ProjectManager;
@@ -16,6 +17,7 @@ import org.katia.editor.ui.menubar.MainMenuBar;
 import org.katia.editor.ui.menubar.MenuAction;
 import org.katia.editor.ui.widgets.ProjectDirectoryExplorerWidget;
 import org.katia.factory.GameObjectFactory;
+import org.katia.factory.SceneFactory;
 
 import java.nio.file.Path;
 
@@ -29,7 +31,7 @@ public class ProjectWindow extends Window {
         Logger.log(Logger.Type.INFO, "Creating project window ...");
 
         directoryExplorerWidget = new ProjectDirectoryExplorerWidget();
-        directoryExplorerWidget.setRootDirectory("C:\\Users\\milos\\Desktop\\Demo Game");
+//        directoryExplorerWidget.setRootDirectory("C:\\Users\\milos\\Desktop\\Demo Game");
     }
 //
 //    @Override
@@ -66,36 +68,10 @@ public class ProjectWindow extends Window {
 
         ImGui.popFont();
         ImGui.setCursorPosY(ImGui.getCursorPosY() + 3);
-
-
     }
-
-    ////        if (!visible)
-////            return;
-////        ImGui.setNextWindowClass(windowClass);
-////        ImGui.pushStyleVar(ImGuiStyleVar.WindowPadding, 5, 5);
-////
-////        ImGui.begin("Project", ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse);
-////        ImGui.pushStyleVar(ImGuiStyleVar.WindowPadding, 10, 5);
-////
-////        ImGui.textDisabled("PROJECT");
-////
-////        ImGui.beginChild("##ProjectChild", -1, -1, true);
-////
-////
-////        ImGui.endChild();
-////        ImGui.popStyleVar();
-////
-////        ImGui.end();
-////        ImGui.popStyleVar();
-//
-//    }
-
-
 
     @Override
     protected void body() {
-
         if (ProjectManager.getGame() != null) {
             renderProjectOpen();
         } else {
@@ -108,7 +84,10 @@ public class ProjectWindow extends Window {
         if (ImGui.beginDragDropTarget()) {
             GameObject payload = ImGui.acceptDragDropPayload("GameObject");
             if (payload != null ) {
-                String json = GameObjectFactory.generateJsonFromGameObject(payload);
+                Scene scene = SceneFactory.createScene("PrefabScene" + payload.getName());
+                scene.addGameObject(GameObjectFactory.copy(payload));
+
+                String json = SceneFactory.generateJsonFromScene(scene);
                 String file = directoryExplorerWidget.getPath() + "/" + payload.getName() + ".prefab";
                 if (FileSystem.doesDirectoryExists(file)) {
                     Logger.log(Logger.Type.ERROR, "File already exists!");

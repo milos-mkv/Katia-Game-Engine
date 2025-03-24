@@ -13,8 +13,8 @@ void main() {
     // Sample the font texture at the given UV coordinates
     float alpha = texture(uTexture, vUV).r; // Use the red channel for alpha (font glyphs are grayscale)
 
-    // Discard low-alpha pixels for crisp text rendering
-    if (alpha < 0.1) {
+//     Discard low-alpha pixels for crisp text rendering
+    if (alpha < 0.2f) {
         discard;
     }
 

@@ -119,7 +119,7 @@ public class ResourceManager {
                 fonts.put(key, FontFactory.createFont(entry.toString()));
             } else if (FileSystem.isLuaFile(entry.toString())) {
                 scripts.put(key, entry.toString());
-            } else if (FileSystem.isSceneFile(entry.toString())) {
+            } else if (FileSystem.isSceneFile(entry.toString()) || FileSystem.isPrefabFile(entry.toString())) {
                 scenes.put(FileSystem.getFilenameWithoutExtension(FileSystem.getFileName(entry.toString())),
                        entry.toString());
             } else if (FileSystem.isSoundFile(entry.toString())) {

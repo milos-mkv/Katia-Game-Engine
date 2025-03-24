@@ -15,6 +15,7 @@ import org.katia.editor.managers.EditorAssetManager;
 public abstract class Window {
 
     protected String name;
+    protected String title;
     protected boolean visible;
     protected ImGuiWindowClass windowClass;
     protected Vector2f childPadding = new Vector2f(5, 5);
@@ -34,6 +35,7 @@ public abstract class Window {
                 | ImGuiDockNodeFlags.NoTabBar
         );
         this.windowFlags = ImGuiWindowFlags.None;
+        this.title = name.toUpperCase();
     }
 
     /**
@@ -46,7 +48,7 @@ public abstract class Window {
         ImGui.pushStyleVar(ImGuiStyleVar.WindowPadding, 5, 0);
         ImGui.begin(name);
         ImGui.pushFont(EditorAssetManager.getInstance().getFont("Default"));
-        ImGui.textDisabled(name.toUpperCase());
+        ImGui.textDisabled(title);
         ImGui.popFont();
         ImGui.sameLine();
 
