@@ -8,21 +8,16 @@ import imgui.flag.ImGuiStyleVar;
 import imgui.flag.ImGuiWindowFlags;
 import imgui.type.ImString;
 import lombok.Data;
-import org.joml.Vector3f;
 import org.katia.FileSystem;
 import org.katia.Icons;
 import org.katia.Logger;
-import org.katia.core.Scene;
-import org.katia.core.components.CameraComponent;
 import org.katia.editor.EditorUI;
 import org.katia.editor.managers.EditorAssetManager;
 import org.katia.editor.managers.ProjectManager;
 import org.katia.editor.popups.FontCreatorPopup;
-import org.katia.editor.renderer.EditorCameraController;
 import org.katia.editor.ui.popups.ImagePreviewPopup;
 import org.katia.editor.ui.popups.PopupManager;
 import org.katia.editor.ui.windows.CodeEditorWindow;
-import org.katia.factory.SceneFactory;
 import org.katia.gfx.resources.Texture;
 
 import java.awt.*;
@@ -196,7 +191,7 @@ public class ProjectDirectoryExplorerWidget {
                         Logger.log(clickedFile.toString());
                     }
                 }
-                if (!Files.isDirectory(entry) && Objects.equals(ext, "lua")) {
+                if (FileSystem.isLuaFile(entry.toString())) {
                     if (ImGui.beginDragDropSource()) {
                         ImGui.setDragDropPayload("LuaScript", entry);
                         ImGui.text(entry.toString());

@@ -29,7 +29,9 @@ public class GameObject {
     private String name;
     private List<GameObject> children;
     private Map<Class<?>, Component> components;
+
     private boolean isFromPrefab = false;
+
     @JsonIgnore
     int selectID;
 
@@ -212,7 +214,7 @@ public class GameObject {
 
     /**
      * Find child game object based on its name.
-     * @param name Name of Game Object.
+     * @param id ID of Game Object.
      * @return GameObject
      */
     public GameObject find(UUID id) {

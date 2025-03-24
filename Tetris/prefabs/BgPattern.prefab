@@ -1,54 +1,19 @@
 {
-  "name" : "Background",
+  "name" : "BgPattern",
   "rootGameObject" : {
-    "id" : "a4b75be2-b49b-45cc-b7af-ff3abd02dcd6",
+    "id" : "1c0b7855-6a65-4de1-9fcd-1bdf73fc249f",
     "name" : "Root",
     "children" : [ {
-      "id" : "9580b01c-1158-48f0-8a20-d749605a9743",
-      "name" : "Background",
-      "children" : [ {
-        "id" : "e31f545c-0821-427a-ba40-7916f440961a",
-        "name" : "Border",
-        "children" : [ ],
-        "components" : {
-          "org.katia.core.components.TransformComponent" : {
-            "type" : "TransformComponent",
-            "componentType" : "Transform",
-            "position" : {
-              "x" : 0.0,
-              "y" : 0.0,
-              "z" : 0.0,
-              "finite" : true
-            },
-            "rotation" : 0.0,
-            "scale" : {
-              "x" : 1.0,
-              "y" : 1.0,
-              "z" : 1.0,
-              "finite" : true
-            },
-            "worldPosition" : {
-              "x" : 400.0,
-              "y" : 400.0,
-              "finite" : true
-            }
-          },
-          "org.katia.core.components.SpriteComponent" : {
-            "type" : "SpriteComponent",
-            "componentType" : "Sprite",
-            "path" : "images/Border.png"
-          }
-        },
-        "active" : true,
-        "fromPrefab" : false
-      } ],
+      "id" : "edede415-6860-46f8-8166-d2555218a07d",
+      "name" : "BgPattern",
+      "children" : [ ],
       "components" : {
         "org.katia.core.components.TransformComponent" : {
           "type" : "TransformComponent",
           "componentType" : "Transform",
           "position" : {
-            "x" : 400.0,
-            "y" : 400.0,
+            "x" : 0.0,
+            "y" : 0.0,
             "z" : 0.0,
             "finite" : true
           },
@@ -60,15 +25,15 @@
             "finite" : true
           },
           "worldPosition" : {
-            "x" : 400.0,
-            "y" : 400.0,
+            "x" : 0.0,
+            "y" : 0.0,
             "finite" : true
           }
         },
         "org.katia.core.components.SpriteComponent" : {
           "type" : "SpriteComponent",
           "componentType" : "Sprite",
-          "path" : "images/Pasted image.png"
+          "path" : "images/Pattern04.png"
         }
       },
       "active" : true,

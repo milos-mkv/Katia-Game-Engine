@@ -21,7 +21,7 @@
           "scale" : {
             "x" : 1.0,
             "y" : 1.0,
-            "z" : 0.0,
+            "z" : 1.0,
             "finite" : true
           },
           "worldPosition" : {
@@ -46,7 +46,44 @@
           }
         }
       },
-      "active" : true
+      "active" : true,
+      "fromPrefab" : false
+    }, {
+      "id" : "f441b279-1b67-439e-b0f3-4adf41e727ce",
+      "name" : "Game Object",
+      "children" : [ ],
+      "components" : {
+        "org.katia.core.components.TransformComponent" : {
+          "type" : "TransformComponent",
+          "componentType" : "Transform",
+          "position" : {
+            "x" : 0.0,
+            "y" : 0.0,
+            "z" : 0.0,
+            "finite" : true
+          },
+          "rotation" : 0.0,
+          "scale" : {
+            "x" : 1.0,
+            "y" : 1.0,
+            "z" : 1.0,
+            "finite" : true
+          },
+          "worldPosition" : {
+            "x" : 0.0,
+            "y" : 0.0,
+            "finite" : true
+          }
+        },
+        "org.katia.core.components.ScriptComponent" : {
+          "type" : "ScriptComponent",
+          "componentType" : "Script",
+          "path" : "scripts/Some.lua",
+          "params" : [ ]
+        }
+      },
+      "active" : true,
+      "fromPrefab" : false
     } ],
     "components" : {
       "org.katia.core.components.TransformComponent" : {
@@ -72,6 +109,7 @@
         }
       }
     },
-    "active" : true
+    "active" : true,
+    "fromPrefab" : false
   }
 }

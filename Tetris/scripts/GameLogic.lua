@@ -182,6 +182,7 @@ function GameLogic:init(params)
 	self.tetrimino = params.tetrimino
 	self.holder = params.holder
 	self.pattern = params.pattern
+	print(self.pattern)
 	self.fb = params.fb
 	for i = 1, 5 do
 		for j = 1, 5 do
@@ -189,7 +190,7 @@ function GameLogic:init(params)
 		local pos = p:getComponent("Transform"):getPosition()
 		pos.x = (i-1) * 192
 		pos.y = (j-1) * 225
-params._bg:addChild(p)
+        params._bg:addChild(p)
 	end
 	end
 
@@ -221,7 +222,7 @@ params._bg:addChild(p)
 	self.rotation = 1
 	self:spawnNewBlock()
 
-	local o = GameObject:create(params.paramKey)
+
 	--self.scene:addGameObject(o)
 end
 
@@ -428,7 +429,7 @@ function GameLogic:update(dt)
 	aa = aa + dt
 	if aa > 0.5 then
 		aa = 0
-print(dt)
+--print(dt)
 	end
 
 	--fb_pos.x = fb_pos.x + 1
@@ -456,12 +457,17 @@ print(dt)
 	self:check_for_cleared_lines()
 
 	 if (Input:isKeyJustPressed(KEY_R)) then
-	 	AudioManager:play(self.params.music)
+	    print("R")
+		SceneManager:setActiveScene("Kurto")
+	-- 	AudioManager:play(self.params.music)
 	 end
 
 end
 
 return GameLogic
+
+
+
 
 
 

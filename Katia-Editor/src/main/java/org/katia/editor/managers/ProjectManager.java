@@ -1,5 +1,6 @@
 package org.katia.editor.managers;
 
+import lombok.Data;
 import lombok.Getter;
 import org.joml.Vector3f;
 import org.katia.FileSystem;
@@ -30,6 +31,7 @@ public abstract class ProjectManager {
     @Getter
     static Game game;
 
+    @Getter
     static String currentScenePath;
 
     public static boolean isPrefab = false;
@@ -82,6 +84,7 @@ public abstract class ProjectManager {
         String confJson = Objects.requireNonNull(Configuration.toJson(configuration));
         Assert(!FileSystem.saveToFile(projectPath + "/katia-conf.json", confJson), "Failed to create katia-conf.json file!");
         Logger.log(Logger.Type.SUCCESS, "Project:", name, "created at:", path);
+        openProject(projectPath);
     }
 
     /**

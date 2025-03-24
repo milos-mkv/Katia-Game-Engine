@@ -46,22 +46,30 @@ public class Editor {
             EditorUI.getInstance().render();
             GLFW.glfwMakeContextCurrent(EditorWindow.getInstance().getHandle());
 
-            if (runGame != null) {
-                GLFW.glfwMakeContextCurrent(runGame.getWindow().getHandle());
-                runGame.update(null);
-
-                if (GLFW.glfwWindowShouldClose(runGame.getWindow().getHandle())) {
-                    runGame.dispose();
-                    runGame = null;
-                    ProjectManager.getGame().getSceneManager().setActiveScene(
-                            ProjectManager.getGame().getSceneManager().getActiveScene().getName()
-                    );
-                }
-            }
-            GLFW.glfwMakeContextCurrent(EditorWindow.getInstance().getHandle());
+            runGameContext();
 
         }
         dispose();
+    }
+
+    private void runGameContext() {
+        if (runGame == null) {
+            return;
+        }
+
+        GLFW.glfwMakeContextCurrent(runGame.getWindow().getHandle());
+        runGame.update(null);
+
+        if (GLFW.glfwWindowShouldClose(runGame.getWindow().getHandle())) {
+            runGame.dispose();
+            runGame = null;
+
+            ProjectManager.setCurrentScene(
+                    ProjectManager.getCurrentScenePath()
+            );
+        }
+
+        GLFW.glfwMakeContextCurrent(EditorWindow.getInstance().getHandle());
     }
 
     /**

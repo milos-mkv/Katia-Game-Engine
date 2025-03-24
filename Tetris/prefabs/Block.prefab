@@ -1,11 +1,11 @@
 {
-  "name" : "PrefabSceneblock1",
+  "name" : "Block",
   "rootGameObject" : {
-    "id" : "edd4d30b-a810-4f49-830b-bcb9e0e9c1f1",
+    "id" : "eec5eb12-e576-435c-a87d-e5360ab33dd6",
     "name" : "Root",
     "children" : [ {
-      "id" : "a24a6c86-3377-4fad-a43a-e3a9b1ba67d8",
-      "name" : "block1",
+      "id" : "bc7c9a77-0015-481a-9a68-e9f4d3a32698",
+      "name" : "Block",
       "children" : [ ],
       "components" : {
         "org.katia.core.components.TransformComponent" : {
@@ -33,7 +33,7 @@
         "org.katia.core.components.SpriteComponent" : {
           "type" : "SpriteComponent",
           "componentType" : "Sprite",
-          "path" : "images/Tetromino_block2_2.png"
+          "path" : "images/Tetromino_block1_4.png"
         }
       },
       "active" : true,

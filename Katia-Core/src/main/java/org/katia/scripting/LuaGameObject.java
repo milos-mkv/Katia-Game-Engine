@@ -39,6 +39,8 @@ public class LuaGameObject {
                 FileSystem.readFromFile(game.getResourceManager().getPrefab(prefab))
         );
         assert scene != null;
-        return GameObjectFactory.copy(scene.getRootGameObject().getChildren().getFirst());
+        GameObject g = scene.getRootGameObject().getChildren().getFirst();
+        g.setFromPrefab(true);
+        return GameObjectFactory.copy(g);
     }
 }

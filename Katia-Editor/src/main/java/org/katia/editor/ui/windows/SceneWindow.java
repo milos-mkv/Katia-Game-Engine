@@ -92,6 +92,12 @@ public class SceneWindow extends Window {
 
     @Override
     protected void body() {
+        if (ProjectManager.getGame() == null ||
+        ProjectManager.getGame().getSceneManager().getActiveScene() == null) {
+            return;
+        }
+
+
                 Settings.w = ImGui.getWindowWidth();
         Settings.h = ImGui.getWindowHeight();
                 var startCursorPosition = ImGui.getCursorPos();
