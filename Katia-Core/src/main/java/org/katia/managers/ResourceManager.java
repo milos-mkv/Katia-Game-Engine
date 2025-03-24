@@ -27,6 +27,7 @@ public class ResourceManager {
     HashMap<String, String> scripts;
     HashMap<String, String> scenes;
     HashMap<String, Audio> audios;
+    HashMap<String, String> prefabs;
 
     /**
      * Resource manager constructor.
@@ -41,9 +42,12 @@ public class ResourceManager {
         scripts = new HashMap<>();
         scenes = new HashMap<>();
         audios = new HashMap<>();
+        prefabs = new HashMap<>();
 
         loadResources(game.getDirectory());
     }
+
+
 
     /**
      * Get texture.
@@ -58,6 +62,19 @@ public class ResourceManager {
             textures.put(key, texture);
         }
         return texture;
+    }
+
+    public String getPrefab(String key) {
+        String prefab = prefabs.get(key);
+        if (prefab == null) {
+            String path = game.getDirectory() + "/" + key;
+            File file = new File(path);
+            if (file.exists()) {
+                prefab = path;
+                scripts.put(key, path);
+            }
+        }
+        return prefab;
     }
 
     /**
@@ -119,10 +136,13 @@ public class ResourceManager {
                 fonts.put(key, FontFactory.createFont(entry.toString()));
             } else if (FileSystem.isLuaFile(entry.toString())) {
                 scripts.put(key, entry.toString());
-            } else if (FileSystem.isSceneFile(entry.toString()) || FileSystem.isPrefabFile(entry.toString())) {
+            } else if (FileSystem.isSceneFile(entry.toString())) {
                 scenes.put(FileSystem.getFilenameWithoutExtension(FileSystem.getFileName(entry.toString())),
                        entry.toString());
-            } else if (FileSystem.isSoundFile(entry.toString())) {
+            } else if (FileSystem.isPrefabFile(entry.toString())) {
+                prefabs.put(key,
+                        entry.toString());
+            }  else if (FileSystem.isSoundFile(entry.toString())) {
                 audios.put(key, AudioFactory.createAudio(entry.toString()));
             }
             return false;

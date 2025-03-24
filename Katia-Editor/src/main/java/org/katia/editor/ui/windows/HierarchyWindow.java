@@ -97,6 +97,11 @@ public class HierarchyWindow extends Window {
         if (gameObject.getComponent(TextComponent.class) != null) {
             icon = Icons.TextHeight;// Icons.Font;
         }
+
+        if (gameObject.isFromPrefab()) {
+            ImGui.pushStyleColor(ImGuiCol.Text, 0.4f, 0.5f, 0.7f, 1.0f);
+        }
+
         boolean open = ImGui.treeNodeEx(icon+ " " + gameObject.getName(), flag);
         // If mouse double click move camera to game object.
         if (ImGui.isItemHovered(ImGuiHoveredFlags.None)) {
@@ -132,6 +137,9 @@ public class HierarchyWindow extends Window {
             ImGui.treePop();
         } else {
             displayGameObjectContextMenu(gameObject);
+        }
+        if (gameObject.isFromPrefab()) {
+            ImGui.popStyleColor();
         }
         ImGui.popID();
     }

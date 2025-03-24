@@ -1,19 +1,19 @@
 {
-  "name" : "PrefabSceneText",
+  "name" : "PrefabSceneblock1",
   "rootGameObject" : {
-    "id" : "8eb53951-3199-4976-9d30-240b83cd0063",
+    "id" : "edd4d30b-a810-4f49-830b-bcb9e0e9c1f1",
     "name" : "Root",
     "children" : [ {
-      "id" : "0fa2b0ed-19a5-4798-8ca9-736e67d338b3",
-      "name" : "Text",
+      "id" : "a24a6c86-3377-4fad-a43a-e3a9b1ba67d8",
+      "name" : "block1",
       "children" : [ ],
       "components" : {
         "org.katia.core.components.TransformComponent" : {
           "type" : "TransformComponent",
           "componentType" : "Transform",
           "position" : {
-            "x" : -98.99997,
-            "y" : -16.100056,
+            "x" : 0.0,
+            "y" : 0.0,
             "z" : 0.0,
             "finite" : true
           },
@@ -25,27 +25,19 @@
             "finite" : true
           },
           "worldPosition" : {
-            "x" : -98.99997,
-            "y" : -16.100056,
+            "x" : 0.0,
+            "y" : 0.0,
             "finite" : true
           }
         },
-        "org.katia.core.components.TextComponent" : {
-          "type" : "TextComponent",
-          "componentType" : "Text",
-          "text" : "TETRIS",
-          "path" : "fonts/JetBrainsMono-Medium.ttf",
-          "color" : {
-            "x" : 1.0,
-            "y" : 1.0,
-            "z" : 1.0,
-            "w" : 1.0,
-            "finite" : true
-          },
-          "scale" : 6.87
+        "org.katia.core.components.SpriteComponent" : {
+          "type" : "SpriteComponent",
+          "componentType" : "Sprite",
+          "path" : "images/Tetromino_block2_2.png"
         }
       },
-      "active" : true
+      "active" : true,
+      "fromPrefab" : false
     } ],
     "components" : {
       "org.katia.core.components.TransformComponent" : {
@@ -71,6 +63,7 @@
         }
       }
     },
-    "active" : true
+    "active" : true,
+    "fromPrefab" : false
   }
 }

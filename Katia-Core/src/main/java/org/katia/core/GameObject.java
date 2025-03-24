@@ -29,7 +29,7 @@ public class GameObject {
     private String name;
     private List<GameObject> children;
     private Map<Class<?>, Component> components;
-
+    private boolean isFromPrefab = false;
     @JsonIgnore
     int selectID;
 

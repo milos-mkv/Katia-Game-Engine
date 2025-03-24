@@ -84,7 +84,7 @@ public class ProjectWindow extends Window {
         if (ImGui.beginDragDropTarget()) {
             GameObject payload = ImGui.acceptDragDropPayload("GameObject");
             if (payload != null ) {
-                Scene scene = SceneFactory.createScene("PrefabScene" + payload.getName());
+                Scene scene = SceneFactory.createScene(payload.getName());
                 scene.addGameObject(GameObjectFactory.copy(payload));
 
                 String json = SceneFactory.generateJsonFromScene(scene);

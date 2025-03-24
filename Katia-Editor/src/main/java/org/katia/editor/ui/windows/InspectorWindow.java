@@ -314,7 +314,7 @@ public class InspectorWindow extends Window {
                 ImGui.endDisabled();
                 if (ImGui.beginDragDropTarget()) {
                     Object payload = ImGui.acceptDragDropPayload("GameObject");
-                    if (payload != null && payload instanceof GameObject) {
+                    if (payload instanceof GameObject) {
 
                         System.out.println(payload);
                         param.setValue(((GameObject) payload).getId().toString());

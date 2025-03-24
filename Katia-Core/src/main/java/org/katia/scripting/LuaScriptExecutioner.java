@@ -121,7 +121,7 @@ public class LuaScriptExecutioner {
         scene.getGlobals().set("SceneManager", CoerceJavaToLua.coerce(game.getSceneManager()));
         scene.getGlobals().set("Window", CoerceJavaToLua.coerce(game.getWindow()));
         scene.getGlobals().set("AudioManager", CoerceJavaToLua.coerce(game.getAudioManager()));
-        scene.getGlobals().set("GameObject", CoerceJavaToLua.coerce(new LuaGameObject()));
+        scene.getGlobals().set("GameObject", CoerceJavaToLua.coerce(new LuaGameObject(game)));
 
         scene.getGlobals().set("print", this.console);
     }

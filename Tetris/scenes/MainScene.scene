@@ -46,7 +46,8 @@
           }
         }
       },
-      "active" : true
+      "active" : true,
+      "fromPrefab" : false
     }, {
       "id" : "503167c3-18e2-4b40-bc00-68f97c836185",
       "name" : "_patternbg",
@@ -75,7 +76,8 @@
           }
         }
       },
-      "active" : true
+      "active" : true,
+      "fromPrefab" : false
     }, {
       "id" : "b0e94956-82ee-47b6-990b-ebed2562516b",
       "name" : "Background",
@@ -112,7 +114,8 @@
             "path" : "images/Border.png"
           }
         },
-        "active" : true
+        "active" : true,
+        "fromPrefab" : false
       } ],
       "components" : {
         "org.katia.core.components.TransformComponent" : {
@@ -143,7 +146,8 @@
           "path" : "images/Pasted image.png"
         }
       },
-      "active" : true
+      "active" : true,
+      "fromPrefab" : false
     }, {
       "id" : "d8e145e4-6d30-44b9-af56-9ff087f82d17",
       "name" : "Sprite",
@@ -177,7 +181,8 @@
           "path" : "images/Tetromino_block1_2.png"
         }
       },
-      "active" : true
+      "active" : true,
+      "fromPrefab" : false
     }, {
       "id" : "fbb526ea-40f8-4b01-87d1-35bfdc8a91bf",
       "name" : "GameLogic",
@@ -226,7 +231,8 @@
           } ]
         }
       },
-      "active" : true
+      "active" : true,
+      "fromPrefab" : false
     }, {
       "id" : "11b8a0c7-a56f-4646-925c-d5e69172b231",
       "name" : "Cursor",
@@ -255,7 +261,8 @@
           }
         }
       },
-      "active" : true
+      "active" : true,
+      "fromPrefab" : false
     }, {
       "id" : "39c47f54-ea14-4f25-a7a5-e4878491ad3d",
       "name" : "GridMinos",
@@ -284,7 +291,8 @@
           }
         }
       },
-      "active" : true
+      "active" : true,
+      "fromPrefab" : false
     }, {
       "id" : "c870bc87-b3c9-42c8-951f-8ae5377f11d8",
       "name" : "Sprite",
@@ -318,7 +326,8 @@
           "path" : "images/Pattern04.png"
         }
       },
-      "active" : true
+      "active" : true,
+      "fromPrefab" : false
     }, {
       "id" : "e9b14c85-3117-4136-ae6b-9feb6d0f7859",
       "name" : "Sprite",
@@ -352,50 +361,8 @@
           "path" : "images/Tetromino_block1_4.png"
         }
       },
-      "active" : true
-    }, {
-      "id" : "f4a654cb-9283-4e06-8a99-28c8d8ebe78a",
-      "name" : "Text",
-      "children" : [ ],
-      "components" : {
-        "org.katia.core.components.TransformComponent" : {
-          "type" : "TransformComponent",
-          "componentType" : "Transform",
-          "position" : {
-            "x" : 300.99997,
-            "y" : 735.89996,
-            "z" : 0.0,
-            "finite" : true
-          },
-          "rotation" : 0.0,
-          "scale" : {
-            "x" : 1.0,
-            "y" : 1.0,
-            "z" : 1.0,
-            "finite" : true
-          },
-          "worldPosition" : {
-            "x" : 300.99997,
-            "y" : 735.89996,
-            "finite" : true
-          }
-        },
-        "org.katia.core.components.TextComponent" : {
-          "type" : "TextComponent",
-          "componentType" : "Text",
-          "text" : "TETRIS",
-          "path" : "fonts/JetBrainsMono-Medium.ttf",
-          "color" : {
-            "x" : 1.0,
-            "y" : 1.0,
-            "z" : 1.0,
-            "w" : 1.0,
-            "finite" : true
-          },
-          "scale" : 1.0
-        }
-      },
-      "active" : true
+      "active" : true,
+      "fromPrefab" : false
     } ],
     "components" : {
       "org.katia.core.components.TransformComponent" : {
@@ -421,6 +388,7 @@
         }
       }
     },
-    "active" : true
+    "active" : true,
+    "fromPrefab" : false
   }
 }

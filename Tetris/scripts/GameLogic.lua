@@ -220,6 +220,9 @@ params._bg:addChild(p)
 	self.size = 30
 	self.rotation = 1
 	self:spawnNewBlock()
+
+	local o = GameObject:create(params.paramKey)
+	--self.scene:addGameObject(o)
 end
 
 function GameLogic:spawnNewBlock()
@@ -459,6 +462,9 @@ print(dt)
 end
 
 return GameLogic
+
+
+
 
 
 
