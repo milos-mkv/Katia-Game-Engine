@@ -73,6 +73,10 @@ public class EditorCameraController {
         scale.y = Math.max(0.1f, Math.min(2.0f, scale.y + delta));
     }
 
+    public float getZoom() {
+        return camera.getComponent(TransformComponent.class).getScale().x;
+    }
+
     /**
      * Move camera.
      * @param deltaX Move on X axis.

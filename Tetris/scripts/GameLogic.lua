@@ -6,7 +6,7 @@
 -- @date        2025-03-21
 -- @copyright 	Copyright (c) 2025
 --    
--- Distributed under the MIT software license, see the accompanying file LICENCE or http://www.opensource.org/licenses/mit-license.php.
+-- Distributed under the MIT software license, see the accompanying file LICENCE or https://opensource.org/license/mit.
 ---------------------------------------------------------------------------------------------------------------------------------------
 
 local Behaviour = require("Behaviour")
@@ -465,6 +465,7 @@ function GameLogic:update(dt)
 end
 
 return GameLogic
+
 
 
 
