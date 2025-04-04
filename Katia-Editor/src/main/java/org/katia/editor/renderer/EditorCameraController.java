@@ -10,6 +10,8 @@ import org.katia.core.components.CameraComponent;
 import org.katia.core.components.TransformComponent;
 import org.katia.factory.GameObjectFactory;
 
+import static org.katia.Math.map;
+
 @Data
 public class EditorCameraController {
 
@@ -25,6 +27,7 @@ public class EditorCameraController {
         camera = GameObjectFactory.createGameObject("Editor Camera Controller");
         camera.addComponent(new CameraComponent());
         camera.getComponent(CameraComponent.class).setBackground(new Vector3f(0.1f, 0.1f, 0.1f));
+        // FIXME: For some reason if we start with position 0, 0 and spawn new game object Gizmo fails.
         camera.getComponent(TransformComponent.class).setPosition(new Vector3f(0.1f, 0.1f, 0));
     }
 
@@ -73,8 +76,19 @@ public class EditorCameraController {
         scale.y = Math.max(0.1f, Math.min(2.0f, scale.y + delta));
     }
 
-    public float getZoom() {
-        return camera.getComponent(TransformComponent.class).getScale().x;
+    public Vector2f getCursorWorldPosition(float x, float y) {
+        var camPos = camera.getComponent(TransformComponent.class).getPosition();
+        var zoom = camera.getComponent(TransformComponent.class).getScale().x;
+
+        float worldX = map(x, 0, getViewport().x,
+                camPos.x - (getViewport().x / 2f) * zoom,
+                camPos.x + (getViewport().x / 2f) * zoom);
+
+        float worldY = map(y, 0, getViewport().y ,
+                camPos.y - (getViewport().y / 2f) * zoom,
+                camPos.y + (getViewport().y / 2f) * zoom);
+
+        return new Vector2f(worldX, worldY);
     }
 
     /**

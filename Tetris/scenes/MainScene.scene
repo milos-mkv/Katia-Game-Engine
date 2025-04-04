@@ -258,41 +258,6 @@
       },
       "active" : true,
       "fromPrefab" : false
-    }, {
-      "id" : "f6650daf-81e1-4ea6-8124-3f34280b8bba",
-      "name" : "Block",
-      "children" : [ ],
-      "components" : {
-        "org.katia.core.components.TransformComponent" : {
-          "type" : "TransformComponent",
-          "componentType" : "Transform",
-          "position" : {
-            "x" : 0.0,
-            "y" : 0.0,
-            "z" : 0.0,
-            "finite" : true
-          },
-          "rotation" : 0.0,
-          "scale" : {
-            "x" : 1.0,
-            "y" : 1.0,
-            "z" : 1.0,
-            "finite" : true
-          },
-          "worldPosition" : {
-            "x" : 0.0,
-            "y" : 0.0,
-            "finite" : true
-          }
-        },
-        "org.katia.core.components.SpriteComponent" : {
-          "type" : "SpriteComponent",
-          "componentType" : "Sprite",
-          "path" : null
-        }
-      },
-      "active" : true,
-      "fromPrefab" : false
     } ],
     "components" : {
       "org.katia.core.components.TransformComponent" : {

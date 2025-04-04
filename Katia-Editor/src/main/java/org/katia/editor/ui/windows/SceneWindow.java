@@ -10,6 +10,7 @@ import imgui.flag.ImGuiMouseButton;
 import imgui.flag.ImGuiStyleVar;
 import imgui.flag.ImGuiWindowFlags;
 import org.joml.Matrix4f;
+import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.katia.FileSystem;
 import org.katia.Icons;
@@ -127,21 +128,11 @@ public class SceneWindow extends Window {
         float finalX = map(m.x, 0, vbounds[1].x - vbounds[0].x, 0, Settings.w);
         float finalY = map(m.y, 0, vbounds[1].y - vbounds[0].y, 0, Settings.h);
 
-        var camera = EditorCameraController.getInstance().getCamera();
-        var cpos = camera.getComponent(TransformComponent.class).getPosition();
-        float zoom = EditorCameraController.getInstance().getZoom(); // Assume you have a getZoom() method returning float
-
 // World-space mouse position accounting for camera position and zoom
-        float worldX = map(finalX, 0, Settings.w,
-                cpos.x - (Settings.w / 2f) * zoom,
-                cpos.x + (Settings.w / 2f) * zoom);
+        Vector2f worldPos = EditorCameraController.getInstance().getCursorWorldPosition(finalX, finalY);
 
-        float worldY = map(finalY, 0, Settings.h,
-                cpos.y - (Settings.h / 2f) * zoom,
-                cpos.y + (Settings.h / 2f) * zoom);
-
-        System.out.println("World X: " + worldX);
-        System.out.println("World Y: " + worldY);
+        System.out.println("World X: " + worldPos.x);
+        System.out.println("World Y: " + worldPos.y);
 
         if (ImGui.beginDragDropTarget()) {
             Path payload = ImGui.acceptDragDropPayload("ImageFile");
@@ -151,7 +142,7 @@ public class SceneWindow extends Window {
                         FileSystem.relativize(ProjectManager.getGame().getDirectory(), payload.toString())
                 );
 
-                gameObject.getComponent(TransformComponent.class).setPosition(new Vector3f(worldX, worldY, 0));
+                gameObject.getComponent(TransformComponent.class).setPosition(new Vector3f(worldPos.x, worldPos.y, 0));
                 ProjectManager.getGame().getSceneManager().getActiveScene().addGameObject(gameObject);
                 System.out.println(payload);
                 EditorUI.getInstance().getWindow(InspectorWindow.class).setGameObject(gameObject);
@@ -166,7 +157,7 @@ public class SceneWindow extends Window {
                        FileSystem.readFromFile(
                         payload.toString()));
                 GameObject g = scene.getRootGameObject().getChildren().get(0);
-                g.getComponent(TransformComponent.class).setPosition(new Vector3f(worldX, worldY, 0));
+                g.getComponent(TransformComponent.class).setPosition(new Vector3f(worldPos.x, worldPos.y, 0));
                 ProjectManager.getGame().getSceneManager().getActiveScene().addGameObject(g);
             }
             ImGui.endDragDropTarget();

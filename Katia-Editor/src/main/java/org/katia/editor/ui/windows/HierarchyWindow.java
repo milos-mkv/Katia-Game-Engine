@@ -82,12 +82,18 @@ public class HierarchyWindow extends Window {
     private void displayGameObject(GameObject gameObject) {
         ImGui.pushID(gameObject.getId().toString());
         boolean isEvenRow = (++treeIndex) % 2 == 0;
+        ImVec2 cursorPos = ImGui.getCursorScreenPos();
+        ImVec2 availableSize = ImGui.getContentRegionAvail();
         if (isEvenRow) {
-            ImVec2 cursorPos = ImGui.getCursorScreenPos();
-            ImVec2 availableSize = ImGui.getContentRegionAvail();
+
             ImGui.getWindowDrawList().addRectFilled(0, cursorPos.y - 5,
                     cursorPos.x + availableSize.x + 3, cursorPos.y + ImGui.getTextLineHeightWithSpacing(),
                     ImGui.getColorU32(0.1f, 0.1f, 0.1f, 0.3f));
+        }
+        if (gameObject == EditorUI.getInstance().getWindow(InspectorWindow.class).getGameObject().get()) {
+            ImGui.getWindowDrawList().addRectFilled(0, cursorPos.y - 5,
+                    cursorPos.x + availableSize.x + 3, cursorPos.y + ImGui.getTextLineHeightWithSpacing(),
+                    ImGui.getColorU32(0.3f, 0.6f, 0.8f, 0.8f));
         }
         int flag = (ImGuiTreeNodeFlags.SpanFullWidth | ImGuiTreeNodeFlags.OpenOnArrow);
         String icon = Icons.Cube;

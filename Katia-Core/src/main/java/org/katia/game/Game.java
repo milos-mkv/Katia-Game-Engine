@@ -22,6 +22,7 @@ public class Game {
     ResourceManager resourceManager;
     InputManager inputManager;
     LuaScriptExecutioner scriptExecutioner;
+
     String directory;
     SceneRenderer sceneRenderer;
     boolean debug;
