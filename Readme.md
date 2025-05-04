@@ -1,4 +1,4 @@
-# Katiga Game Engine
+# Katia Game Engine
 
 Simple 2D game engine written in Java LWJGL.
 
