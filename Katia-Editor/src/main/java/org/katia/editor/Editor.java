@@ -37,7 +37,7 @@ public class Editor {
         Logger.log(Logger.Type.INFO, "Editor run");
 
         ProjectManager.openProject("/home/mmilicevic/Documents/GitHub/Katia-Game-Engine/Tetris");
-        ProjectManager.setCurrentScene("/home/mmilicevic/Documents/GitHub/Katia-Game-Engine/Tetris/scenes/MainScene.scene");
+//        ProjectManager.setCurrentScene("/home/mmilicevic/Documents/GitHub/Katia-Game-Engine/Tetris/scenes/MainScene.scene");
 
         GLFW.glfwSwapInterval(0);
         while (!GLFW.glfwWindowShouldClose(EditorWindow.getInstance().getHandle())) {

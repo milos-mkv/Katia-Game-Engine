@@ -93,19 +93,17 @@ public class SceneWindow extends Window {
 
     @Override
     protected void body() {
-        if (ProjectManager.getGame() == null ||
-        ProjectManager.getGame().getSceneManager().getActiveScene() == null) {
+        if (ProjectManager.getGame() == null || ProjectManager.getGame().getSceneManager().getActiveScene() == null) {
             return;
         }
 
-
-                Settings.w = ImGui.getWindowWidth();
+        Settings.w = ImGui.getWindowWidth();
         Settings.h = ImGui.getWindowHeight();
-                var startCursorPosition = ImGui.getCursorPos();
+        var startCursorPosition = ImGui.getCursorPos();
 
         var viewportOffset = ImGui.getCursorPos();
 
-        ImGui.image(EditorSceneRenderer.getInstance().getDefaultframeBuffer().getTexture(), ImGui.getWindowWidth() -11, ImGui.getWindowHeight() - 9, 0, 1, 1, 0);
+        ImGui.image(EditorSceneRenderer.getInstance().getDefaultframeBuffer().getTexture(), ImGui.getWindowWidth() - 11, ImGui.getWindowHeight() - 9, 0, 1, 1, 0);
 
         var windowSize = ImGui.getWindowSize();
         var minBound = ImGui.getWindowPos();
@@ -128,15 +126,11 @@ public class SceneWindow extends Window {
         float finalX = map(m.x, 0, vbounds[1].x - vbounds[0].x, 0, Settings.w);
         float finalY = map(m.y, 0, vbounds[1].y - vbounds[0].y, 0, Settings.h);
 
-// World-space mouse position accounting for camera position and zoom
         Vector2f worldPos = EditorCameraController.getInstance().getCursorWorldPosition(finalX, finalY);
-
-        System.out.println("World X: " + worldPos.x);
-        System.out.println("World Y: " + worldPos.y);
 
         if (ImGui.beginDragDropTarget()) {
             Path payload = ImGui.acceptDragDropPayload("ImageFile");
-            if (payload != null ) {
+            if (payload != null) {
                 GameObject gameObject = GameObjectFactory.createGameObjectWithComponent("Sprite");
                 gameObject.getComponent(SpriteComponent.class).setPath(
                         FileSystem.relativize(ProjectManager.getGame().getDirectory(), payload.toString())
@@ -154,8 +148,8 @@ public class SceneWindow extends Window {
             Object payload = ImGui.acceptDragDropPayload("Prefab");
             if (payload instanceof Path) {
                 Scene scene = SceneFactory.generateSceneFromJson(
-                       FileSystem.readFromFile(
-                        payload.toString()));
+                        FileSystem.readFromFile(
+                                payload.toString()));
                 GameObject g = scene.getRootGameObject().getChildren().get(0);
                 g.getComponent(TransformComponent.class).setPosition(new Vector3f(worldPos.x, worldPos.y, 0));
                 ProjectManager.getGame().getSceneManager().getActiveScene().addGameObject(g);
@@ -179,7 +173,7 @@ public class SceneWindow extends Window {
 
         if (ImGui.isWindowHovered() && ImGui.isMouseDragging(ImGuiMouseButton.Right)) {
             EditorCameraController.getInstance()
-                    .move((mouseLastPosition.x -currentMouseCursor.x), ( currentMouseCursor.y - mouseLastPosition.y ));
+                    .move((mouseLastPosition.x - currentMouseCursor.x), (currentMouseCursor.y - mouseLastPosition.y));
         }
 
         if (ImGui.isWindowHovered() && ImGui.getIO().getMouseWheel() != 0.0f) {
@@ -193,36 +187,11 @@ public class SceneWindow extends Window {
         renderManipulationToolbar();
 
         if (EditorInputManager.getInstance().isKeyPressed(GLFW.GLFW_KEY_LEFT_CONTROL) &&
-            EditorInputManager.getInstance().isKeyJustPressed(GLFW.GLFW_KEY_S))   {
+                EditorInputManager.getInstance().isKeyJustPressed(GLFW.GLFW_KEY_S)) {
             ProjectManager.saveCurrentScene();
         }
     }
 
-    public static boolean containsNaN(Matrix4f matrix) {
-        for (int i = 0; i < 4; i++) {
-            for (int j = 0; j < 4; j++) {
-                if (Float.isNaN(matrix.get(i, j))) {
-                    return true;  // Found NaN
-                }
-            }
-        }
-        return false;  // No NaN found
-    }
-    private static float sanitizeZero(float value) {
-        return (value == -0.0f) ? 0.0f : value;
-    }
-    public static Matrix4f sanitizeMatrix(Matrix4f m) {
-        Matrix4f sanitized = new Matrix4f(m);
-        for (int col = 0; col < 4; col++) {
-            for (int row = 0; row < 4; row++) {
-                float v = sanitized.get(col, row);
-                if (Float.isNaN(v) || Float.isInfinite(v) || Math.abs(v) < 1e-7f || v == -0.0f) {
-                    sanitized.set(col, row, 0.0f);
-                }
-            }
-        }
-        return sanitized;
-    }
     private void manipulate() {
 
         GameObject gameObject = EditorUI.getInstance().getWindow(InspectorWindow.class).getGameObject().get();
@@ -247,21 +216,6 @@ public class SceneWindow extends Window {
         ImGuizmo.manipulate(view, proj, transform, manipulationOperation, Mode.WORLD);
 
         if (ImGuizmo.isUsing()) {
-//            var m = new Matrix4f().set(transform);
-//            if (containsNaN(m)) {
-//                if (t.getPosition().x == 0) {
-//                    t.getPosition().x = 1;
-//                }
-//                if (t.getPosition().y == 0) {
-//                    t.getPosition().y = 1;
-//                }
-//                return;
-//            }
-//                var s = t.getWorldTransformMatrix();
-//                var tts = matrixToFloatBuffer(s);
-//                var p = gameObject.getComponent(TransformComponent.class).getPosition();
-//                return;
-//            }
             t.setWorldTransformMatrix(new Matrix4f().set(transform));
             System.out.println(new Matrix4f().set(transform));
             // FIXME: For some reason when using scale it resets rotation. Find why is that.
@@ -318,5 +272,4 @@ public class SceneWindow extends Window {
         matrix.get(buffer);
         return buffer;
     }
-
 }
